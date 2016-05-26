@@ -2,9 +2,9 @@ install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9"; fi
   - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7"; fi
   - echo ${PATH}
-  - echo ${CC}
-  - ${CC} --version
-  - ${CC} -v
+  - echo ${CXX}
+  - ${CXX} --version
+  - ${CXX} -v
 
 addons:
   apt:
@@ -17,7 +17,7 @@ addons:
       - g++-4.9
       - clang-3.7
       - cmake
-      - boost1.54
+      - libboost1.54-all-dev
       - libeigen3-dev
       - python-dev
       - python-numpy
