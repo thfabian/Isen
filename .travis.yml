@@ -1,7 +1,3 @@
-branches:
-  only:
-    - master
-
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9"; fi
   - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7"; fi
@@ -51,4 +47,3 @@ notifications:
     on_failure: always
     
 sudo: false
-
