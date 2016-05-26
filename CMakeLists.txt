@@ -123,14 +123,12 @@ if(ISEN_PYTHON)
     add_definitions(-DISEN_PYTHON)
 
     # Python2
-    find_package(PythonInterp 2 REQUIRED)
     find_package(PythonLibs 2 REQUIRED)
     include_directories(${PYTHON_INCLUDE_DIRS})
     
     # Python3
     #set(Python_ADDITIONAL_VERSIONS 3.5)
     #find_package(PythonLibs 3 REQUIRED)
-    #find_package(PythonInterp 3 REQUIRED)
     #include_directories(${PYTHON_INCLUDE_DIRS})
     #boost: python-py34 (linux) or python3 (mac)
 
