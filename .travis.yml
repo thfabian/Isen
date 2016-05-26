@@ -1,10 +1,19 @@
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9"; fi
   - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7"; fi
+  
+  # Info about Compiler
   - echo ${PATH}
   - echo ${CXX}
   - ${CXX} --version
   - ${CXX} -v
+  
+  # Info about OS
+  - uname -a
+  - echo $TRAVIS_OS_NAME
+
+  # Install Mac OSX
+  - if [ "TRAVIS_OS_NAME" == "osx" ]]; then brew install eigen boost; fi
 
 addons:
   apt:
@@ -25,7 +34,7 @@ addons:
 
 os:
   - linux
-  # - osx
+  - osx
   
 env:
   - CONFIG=Release
@@ -40,7 +49,12 @@ compiler:
 before_script:
   - mkdir build
   - cd build
-  - cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=${CONFIG}
+
+  # Build Linux (build with Python)
+  - if [ "TRAVIS_OS_NAME" == "linux" ]]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=${CONFIG}; fi
+  
+  # Build Mac OSX (build without Python)
+  - if [ "TRAVIS_OS_NAME" == "osx" ]]; then cmake ../ -DISEN_PYTHON=OFF -DCMAKE_BUILD_TYPE=${CONFIG}; fi
   - make
 
 script:
