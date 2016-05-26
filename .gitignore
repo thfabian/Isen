@@ -1,0 +1,35 @@
+# Temp files created by most text editors.
+*~
+*.user
+
+# Merge files created by git.
+*.orig
+
+# Byte compiled python modules.
+*.pyc
+
+# vim swap files
+.*.sw?
+.sw?
+
+# OS X specific files.
+.DS_store
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Executables
+*.out
+*.app
+*.pdb
+*.user
+
+# Directories
+build*
+.idea
+
+# Doc HTML files
+doc/html/

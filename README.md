@@ -1,2 +1,1 @@
-# Isen
-2D Isentropic model 
+# Isen - 2D Isentropic model (BETA)
