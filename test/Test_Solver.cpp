@@ -46,7 +46,14 @@ TEST_CASE("MATLAB verification", "[Solver]")
         CHECK_NOTHROW(namelist = parser.parse(filename));
         std::shared_ptr<Solver> solver(new SolverRef(namelist));
 
+        //-------------------------------------------------
+        // Check inital-conditions
+        //-------------------------------------------------
         solver->init();
+
+        //-------------------------------------------------
+        // Check evolution
+        //-------------------------------------------------
         solver->run();
 
         LOG() << log::enable;

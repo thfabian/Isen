@@ -11,7 +11,7 @@
 #
 
 file(GLOB ISEN_TEST_SOURCE "*.cpp")
-set(ISEN_TEST_HEADER Test.h FileProxy.h FieldLoader.h)
+set(ISEN_TEST_HEADER Test.h FileProxy.h FieldLoader.h FieldVerifier.h)
     
 # Build tests
 add_executable(isen_test ${ISEN_TEST_SOURCE} ${ISEN_TEST_HEADER})
