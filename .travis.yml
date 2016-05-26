@@ -13,7 +13,7 @@ install:
   - echo $TRAVIS_OS_NAME
 
   # Install Mac OSX
-  - if [ "TRAVIS_OS_NAME" == "osx" ]]; then brew install eigen boost; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install cmake eigen boost; fi
 
 addons:
   apt:
@@ -51,10 +51,10 @@ before_script:
   - cd build
 
   # Build Linux (build with Python)
-  - if [ "TRAVIS_OS_NAME" == "linux" ]]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=${CONFIG}; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG; fi
   
   # Build Mac OSX (build without Python)
-  - if [ "TRAVIS_OS_NAME" == "osx" ]]; then cmake ../ -DISEN_PYTHON=OFF -DCMAKE_BUILD_TYPE=${CONFIG}; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=OFF -DCMAKE_BUILD_TYPE=$CONFIG; fi
   - make
 
 script:
