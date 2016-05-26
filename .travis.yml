@@ -12,7 +12,7 @@ install:
   - uname -a
   - echo $TRAVIS_OS_NAME
 
-  # Install Mac OSX (boost and cmake already installed)
+  # Install OSX (boost and cmake already installed)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install eigen; fi
 
 addons:
@@ -45,15 +45,26 @@ language: cpp
 compiler:
   - clang
   - gcc
+  
+matrix:
+  exclude:
+    # OSX boost is compiled with Clang (skip gcc builds)
+    - os: osx
+      compiler: gcc
+      env: CONFIG=Release
+      
+    - os: osx
+      compiler: gcc
+      env: CONFIG=Debug
 
 before_script:
   - mkdir build
   - cd build
 
-  # Build Linux (build with Python)
+  # Build Linux (with Python)
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG; fi
   
-  # Build Mac OSX (build without Python)
+  # Build OSX (without Python)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=OFF -DCMAKE_BUILD_TYPE=$CONFIG; fi
   - make
 
