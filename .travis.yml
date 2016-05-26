@@ -12,8 +12,8 @@ install:
   - uname -a
   - echo $TRAVIS_OS_NAME
 
-  # Install Mac OSX
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install cmake eigen boost; fi
+  # Install Mac OSX (boost and cmake already installed)
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install eigen; fi
 
 addons:
   apt:
