@@ -47,18 +47,21 @@ if(NOT(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC"))
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} "
                             "-Wno-sign-compare"
                             "-Wno-unused-function"
+                            # Eigen3
+                            "-Wno-enum-compare"
                             # Boost.Python
-			    "-Wno-unused-local-typedefs"
+                            "-Wno-unused-local-typedefs"
                             )
         string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} "
                             "-Wno-sign-compare"
                             "-Wno-unused-function"
+                            "-Wno-ignored-qualifiers"
                             # Eigen3
                             "-Wno-deprecated-declarations"
                             # Boost.Python
-			    "-Wno-unused-local-typedefs"
+                            "-Wno-unused-local-typedefs"
                             )
         string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")

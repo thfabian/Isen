@@ -18,6 +18,7 @@ addons:
       - clang-3.7
       - cmake
       - libboost1.54-all-dev
+      - libboost-python1.54-dev
       - libeigen3-dev
       - python-dev
       - python-numpy
@@ -35,7 +36,7 @@ compiler:
 before_script:
   - mkdir build
   - cd build
-  - cmake ../ -DISEN_PYTHON=OFF -DCMAKE_BUILD_TYPE=Release
+  - cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=Release
   - make
 
 script:
