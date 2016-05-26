@@ -7,6 +7,7 @@
 
 # Byte compiled python modules.
 *.pyc
+*.pyd
 
 # vim swap files
 .*.sw?
@@ -20,6 +21,10 @@
 *.lo
 *.o
 *.obj
+
+# Libraries
+*.so
+*.a
 
 # Executables
 *.out

@@ -1,0 +1,53 @@
+branches:
+  only:
+    - master
+
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9"; fi
+  - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7"; fi
+  - echo ${PATH}
+  - echo ${CC}
+  - ${CC} --version
+  - ${CC} -v
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.7
+    packages:
+      - gcc-4.9
+      - clang-3.7
+      - cmake
+      - libboost-all-dev
+      - libeigen3-dev
+      - python-dev
+      - python-numpy
+
+os:
+  - linux
+  # - osx
+
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ../ -DISEN_PYTHON=ON
+  - make
+
+script:
+   - ./isen_test
+
+notifications:
+  email:
+    recipients:
+      - fabian_thuering@hotmail.com
+    on_success: never
+    on_failure: always
+    
+sudo: false
