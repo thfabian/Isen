@@ -9,13 +9,14 @@ install:
 addons:
   apt:
     sources:
+      - boost-latest-ppa
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.7
     packages:
       - gcc-4.9
       - clang-3.7
       - cmake
-      - libboost-all-dev
+      - boost1.54
       - libeigen3-dev
       - python-dev
       - python-numpy
