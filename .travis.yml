@@ -9,11 +9,12 @@ install:
 addons:
   apt:
     sources:
-      - boost-latest-ppa
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.7
+      - boost-latest
     packages:
       - gcc-4.9
+      - g++-4.9
       - clang-3.7
       - cmake
       - boost1.54
@@ -34,7 +35,7 @@ compiler:
 before_script:
   - mkdir build
   - cd build
-  - cmake ../ -DISEN_PYTHON=ON
+  - cmake ../ -DISEN_PYTHON=OFF -DCMAKE_BUILD_TYPE=Release
   - make
 
 script:
