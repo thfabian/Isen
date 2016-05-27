@@ -83,15 +83,21 @@ protected:
     /// Montgomery potential
     MatrixXf mtg_;
     MatrixXf mtgnew_;
+    VectorXf mtg0_;
 
     /// Exner function
     MatrixXf exn_;
+    VectorXf exn0_;
 
     /// Pressure
     MatrixXf prs_;
+    VectorXf prs0_;
 
     /// Height-dependent diffusion coefficient
     VectorXf tau_;
+
+    /// Upstream profile for theta 
+    VectorXf th0_;
 
     /// Precipitation
     VectorXf prec_;
@@ -205,14 +211,26 @@ public:
     auto mtgnew() const -> const decltype(mtgnew_) & { return mtgnew_; }
     auto mtgnew() -> decltype(mtgnew_) & { return mtgnew_; }
 
+    auto mtg0() const -> const decltype(mtg0_) & { return mtg0_; }
+    auto mtg0() -> decltype(mtg0_) & { return mtg0_; }
+
     auto exn() const -> const decltype(exn_) & { return exn_; }
     auto exn() -> decltype(exn_) & { return exn_; }
+
+    auto exn0() const -> const decltype(exn0_) & { return exn0_; }
+    auto exn0() -> decltype(exn0_) & { return exn0_; }
 
     auto prs() const -> const decltype(prs_) & { return prs_; }
     auto prs() -> decltype(prs_) & { return prs_; }
 
+    auto prs0() const -> const decltype(prs0_) & { return prs0_; }
+    auto prs0() -> decltype(prs0_) & { return prs0_; }
+
     auto tau() const -> const decltype(tau_) & { return tau_; }
     auto tau() -> decltype(tau_) & { return tau_; }
+
+    auto th0() const -> const decltype(th0_) & { return th0_; }
+    auto th0() -> decltype(th0_) & { return th0_; }
 
     auto prec() const -> const decltype(prec_) & { return prec_; }
     auto prec() -> decltype(prec_) & { return prec_; }
@@ -315,6 +333,9 @@ public:
 
     auto ncbnd2() const -> const decltype(ncbnd2_) & { return ncbnd2_; }
     auto ncbnd2() -> decltype(ncbnd2_) & { return ncbnd2_; }
+
+    VectorXf tbnd1() const { VectorXf tbnd1(1); tbnd1(0) = tbnd1_; return tbnd1; }
+    VectorXf tbnd2() const { VectorXf tbnd2(1); tbnd2(0) = tbnd2_; return tbnd2; }
 };
 
 /// This is a convenience macro to declare local aliases of the NameList class inside any Solver method

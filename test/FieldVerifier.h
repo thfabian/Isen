@@ -45,7 +45,7 @@ public:
         if(test.cols() != ref.cols() || test.rows() != ref.rows())
         {
             if(verbose)
-                std::cerr << boost::format("The test field '%s' has a diffrent size than the refrence field.\n"
+                std::cerr << boost::format("\nThe test field '%s' has a diffrent size than the refrence field.\n"
                                            " %-15s as: (%i, %i)\n %-15s as: (%i, %i)\n")
                                  % name % name % test.rows() % test.cols() % "refrence" % ref.rows() % ref.cols();
             return false;
@@ -66,7 +66,7 @@ public:
                         // Print header
                         if(!printedHeader)
                         {
-                            std::cerr << boost::format("\n%9s | %24s | %24s\n") % "Position"
+                            std::cerr << boost::format("\n\n%9s | %24s | %24s\n") % "Position"
                                              % (boost::format("Actual [%s]") % name).str() % "Refrence";
                             std::cerr << std::string(63, '-') << "\n";
                             printedHeader = true;

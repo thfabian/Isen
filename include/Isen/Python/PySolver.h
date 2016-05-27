@@ -142,12 +142,26 @@ public:
             throw IsenException("Solver: not initialized");
         return toNumpyArray(solver_->mtgnew());
     }
+
+    boost::python::object mtg0() const
+    {
+        if(!isInitialized_)
+            throw IsenException("Solver: not initialized");
+        return toNumpyArray(solver_->mtg0());
+    }
     
     boost::python::object exn() const
     {
         if(!isInitialized_)
             throw IsenException("Solver: not initialized");
         return toNumpyArray(solver_->exn());
+    }
+
+    boost::python::object exn0() const
+    {
+        if(!isInitialized_)
+            throw IsenException("Solver: not initialized");
+        return toNumpyArray(solver_->exn0());
     }
     
     boost::python::object prs() const
@@ -156,12 +170,26 @@ public:
             throw IsenException("Solver: not initialized");
         return toNumpyArray(solver_->prs());
     }
+
+    boost::python::object prs0() const
+    {
+        if(!isInitialized_)
+            throw IsenException("Solver: not initialized");
+        return toNumpyArray(solver_->prs0());
+    }
     
     boost::python::object tau() const
     {
         if(!isInitialized_)
             throw IsenException("Solver: not initialized");
         return toNumpyArray(solver_->tau());
+    }
+
+    boost::python::object th0() const
+    {
+        if(!isInitialized_)
+            throw IsenException("Solver: not initialized");
+        return toNumpyArray(solver_->th0());
     }
     
     boost::python::object prec() const
@@ -302,6 +330,20 @@ public:
         if(!isInitialized_)
             throw IsenException("Solver: not initialized");
         return toNumpyArray(solver_->sbnd2());
+    }
+
+    boost::python::object tbnd1() const
+    {
+        if(!isInitialized_)
+            throw IsenException("Solver: not initialized");
+        return toNumpyArray(solver_->tbnd1());
+    }
+    
+    boost::python::object tbnd2() const
+    {
+        if(!isInitialized_)
+            throw IsenException("Solver: not initialized");
+        return toNumpyArray(solver_->tbnd2());
     }
     
     boost::python::object ubnd1() const

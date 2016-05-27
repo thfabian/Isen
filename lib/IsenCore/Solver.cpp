@@ -47,15 +47,21 @@ Solver::Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
 
         // Montgomery potential
         mtg_ = mtgnew_ = MatrixXf::Zero(nxb, nz);
+        mtg0_ = VectorXf::Zero(nz);
 
         // Exner function
         exn_ = MatrixXf::Zero(nxb, nz1);
+        exn0_ = VectorXf::Zero(nz1);
 
         // Pressure
         prs_ = MatrixXf::Zero(nxb, nz1);
+        prs0_ = VectorXf::Zero(nz1);
 
         // Height-dependent diffusion coefficient
         tau_ = VectorXf::Zero(nz);
+
+        // Upstream profile for theta 
+        th0_ = VectorXf::Zero(nz1);
 
         if(imoist)
         {
@@ -148,10 +154,7 @@ void Solver::makeprofile() noexcept
     Timer t;
     LOG() << "Create initial profile ... " << log::flush;
 
-    VectorXf exn0 = VectorXf::Zero(nz1);
     VectorXf z0 = VectorXf::Zero(nz1);
-    VectorXf mtg0 = VectorXf::Zero(nz);
-    VectorXf prs0 = VectorXf::Zero(nz1);
     VectorXf rh0 = VectorXf::Zero(nz1);
     VectorXf qv0 = VectorXf::Zero(nz);
 
@@ -174,38 +177,38 @@ void Solver::makeprofile() noexcept
 
     // Upstream profile of theta (staggered)
     // -----------------------------------------------------------
-    VectorXf th0 = th00 * VectorXf::Ones(nz1).array() + dth * VectorXf::LinSpaced(nz1, 0, nz1 - 1).array();
+    th0_ = th00 * VectorXf::Ones(nz1).array() + dth * VectorXf::LinSpaced(nz1, 0, nz1 - 1).array();
 
     // Upstream profile for Exner function and pressure (staggered)
     //-------------------------------------------------------------
-    exn0[0] = exn00;
+    exn0_[0] = exn00;
     for(int k = 1; k < nz1; ++k)
-        exn0[k]
-            = exn0[k - 1] - (16 * g2 * (th0[k] - th0[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * pow2(th0[k - 1] + th0[k])));
+        exn0_[k]
+            = exn0_[k - 1] - (16 * g2 * (th0_[k] - th0_[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * pow2(th0_[k - 1] + th0_[k])));
 
     for(int k = 0; k < nz1; ++k)
-        prs0[k] = pref * std::pow(exn0[k] / cp, cpdr);
+        prs0_[k] = pref * std::pow(exn0_[k] / cp, cpdr);
 
     // Upstream profile for geometric height (staggered)
     //-------------------------------------------------------------
     z0[0] = z00;
     for(int k = 1; k < nz1; ++k)
-        z0[k] = z0[k - 1] + (8 * g * (th0[k] - th0[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * (th0[k - 1] + th0[k])));
+        z0[k] = z0[k - 1] + (8 * g * (th0_[k] - th0_[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * (th0_[k - 1] + th0_[k])));
 
     // Upstream profile for Montgomery potential (unstaggered)
     //-------------------------------------------------------------
-    mtg0[0] = g * z0[0] + th00 * exn0[0] + dth * exn0[0] / 2.;
+    mtg0_[0] = g * z0[0] + th00 * exn0_[0] + dth * exn0_[0] / 2.;
 
-    Float mtg0old = mtg0[0];
+    Float mtg0old = mtg0_[0];
     for(int k = 1; k < nz; ++k)
     {
-        std::swap(mtg0[k], mtg0old);
-        mtg0[k] += dth * exn0[k];
+        std::swap(mtg0_[k], mtg0old);
+        mtg0_[k] += dth * exn0_[k];
     }
 
     // Upstream profile for isentropic density (unstaggered)
     //-------------------------------------------------------------
-    VectorXf s0 = -1. / g * (prs0.tail(nz1 - 1) - prs0.head(nz1 - 1)) / dth;
+    VectorXf s0 = -1. / g * (prs0_.tail(nz1 - 1) - prs0_.head(nz1 - 1)) / dth;
 
     // Upstream profile for velocity (unstaggered)
     //-------------------------------------------------------------
@@ -247,8 +250,8 @@ void Solver::makeprofile() noexcept
     //-------------------------------------------------------------
     sold_ = s0.transpose().replicate(sold_.rows(), 1);
     snow_ = s0.transpose().replicate(snow_.rows(), 1);
-    mtg_ = mtg0.transpose().replicate(mtg_.rows(), 1);
-    mtgnew_ = mtg0.transpose().replicate(mtgnew_.rows(), 1);
+    mtg_ = mtg0_.transpose().replicate(mtg_.rows(), 1);
+    mtgnew_ = mtg0_.transpose().replicate(mtgnew_.rows(), 1);
     uold_ = u0.transpose().replicate(uold_.rows(), 1);
     unow_ = u0.transpose().replicate(unow_.rows(), 1);
 
@@ -321,8 +324,8 @@ void Solver::makeprofile() noexcept
     for(int k = 1; k < nz1; ++k)
     {
         zhtnow_.col(k) = zhtnow_.col(k - 1).array()
-                         - rdcp / g * 0.5 * (th0[k - 1] * exn0[k - 1] + th0[k] * exn0[k]) * (prs0[k] - prs0[k - 1])
-                               / (0.5 * (prs0[k] + prs0[k - 1]));
+                         - rdcp / g * 0.5 * (th0_[k - 1] * exn0_[k - 1] + th0_[k] * exn0_[k]) * (prs0_[k] - prs0_[k - 1])
+                               / (0.5 * (prs0_[k] + prs0_[k - 1]));
     }
 }
 

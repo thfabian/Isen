@@ -17,6 +17,8 @@
 
 #include <Isen/Common.h>
 #include <fstream>
+#include <iterator>
+#include <algorithm>
 #include <string>
 
 ISEN_NAMESPACE_BEGIN
@@ -34,11 +36,9 @@ public:
         int n, m;
         fin >> n >> m;
         MatrixXf mat(n, m);
- 
-        // Read content (we read row-wise)
-        for(int i = 0; i < mat.rows(); ++i)
-            for(int j = 0; j < mat.cols(); ++j)
-                fin >> mat(i, j);
+
+        // Read data (col-major)
+        std::copy(std::istream_iterator<Float>(fin), std::istream_iterator<Float>(), mat.data());
 
         fin.close();
         return mat;

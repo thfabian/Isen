@@ -88,6 +88,7 @@
 #define WIN32_LEAN_AND_MEAN 1
 #define NOMINMAX 1
 #define _CRT_SECURE_NO_WARNINGS 1
+#define _SCL_SECURE_NO_WARNINGS 1
 #endif
 
 // Ignore some annoying warnings

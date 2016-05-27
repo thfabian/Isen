@@ -23,15 +23,15 @@ TEST_CASE("FieldLoader", "[Verification]")
     MatrixXf test(2, 3);
 
     // Fill matrix with some values
-    for(int i = 0; i < test.rows(); ++i)
-        for(int j = 0; j < test.cols(); ++j)
+    for(int j = 0; j < test.cols(); ++j)
+        for(int i = 0; i < test.rows(); ++i)
             test(i, j) = i + j;
 
-    // Prepare file
+    // Prepare file (write col major)
     std::string lines = (boost::format("%i %i") % test.rows() % test.cols()).str();
-    for(int i = 0; i < test.rows(); ++i)
+    for(int j = 0; j < test.cols(); ++j)
     {
-        for(int j = 0; j < test.cols(); ++j)
+        for(int i = 0; i < test.rows(); ++i)
             lines += (boost::format(" %f ") % test(i, j)).str();
         lines += "\n";
     }
