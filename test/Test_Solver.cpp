@@ -11,29 +11,33 @@
  *  This file is distributed under the MIT Open Source License. See LICENSE.TXT for details.
  */
 
+#include "FieldLoader.h"
+#include "FieldVerifier.h"
 #include "Test.h"
 #include <Isen/Common.h>
 #include <Isen/Logger.h>
 #include <Isen/Parse.h>
 #include <Isen/SolverRef.h>
+#include <Isen/Terminal.h>
 #include <boost/filesystem.hpp>
 
 ISEN_NAMESPACE_BEGIN
 
 TEST_CASE("MATLAB verification", "[Solver]")
 {
-    std::string filename, dirname;
+    std::string filename;
+    boost::filesystem::path dir;
 
     if(boost::filesystem::exists("data/namelist.m"))
     {
         filename = "data/namelist.m";
-        dirname = "data";
+        dir = "data";
     }
     // Visual Studio runs from many diffrent directories ...
     else if(boost::filesystem::exists("../data/namelist.m"))
     {
         filename = "../data/namelist.m";
-        dirname = "../data";
+        dir = "../data";
     }
 
     if(!filename.empty())
@@ -50,6 +54,17 @@ TEST_CASE("MATLAB verification", "[Solver]")
         // Check inital-conditions
         //-------------------------------------------------
         solver->init();
+
+        try
+        {
+            auto mat = FieldLoader::load((dir / boost::filesystem::path("unow-0.dat")).string());
+            CHECK(FieldVerifier::verify("unow", solver->unow(), mat));
+        }
+        catch(IsenException& e)
+        {
+            std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "unow";
+            std::cout << " : No test data found - Skipping\n";
+        }
 
         //-------------------------------------------------
         // Check evolution
