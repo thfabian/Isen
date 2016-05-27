@@ -39,7 +39,7 @@ TEST_CASE("FieldLoader", "[Verification]")
     SECTION("Load field")
     {
         ProxyFile f(ProxyFile::PYTHON, {lines});
-        MatrixXf mat(std::move(FieldLoader::load(f.getFilename())));
+        MatrixXf mat(FieldLoader::load(f.getFilename()));
         CHECK(test == mat);
     }
 }
@@ -95,6 +95,7 @@ TEST_CASE("FieldVerifier", "[Verification]")
         VectorXf vec3(4);
         CHECK_FALSE(FieldVerifier::verify("vec", vec3, vec2, false)); 
     }
+
 }
 
 ISEN_NAMESPACE_END
