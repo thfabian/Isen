@@ -21,7 +21,7 @@ dx      = xl/nx;
 thl     = 60.;          % domain depth [K]
 nz      = 60;           % vertical resolution
 dt      = 10;           % time step [s]
-time    = 6*60*60;      % integration time [s]
+time    = 50;      % integration time [s]
 diff    = 0.02;         % (horizontal) diffusion coefficient
 
 % Topography

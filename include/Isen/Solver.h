@@ -174,7 +174,13 @@ protected:
     VectorXf ncbnd1_;
     VectorXf ncbnd2_;
 
-    /// Be verbose
+    //-------------------------------------------------
+    // Define scalar fields
+    //-------------------------------------------------
+    Float dtdx_;
+    Float topofact_;
+
+    /// Be verbose?
     bool verbose_;
 
 public:

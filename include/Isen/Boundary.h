@@ -39,6 +39,8 @@ struct Boundary
     template <class Derived>
     static void relax(Eigen::MatrixBase<Derived>& phi, int nx, int nb, Float phi1, Float phi2) noexcept
     {
+        //TODO: phi1 and phi2 should be arrays?
+
         assert(phi.rows() == (nx + 2 * nb));
 
         // Relaxation is done over nr grid points

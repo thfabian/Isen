@@ -101,7 +101,7 @@ struct NameList
     /// Maximum value of absorber
     Float diffabs = 1.0;
     /// Lateral boundaries (false = periodic)
-    bool irelax = true;
+    bool irelax = false;
     /// Number of boundary points on each side
     int nb = 2;
 
@@ -113,7 +113,7 @@ struct NameList
     bool idbg = false;
     /// Print CFL number
     bool iprtcfl = true;
-    /// Print computation time
+    /// Print computation time (unused)
     bool itime = true;
 
     //-------------------------------------------------

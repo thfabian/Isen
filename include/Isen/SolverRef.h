@@ -45,8 +45,18 @@ public:
     // Diffusion
     //------------------------------------------------------------
 
-    /// Horizontal diffusion for dry model
+    /// Horizontal diffusion
     void horizontalDiffusion() noexcept;
+
+    //------------------------------------------------------------
+    // Boundary
+    //------------------------------------------------------------
+    
+    /// Exchange boundaries for periodicity of prognostic fields
+    void applyPeriodicBoundary() noexcept;
+
+    /// Relaxation of prognostic fields
+    void applyRelaxationBoundary() noexcept;
 
     //------------------------------------------------------------
     // Diagnostic

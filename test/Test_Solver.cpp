@@ -122,6 +122,22 @@ TEST_CASE("MATLAB verification", "[Solver]")
         LOG() << log::disable;
         solver->run();
         LOG() << log::enable;
+
+        //CHECK_FIELD(zhtold, 1);
+        //CHECK_FIELD(zhtnow, 1);
+
+        //CHECK_FIELD(uold, 1);
+        //CHECK_FIELD(unow, 1);
+
+        //CHECK_FIELD(sold, 1);
+        //CHECK_FIELD(snow, 1);
+
+        //CHECK_FIELD(mtg, 1);
+
+        //CHECK_FIELD(exn, 1);
+        //CHECK_FIELD(prs, 1);
+
+        CHECK_FIELD(tau, 1);
     }
     else
         std::cout << "MATLAB verification: No test data found -  Skipping" << std::endl;

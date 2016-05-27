@@ -99,7 +99,6 @@ Solver::Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
         //-------------------------------------------------
         // Define fields at lateral boundaries
         //-------------------------------------------------
-
         tbnd1_ = tbnd2_ = 0;
 
         // Isentropic density
@@ -134,6 +133,12 @@ Solver::Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
                 dthetadtbnd1_ = dthetadtbnd2_ = VectorXf::Zero(nz1);
             }
         }
+
+        //-------------------------------------------------
+        // Define scalar fields
+        //-------------------------------------------------
+        dtdx_ = dt / dx;
+        topofact_ = 1.0;
     }
     catch(std::bad_alloc&)
     {
