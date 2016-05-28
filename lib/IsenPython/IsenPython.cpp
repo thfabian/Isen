@@ -14,6 +14,7 @@
 #include <Isen/Output.h>
 #include <Isen/Python/IsenPython.h>
 #include <Isen/Python/PySolver.h>
+#include <Isen/Python/PyLogger.h>
 
 ISEN_NAMESPACE_BEGIN
 
@@ -51,12 +52,16 @@ BOOST_PYTHON_MODULE(IsenPythonCxx)
     // Exception
     register_exception_translator<Isen::IsenException>(&Isen::translateIsenException);
 
+    // PyLogger
+    class_<Isen::PyLogger>("Logger")
+        .def("enable", &Isen::PyLogger::enable)
+        .def("disable", &Isen::PyLogger::disable);
+
     // PySolver
     class_<Isen::PySolver>("Solver", "Solver's Docstring", init<boost::python::optional<const char*>>())
         .def("init", &Isen::PySolver::init, PySolver_overload_init())
         .def("run", &Isen::PySolver::run)
         .def("write", &Isen::PySolver::write, PySolver_overload_write())
-        .def("setVerbosity", &Isen::PySolver::setVerbosity)
         .def("print_", &Isen::PySolver::print)
         .def("topo", &Isen::PySolver::topo)
         .def("zhtold", &Isen::PySolver::zhtold)

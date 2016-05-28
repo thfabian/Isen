@@ -70,7 +70,6 @@ void PySolver::write(Output::ArchiveType archiveType, const char* filename)
 
     if(archiveType != Output::Unknown)
         solver_->getOutput()->setArchiveType(archiveType);
-
     solver_->write(filename);
 }
 

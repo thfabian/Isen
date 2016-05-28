@@ -36,7 +36,7 @@ public:
     virtual void init() noexcept override;
 
     /// Run the simulation (See Solver::run)
-    virtual void run() noexcept override;
+    virtual void run() override;
 
     /// Write simulation to output file (See Solver::write)
     virtual void write(std::string filename = "") override;

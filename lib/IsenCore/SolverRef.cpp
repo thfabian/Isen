@@ -18,6 +18,10 @@
 #include <Isen/SolverRef.h>
 #include <Isen/Timer.h>
 
+#ifdef ISEN_PYTHON
+#include <boost/python.hpp>
+#endif
+
 ISEN_NAMESPACE_BEGIN
 
 SolverRef::SolverRef(std::shared_ptr<NameList> namelist,
@@ -31,7 +35,7 @@ void SolverRef::init() noexcept
     Base::init();
 }
 
-void SolverRef::run() noexcept
+void SolverRef::run()
 {
     SOLVER_DECLARE_ALL_ALIASES
 
@@ -115,6 +119,13 @@ void SolverRef::run() noexcept
         //--------------------------------------------------------
         if((i % iout) == 0)
             output_->makeOutput(this);
+
+#ifdef ISEN_PYTHON
+        // Handle Python signals   
+        //--------------------------------------------------------
+        if(PyErr_CheckSignals() == -1)
+            throw IsenException("PySolver::run : signal caught");
+#endif
     }
 
 

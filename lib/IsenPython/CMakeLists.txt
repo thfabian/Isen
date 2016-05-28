@@ -15,16 +15,19 @@ cmake_minimum_required(VERSION 2.8)
 set(ISEN_PYTHON_SOURCE 
     IsenPython.cpp
     PySolver.cpp
+    PyLogger.cpp
     )
                 
 set(ISEN_PYTHON_HEADER 
     ${ISEN_INCLUDE_DIR}/Isen/Python/IsenPython.h
     ${ISEN_INCLUDE_DIR}/Isen/Python/PySolver.h
+    ${ISEN_INCLUDE_DIR}/Isen/Python/PyLogger.h
 	${ISEN_INCLUDE_DIR}/Isen/Python/PyType.h
     )
     
 set(ISEN_PYTHON_PYFILES
-    ${CMAKE_SOURCE_DIR}/python/IsenPython/__init__.py    
+    ${CMAKE_SOURCE_DIR}/python/IsenPython/__init__.py 
+    ${CMAKE_SOURCE_DIR}/python/IsenPython/Visualizer.py       
     ) 
 source_group("Python" FILES ${ISEN_PYTHON_PYFILES})  
  

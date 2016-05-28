@@ -25,7 +25,7 @@
 
 ISEN_NAMESPACE_BEGIN
 
-/// @brief Expose the Solver interface to python
+/// @brief Expose the Solver interface to Python
 class PySolver
 {
 public:
@@ -48,15 +48,6 @@ public:
 
     /// Write to output file
     void write(Output::ArchiveType archiveType = Output::Unknown, const char* filename = "");
-
-    /// Set verbosity (true : enable)
-    void setVerbosity(bool verbose)
-    {
-        if(verbose)
-            LOG() << log::enable;
-        else
-            LOG() << log::disable;
-    }
 
 private:
     std::shared_ptr<Solver> solver_;

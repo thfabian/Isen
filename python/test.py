@@ -8,4 +8,5 @@ visualiter = IsenPython.Visualizer()
 solver = IsenPython.Solver()
 solver.init()
 solver.run()
+
 #solver.write(IsenPython.ArchiveType.Unknown)

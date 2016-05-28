@@ -37,7 +37,7 @@ public:
     virtual void init() noexcept;
 
     /// Run the simulation
-    virtual void run() noexcept = 0;
+    virtual void run() = 0;
 
     /// @brief Write simulation to output file
     ///
