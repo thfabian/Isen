@@ -54,9 +54,9 @@ public:
         bool passed = true;
         bool printedHeader = false;
 
-        for(int i = 0; i < test_m.rows(); ++i)
+        for(int j = 0; j < test_m.cols(); ++j)
         {
-            for(int j = 0; j < test_m.cols(); ++j)
+            for(int i = 0; i < test_m.rows(); ++i)
             {
                 if(!FieldVerifier::equal(test_m(i, j), ref(i, j)))
                 {

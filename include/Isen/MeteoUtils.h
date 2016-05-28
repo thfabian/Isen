@@ -37,7 +37,7 @@ struct MetoUtils
     /// @param humv     Humidity variable, either in [K] if humidityKind == HumidityKind::DEWPOINT or between [0,1] if
     ///                 humidityKind == HumidityKind::RELATIVE
     /// @param humidityKind Kind of humidity
-    static inline VectorXf rrmixv1(const VectorXf& p, Float T, Float humv, HumidityKind humidityKind) NOEXCEPT
+    static inline VectorXf rrmixv1(const VectorXf& p, Float T, Float humv, HumidityKind humidityKind) noexcept
     {
         // Local constant
         const Float eps = 0.62198;
@@ -65,7 +65,7 @@ struct MetoUtils
     /// Using Goff-Gratch formulation which is based on exact integration of Clausius-Clapeyron equation.
     ///
     /// @param T    Temperature [K]
-    static inline Float eswat1(Float T) NOEXCEPT
+    static inline Float eswat1(Float T) noexcept
     {
         // Define local constants
         const Float C1 = 7.90298;
@@ -75,10 +75,10 @@ struct MetoUtils
         const Float C5 = 8.1328e-3;
         const Float C6 = 3.49149;
 
-        Float RMIXV = 373.16 / T;
+        Float rmixv = 373.16 / T;
 
-        Float ES = -C1 * (RMIXV - 1.0) + C2 * std::log10(RMIXV) - C3 * (std::pow(10, C4 * (1.0 - 1.0 / RMIXV)) - 1.0)
-                   + C5 * (std::pow(10, -C6 * (RMIXV - 1.0)) - 1.0);
+        Float ES = -C1 * (rmixv - 1.0) + C2 * std::log10(rmixv) - C3 * (std::pow(10, C4 * (1.0 - 1.0 / rmixv)) - 1.0)
+                   + C5 * (std::pow(10, -C6 * (rmixv - 1.0)) - 1.0);
 
         return (1013.246 * std::pow(10, ES));
     }

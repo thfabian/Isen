@@ -53,10 +53,7 @@ void SolverRef::run() noexcept
 
         // Special treatment of first time step
         //--------------------------------------------------------
-        if(i == 1)
-            dtdx_ = 0.5 * dt / dx;
-        else
-            dtdx_ = dt / dx;
+        dtdx_ = i == 1 ? 0.5 * dt / dx : dt / dx;
 
         // Prognostic step
         //--------------------------------------------------------
@@ -96,15 +93,14 @@ void SolverRef::run() noexcept
         // Diagnostic step
         //--------------------------------------------------------
 
-        // Montgomorey 
-        diagMontgomery();
-
         // Pressure
         diagPressure();
 
+        // Montgomorey 
+        diagMontgomery();
+
         // Calculation of geometric height (staggered) 
         //--------------------------------------------------------
-
 
         // Microphysics
         //--------------------------------------------------------
@@ -137,16 +133,11 @@ void SolverRef::horizontalDiffusion() noexcept
     const int nxnb = nx + nb;
     const int nxnb1 = nx + nb + 1;
 
-    bool tauIsNegative = false;
-    for(int k = 0; k < nz; ++k)
-        tauIsNegative |= tau_(k) <= 0.0;
-
-
     // Solve diffusion equation
     //------------------------------------------------------------
     for(int k = 0; k < nz; ++k)
     {
-        Float tau = tau_(k);
+        const Float tau = tau_(k);
         const bool sel = tau_(k) > 0.0;
         const bool negSel = !sel;
 
@@ -200,11 +191,36 @@ void SolverRef::applyRelaxationBoundary() noexcept
 void SolverRef::diagMontgomery() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
+
+    const Float dth05 = dth * 0.5;
+    const Float gtopofact_ = g * topofact_;
+
+    // Exner function
+    for(int k = 0; k < nz1; ++k)
+        for(int i = 0; i < nxb; ++i)
+            exn_(i, k) = cp * std::pow(prs_(i, k) / pref, rdcp);
+
+    // Montgomery
+    for(int i = 0; i < nxb; ++i)
+        mtg_(i, 0) = gtopofact_ * topo_(i) + th0_(0) * exn_(i, 0) + dth05 * exn_(i, 0);
+
+    for(int k = 1; k < nz; ++k)
+        for(int i = 0; i < nxb; ++i)
+            mtg_(i, k) = mtg_(i, k - 1) + dth * exn_(i, k);
 }
 
 void SolverRef::diagPressure() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
+
+    const Float gdth = g* dth;
+
+    for(int i = 0; i < nxb; ++i)
+        prs_(i, nz) = prs0_(nz);
+
+    for(int k = nz - 1; k >= 0; --k)
+        for(int i = 0; i < nxb; ++i)
+            prs_(i, k) = prs_(i, k + 1) + gdth * snow_(i, k);
 }
 
 void SolverRef::progIsendens() noexcept

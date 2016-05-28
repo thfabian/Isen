@@ -47,7 +47,7 @@ ISEN_NAMESPACE_BEGIN
         LOG() << "No test data found" << log::failed;                                                                  \
     }
 
-TEST_CASE("MATLAB verification", "[Solver]")
+TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
 {
     std::string filename;
     boost::filesystem::path dir;
@@ -126,16 +126,16 @@ TEST_CASE("MATLAB verification", "[Solver]")
         //CHECK_FIELD(zhtold, 1);
         //CHECK_FIELD(zhtnow, 1);
 
-        //CHECK_FIELD(uold, 1);
-        //CHECK_FIELD(unow, 1);
+        CHECK_FIELD(uold, 1);
+        CHECK_FIELD(unow, 1);
 
-        //CHECK_FIELD(sold, 1);
-        //CHECK_FIELD(snow, 1);
+        CHECK_FIELD(sold, 1);
+        CHECK_FIELD(snow, 1);
 
-        //CHECK_FIELD(mtg, 1);
+        CHECK_FIELD(mtg, 1);
 
-        //CHECK_FIELD(exn, 1);
-        //CHECK_FIELD(prs, 1);
+        CHECK_FIELD(exn, 1);
+        CHECK_FIELD(prs, 1);
 
         CHECK_FIELD(tau, 1);
     }
