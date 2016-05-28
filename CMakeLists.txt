@@ -34,6 +34,9 @@ endif(${ISEN_PYTHON})
 # Use certain flags to enhance profilerexperience
 option(ISEN_BENCHMARK "Use certain flags (-fno-omit-frame-prointer) for improved profiling" OFF)
 
+# Report on SIMD vectorization
+option(ISEN_VEC_REPORT "Optimization reports on vectorization [Intel]" OFF)
+
 if(APPLE)
     #TODO: Thats not really a solution here ;)
     set(CMAKE_MACOSX_RPATH 0)
@@ -65,7 +68,12 @@ if(NOT(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC"))
                             )
         string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd1478")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd1478 -simd")
+        
+        # Report on vectorization
+        if(ISEN_VEC_REPORT)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -qopt-report-phase=vec -qopt-report5 -qopt-report-per-object")
+        endif(ISEN_VEC_REPORT)
     endif()
     
     # Produce position independent code

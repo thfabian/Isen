@@ -18,12 +18,12 @@ ISEN_NAMESPACE_BEGIN
 
 void PyLogger::enable() const noexcept
 {
-    LOG() << log::enable;
+    LOG() << logger::enable;
 }
 
 void PyLogger::disable() const noexcept
 {
-    LOG() << log::disable;
+    LOG() << logger::disable;
 }
 
 ISEN_NAMESPACE_END

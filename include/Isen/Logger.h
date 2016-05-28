@@ -20,7 +20,7 @@
 
 ISEN_NAMESPACE_BEGIN
 
-enum class log
+enum class logger
 {
     nop = 0, ///< Do nothing
     ok,      ///< Print [OK], in white, and @c endl the stream
@@ -75,7 +75,7 @@ public:
     }
 
     /// Manipulate the logging stack
-    Logger& operator<<(log loggerEnum) noexcept;
+    Logger& operator<<(logger loggerEnum) noexcept;
 
     /// Reset the logging stack
     void clear() noexcept
@@ -116,7 +116,7 @@ ISEN_NAMESPACE_END
 #define LOG_SUCCESS(timer)                                                                                             \
     {                                                                                                                  \
         Isen::loggerInstance->setTimeStr(Isen::timeString((timer).stop()));                                            \
-        (*Isen::loggerInstance) << Isen::log::ok;                                                                      \
+        (*Isen::loggerInstance) << Isen::logger::ok;                                                                      \
     }
 
 #endif

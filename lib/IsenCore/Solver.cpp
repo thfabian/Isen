@@ -25,7 +25,7 @@ Solver::Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
     SOLVER_DECLARE_ALL_ALIASES
 
     Timer t;
-    LOG() << "Allocating memory ... " << log::flush;
+    LOG() << "Allocating memory ... " << logger::flush;
 
     try
     {
@@ -142,7 +142,7 @@ Solver::Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
     }
     catch(std::bad_alloc&)
     {
-        LOG() << log::failed;
+        LOG() << logger::failed;
         throw IsenException("out of memory");
     }
     LOG_SUCCESS(t);
@@ -157,7 +157,7 @@ void Solver::makeprofile() noexcept
     const Float g2 = g * g;
 
     Timer t;
-    LOG() << "Create initial profile ... " << log::flush;
+    LOG() << "Create initial profile ... " << logger::flush;
 
     VectorXf z0 = VectorXf::Zero(nz1);
     VectorXf rh0 = VectorXf::Zero(nz1);
@@ -285,7 +285,7 @@ void Solver::makeprofile() noexcept
     //-------------------------------------------------------------
     if(irelax)
     {
-        LOG() << "Saving lateral boundary values ... " << log::flush;
+        LOG() << "Saving lateral boundary values ... " << logger::flush;
         t.start();
 
         sbnd1_ = snow_.row(0);
@@ -339,7 +339,7 @@ void Solver::maketopo() noexcept
     SOLVER_DECLARE_ALL_ALIASES
 
     Timer t;
-    LOG() << "Creating topography ... " << log::flush;
+    LOG() << "Creating topography ... " << logger::flush;
 
     Float x0 = (nxb - 1) / 2.0 + 1;
     VectorXf x = (VectorXf::LinSpaced(nxb, 0, nxb - 1).array() + 1 - x0) * dx;
@@ -371,7 +371,7 @@ void Solver::init() noexcept
     Timer t;
     if(irelax)
     {
-        LOG() << "Relax topography ... " << log::flush;
+        LOG() << "Relax topography ... " << logger::flush;
         t.start();
 
         tbnd1_ = topo_[0];
@@ -382,7 +382,7 @@ void Solver::init() noexcept
     }
     else
     {
-        LOG() << "Periodic topography ... " << log::flush;
+        LOG() << "Periodic topography ... " << logger::flush;
         t.start();
         Boundary::periodic(topo_, nx, nb);
         LOG_SUCCESS(t);
