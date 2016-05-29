@@ -1,16 +1,13 @@
-################################################################################
 #                        _________ _______   __
 #                       /  _/ ___// ____/ | / /
 #                       / / \__ \/ __/ /  |/ / 
 #                     _/ / ___/ / /___/ /|  /  
 #                    /___//____/_____/_/ |_/   
 #            
-#  Isentropic model - ETH Zürich
-#  Copyright (C) 2016  Fabian Thüring (thfabian@student.ethz.ch)
+#  Isentropic model - ETH ZÃ¼rich
+#  Copyright (C) 2016  Fabian ThÃ¼ring (thfabian@student.ethz.ch)
 # 
-#  This file is distributed under the MIT Open Source License. See
-#  LICENSE.TXT for details.
-################################################################################ 
+#  This file is distributed under the MIT Open Source License. See LICENSE.TXT for details.
 
 if(ISEN_DOCUMENTATION)
     if(NOT DOXYGEN_FOUND)
