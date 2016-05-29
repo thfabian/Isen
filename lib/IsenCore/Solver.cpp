@@ -151,9 +151,12 @@ Solver::Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
     output_ = std::make_shared<Output>(namelist_, archiveType);
 }
 
-void Solver::makeprofile() noexcept
+void Solver::init() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
+
+    // Make upstream profiles and initial conditions
+    //-------------------------------------------------------------
     const Float g2 = g * g;
 
     Timer t;
@@ -332,14 +335,11 @@ void Solver::makeprofile() noexcept
                          - rdcp / g * 0.5 * (th0_[k - 1] * exn0_[k - 1] + th0_[k] * exn0_[k]) * (prs0_[k] - prs0_[k - 1])
                                / (0.5 * (prs0_[k] + prs0_[k - 1]));
     }
-}
 
-void Solver::maketopo() noexcept
-{
-    SOLVER_DECLARE_ALL_ALIASES
-
-    Timer t;
+    // Make topography
+    //-------------------------------------------------------------
     LOG() << "Creating topography ... " << logger::flush;
+    t.start();
 
     Float x0 = (nxb - 1) / 2.0 + 1;
     VectorXf x = (VectorXf::LinSpaced(nxb, 0, nxb - 1).array() + 1 - x0) * dx;
@@ -352,23 +352,9 @@ void Solver::maketopo() noexcept
         topo_[i] = toponf[i] + 0.25 * (toponf[i - 1] - 2.0 * toponf[i] + toponf[i + 1]);
 
     LOG_SUCCESS(t);
-}
-
-void Solver::init() noexcept
-{
-    SOLVER_DECLARE_ALL_ALIASES
-
-    // Make upstream profiles and initial conditions
-    //-------------------------------------------------------------
-    makeprofile();
-
-    // Make topography
-    //-------------------------------------------------------------
-    maketopo();
 
     // Switch between boundary relaxation / periodic boundary conditions
     //-------------------------------------------------------------
-    Timer t;
     if(irelax)
     {
         LOG() << "Relax topography ... " << logger::flush;

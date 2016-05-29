@@ -25,18 +25,21 @@ ISEN_NAMESPACE_BEGIN
 class Solver
 {
 public:
-    /// Allocate memory (may throw bad_alloc)
+    /// @brief Allocate memory 
+    ///
+    /// @throw IsenException if out of memory
     Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveType = Output::ArchiveType::Text);
 
-    /// Free all memory
+    /// @brief Free all memory
     virtual ~Solver() {}
 
     /// @brief Initialize the simulation
     ///
-    /// Calls Solver::maketopo, Solver::makeprofile and initializes the boundaries.
+    /// Generates initial conditions for isentropic density (sigma) and velocity (u), initializes the boundaries and
+    /// generates the topography.
     virtual void init() noexcept;
 
-    /// Run the simulation
+    /// @brief Run the simulation
     virtual void run() = 0;
 
     /// @brief Write simulation to output file
@@ -44,16 +47,11 @@ public:
     /// If no filename is provided, NameList::run_name is being used.
     virtual void write(std::string filename = "");
 
-    /// @brief Make upstream profiles
-    ///
-    /// Generate initial conditions for isentropic density (sigma) and velocity (u).
-    void makeprofile() noexcept;
-
-    /// Generate topography definition
-    void maketopo() noexcept;
-
-    /// Directly access output
+    /// @brief Access the output
     std::shared_ptr<Output> getOutput() const { return output_; }
+
+protected:
+
 
 protected:
     std::shared_ptr<NameList> namelist_;

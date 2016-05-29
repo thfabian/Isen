@@ -16,6 +16,8 @@ set(ISEN_PYTHON_SOURCE
     IsenPython.cpp
     PySolver.cpp
     PyLogger.cpp
+    PyNamelist.cpp
+    PyOutput.cpp
     )
                 
 set(ISEN_PYTHON_HEADER 
@@ -23,12 +25,15 @@ set(ISEN_PYTHON_HEADER
     ${ISEN_INCLUDE_DIR}/Isen/Python/PySolver.h
     ${ISEN_INCLUDE_DIR}/Isen/Python/PyLogger.h
 	${ISEN_INCLUDE_DIR}/Isen/Python/PyType.h
+    ${ISEN_INCLUDE_DIR}/Isen/Python/PyNamelist.h	
+    ${ISEN_INCLUDE_DIR}/Isen/Python/PyOutput.h
     )
     
 set(ISEN_PYTHON_PYFILES
     ${CMAKE_SOURCE_DIR}/python/IsenPython/__init__.py 
     ${CMAKE_SOURCE_DIR}/python/IsenPython/Visualizer.py       
-    ) 
+    )
+
 source_group("Python" FILES ${ISEN_PYTHON_PYFILES})  
  
 # Add shared library
