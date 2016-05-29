@@ -16,7 +16,7 @@ set(ISEN_PYTHON_SOURCE
     IsenPython.cpp
     PySolver.cpp
     PyLogger.cpp
-    PyNamelist.cpp
+    PyNameList.cpp
     PyOutput.cpp
     )
                 
@@ -25,7 +25,7 @@ set(ISEN_PYTHON_HEADER
     ${ISEN_INCLUDE_DIR}/Isen/Python/PySolver.h
     ${ISEN_INCLUDE_DIR}/Isen/Python/PyLogger.h
 	${ISEN_INCLUDE_DIR}/Isen/Python/PyType.h
-    ${ISEN_INCLUDE_DIR}/Isen/Python/PyNamelist.h	
+    ${ISEN_INCLUDE_DIR}/Isen/Python/PyNameList.h	
     ${ISEN_INCLUDE_DIR}/Isen/Python/PyOutput.h
     )
     

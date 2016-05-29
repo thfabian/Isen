@@ -16,11 +16,11 @@
 #define ISEN_PYTHON_TYPE_H
 
 #include <Isen/Common.h>
-#include <Isen/Namelist.h>
+#include <Isen/NameList.h>
 
 ISEN_NAMESPACE_BEGIN
 
-class PyNamelist
+class PyNameList
 {
 
 };

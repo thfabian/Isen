@@ -11,7 +11,7 @@
  *  This file is distributed under the MIT Open Source License. See LICENSE.TXT for details.
  */
 
-#include <Isen/Python/PyNamelist.h>
+#include <Isen/Python/PyNameList.h>
 
 ISEN_NAMESPACE_BEGIN
 
