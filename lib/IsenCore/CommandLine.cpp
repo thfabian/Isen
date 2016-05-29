@@ -45,12 +45,16 @@ CommandLine::CommandLine() : desc_("Options", Terminal::getWidth())
         // --file, -f
         ("file,f", po::value<std::vector<std::string>>(),
          "Specify the input file(s) which will be parsed. Usually a valid "
-         "MATLAB (.m) or Python (.py) file containing the input variables. "
+         "MATLAB (.m) or Python (.py) file containing the input variables (namelist). "
          "Multiple files will be parsed/executed one after another.")
         // --no-output
         ("no-output", "Don't write simulation to output file.")
         // --print-namelist
         ("print-namelist,p", "Print the parsed NameList.")
+        // --print-namelist
+        ("namelist", po::value<std::vector<std::string>>(),
+         "Namelist like string with comma seprated 'key=value' pair(s). The "
+         "parsed variables take precedence over those provided by the input file.\nExample: --namelist=\"iprtcfl=0,itime=1\"")
         // --quiet
         ("quiet", "Be quit (no output to terminal).")
         // --archive, -a
@@ -64,7 +68,7 @@ CommandLine::CommandLine() : desc_("Options", Terminal::getWidth())
          "Set the parsing style for the input file(s). Allowed values are:"
          "\n matlab - Use Matlab syntax"
          "\n python - Use Python syntex"
-         "\nBy default the parsing style is deduced from file the extension.")
+         "\nBy default the parsing style is deduced from the file extension.")
         // --no-color
         ("no-color", "Don't use colored terminal output (useful when piping the output to a file).");
 

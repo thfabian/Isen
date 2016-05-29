@@ -87,6 +87,13 @@ int main(int argc, char* argv[])
     auto files = cl.as<std::vector<std::string>>("file");
     tokenizeFiles(files);
 
+    std::vector<std::string> namelistJit;
+    if(cl.has("namelist"))
+    {
+        namelistJit = cl.as<std::vector<std::string>>("namelist");
+        tokenizeFiles(namelistJit);
+    }
+
     Parser parser;
     std::shared_ptr<NameList> namelist;
     std::shared_ptr<Solver> solver;
@@ -98,8 +105,13 @@ int main(int argc, char* argv[])
         {
             parser.setStyle(parsingStyle);
             namelist = parser.parse(file);
+
             if(cl.has("print-namelist"))
                 namelist->print();
+
+            if(!namelistJit.empty())
+                for(const auto& line : namelistJit)
+                    parser.parseSingleLine(namelist, line);
 
             solver = std::make_shared<SolverRef>(namelist, archiveType);
         }

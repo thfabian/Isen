@@ -152,15 +152,17 @@ public:
     /// This operation will allocate a new NameList and override the default values while they are being parsed.
     std::shared_ptr<NameList> parse(const std::string& filename);
 
+    /// @brief Parse the a single line and update the given @c namelist.
+    void parseSingleLine(std::shared_ptr<NameList>& nameList, const std::string& line);
+
     /// Get parsing style
     Style getStyle() const { return style_; }
 
     /// Set parsing style
     void setStyle(Style style) { style_ = style; }
 
-    /// Initialize the internals of the parser (automatically called by
-    /// Parser::parse)
-    void init(const std::string& filename);
+    /// Initialize the internals of the parser (automatically called by Parser::parse)
+    void init(const std::string& filename, bool skipPathNormalization = false);
 
     /// Check whether the given string is a valid MATLAB or Python identifier
     bool isIdentifier(const std::string& str) const;

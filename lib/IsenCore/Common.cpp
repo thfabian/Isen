@@ -34,6 +34,16 @@ void ISEN_NORETURN error(std::string program, std::string msg)
     std::exit(EXIT_FAILURE);
 }
 
+void warning(std::string program, std::string msg)
+{
+    program = bf::path(program).filename().string();
+
+    if(msg.back() == '\n')
+        msg.back() = ' ';
+
+    std::cerr << program << ": warning: " << msg << std::endl;
+}
+
 std::string timeString(Float time, bool precise)
 {
     if(std::isnan(time) || std::isinf(time))

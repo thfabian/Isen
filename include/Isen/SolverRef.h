@@ -41,6 +41,9 @@ public:
     /// Write simulation to output file (See Solver::write)
     virtual void write(std::string filename = "") override;
 
+    /// Horizontal diffusion
+    Float computeCFL() const noexcept;
+
     //------------------------------------------------------------
     // Diffusion
     //------------------------------------------------------------

@@ -55,6 +55,9 @@ public:
 /// Print an error message and exit the program with EXIT_FAILURE(1)
 extern void ISEN_NORETURN error(std::string program, std::string msg);
 
+/// Print a warning message
+extern void warning(std::string program, std::string msg);
+
 /// Convert a time value in milliseconds into a human-readable string
 extern std::string timeString(Float time, bool precise = false);
 

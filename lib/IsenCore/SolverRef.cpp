@@ -42,7 +42,8 @@ void SolverRef::run()
     Timer t;
 
     Progressbar pbar(nts);
-    pbar.disableProgressbar = LOG().isDisabled();
+    const bool logIsDisabled = LOG().isDisabled();
+    pbar.disableProgressbar = logIsDisabled;
 
     Float curTime = 0;
 
@@ -50,7 +51,8 @@ void SolverRef::run()
     //------------------------------------------------------------
     for(int i = 1; i < (nts + 1); ++i)
     {
-        pbar.advance();
+        if(!iprtcfl)
+            pbar.advance();
 
         curTime += dt;
         topofact_ = std::min(1., curTime / topotim);
@@ -106,14 +108,23 @@ void SolverRef::run()
         // Calculation of geometric height (staggered) 
         //--------------------------------------------------------
 
+
         // Microphysics
         //--------------------------------------------------------
 
         
         // Check maximum CFL condition   
-        //--------------------------------------------------------
-        //iprtcfl
+        //--------------------------------------------------------  
+        Float umax = computeCFL();
+        Float cflmax = umax * dtdx_;
 
+        if(iprtcfl)
+            std::printf("CFL max: %f U max: %f m/s \n", cflmax, umax);
+
+        if(cflmax > 1)
+            warning("isen", (boost::format("CFL condition violated (CFL max %f)") % cflmax).str());
+        if(std::isnan(cflmax))
+            error("isen", "model encountered NaN values");
 
         // Output every 'iout'-th time step
         //--------------------------------------------------------
@@ -128,13 +139,26 @@ void SolverRef::run()
 #endif
     }
 
-
     pbar.pause();
-    if(!LOG().isDisabled())
+    if(!logIsDisabled)
         Progressbar::printBar('=');
+    
+    if(logIsDisabled && itime)
+        std::printf("Elapsed time: %s\n", timeString(t.stop()));
 
     LOG() << "Finished time loop ...";
     LOG_SUCCESS(t);
+}
+
+Float SolverRef::computeCFL() const noexcept
+{
+    SOLVER_DECLARE_ALL_ALIASES
+
+    Float umax = -std::numeric_limits<Float>::max();
+    for(int k = 0; k < nz; ++k)
+        for(int i = 0; i < nxb; ++i)
+            umax = std::max(umax, std::fabs(unow_(i, k)));
+    return umax;
 }
 
 void SolverRef::horizontalDiffusion() noexcept
@@ -242,14 +266,10 @@ void SolverRef::progIsendens() noexcept
     const int nxnb = nx + nb;
 
     for(int k = 0; k < nz; ++k)
-    {
         for(int i = nb; i < nxnb; ++i)
-        {
             snew_(i, k) = sold_(i, k)
                           - (dtdx05) * (snow_(i + 1, k) * (unow_(i + 2, k) + unow_(i + 1, k))
                                        - snow_(i - 1, k) * (unow_(i, k) + unow_(i - 1, k)));
-        }
-    }
 }
 
 void SolverRef::progVelocity() noexcept

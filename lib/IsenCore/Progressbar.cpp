@@ -69,8 +69,8 @@ void Progressbar::pause() const
     if(disableProgressbar)
         return;
 
-    std::cout << std::string(terminalWidth_, ' ') << "\r";
-    std::cout.flush();
+    std::printf("%s\r", std::string(terminalWidth_, ' ').c_str());
+    std::fflush(stdout);
 }
 
 void Progressbar::printBar(char c)

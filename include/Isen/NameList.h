@@ -109,11 +109,11 @@ struct NameList
     // Print options
     //-------------------------------------------------
 
-    /// Print debugging text
+    /// Print debugging text (unused)
     bool idbg = false;
     /// Print CFL number
     bool iprtcfl = true;
-    /// Print computation time (unused)
+    /// Print computation time
     bool itime = true;
 
     //-------------------------------------------------

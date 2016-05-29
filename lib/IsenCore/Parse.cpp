@@ -216,13 +216,18 @@ bool Parser::stringToBoolean(const std::string& str) const
     throw std::invalid_argument((boost::format("invalid boolean value '%s'") % str).str());
 }
 
-void Parser::init(const std::string& filename)
+void Parser::init(const std::string& filename, bool skipPathNormalization)
 {
     // Extract filename and expand to absolute path
-    boost::filesystem::path p(filename);
-    p = boost::filesystem::absolute(p);
-    p = boost::filesystem::canonical(p);
-    filename_ = p.string();
+    if(!skipPathNormalization)
+    {
+        boost::filesystem::path p(filename);
+        p = boost::filesystem::absolute(p);
+        p = boost::filesystem::canonical(p);
+        filename_ = p.string();
+    }
+    else
+        filename_ = filename;
 
     // Detect parsing style
     if(style_ == Style::UNKNOWN)
@@ -402,7 +407,6 @@ std::string Parser::evalExpression(std::vector<std::string>::iterator first,
     return std::to_string(result);
 }
 
-
 void Parser::parseAssignment(std::shared_ptr<NameList>& nameList)
 {
     // Remove comments from line and the end of line token ';'
@@ -559,5 +563,26 @@ std::shared_ptr<NameList> Parser::parse(const std::string& filename)
     LOG_SUCCESS(t);
     return nameList;
 }
+
+void Parser::parseSingleLine(std::shared_ptr<NameList>& nameList, const std::string& line)
+{
+    style_ = Style::MATLAB;
+    init("command line option --namelist", true);
+    line_ = line;
+
+    try
+    {
+        parseAssignment(nameList);
+        row_++;
+    }
+    catch(const ParserException& pe)
+    {
+        throw IsenException("syntax error in %s: %s", pe.getFilename(), pe.what());
+    }
+
+    nameList->update();
+    style_ = Style::UNKNOWN;
+}
+
 
 ISEN_NAMESPACE_END
