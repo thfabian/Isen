@@ -535,7 +535,7 @@ std::shared_ptr<NameList> Parser::parse(const std::string& filename)
     std::shared_ptr<NameList> nameList(new NameList);
 
     Timer t;
-    LOG() << "Parsing '" << filename << "' ... " << log::flush;
+    LOG() << "Parsing '" << filename << "' ... " << logger::flush;
 
     // Parse line-by-line
     try
@@ -548,7 +548,7 @@ std::shared_ptr<NameList> Parser::parse(const std::string& filename)
     }
     catch(const ParserException& pe)
     {
-        LOG() << log::failed;
+        LOG() << logger::failed;
         if(prettyPrintErrors_ && !LOG().isDisabled())
         {
             pe.print();

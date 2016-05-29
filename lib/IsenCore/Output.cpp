@@ -39,7 +39,7 @@ Output::Output(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
     SOLVER_DECLARE_ALL_ALIASES
 
     Timer t;
-    LOG() << "Preparing output ... " << log::flush;
+    LOG() << "Preparing output ... " << logger::flush;
 
     // Allocate memory
     try
@@ -74,7 +74,7 @@ Output::Output(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
     }
     catch(std::bad_alloc&)
     {
-        LOG() << log::failed;
+        LOG() << logger::failed;
         throw IsenException("out of memory");
     }
 
@@ -175,12 +175,12 @@ void Output::write(std::string filename)
     }
 
     Timer t;
-    LOG() << "Writing to '" << filename << "' ..." << log::flush;
+    LOG() << "Writing to '" << filename << "' ..." << logger::flush;
 
     std::ofstream fout(filename, flags);
     if(!fout.good())
     {
-        LOG() << log::failed;
+        LOG() << logger::failed;
         throw IsenException("failed to open file: %s", filename);
     }
 
@@ -209,7 +209,7 @@ void Output::write(std::string filename)
             break;
         }
         default:
-            LOG() << log::failed;
+            LOG() << logger::failed;
             throw IsenException("unknown archive type");
     }
 
@@ -220,7 +220,7 @@ void Output::write(std::string filename)
 void Output::read(const std::string& filename)
 {
     Timer t;
-    LOG() << "Reading from '" << filename << "' ..." << log::flush;
+    LOG() << "Reading from '" << filename << "' ..." << logger::flush;
 
     // Deduce archive type
     if(archiveType_ == ArchiveType::Unknown)
@@ -235,7 +235,7 @@ void Output::read(const std::string& filename)
             archiveType_ = ArchiveType::Binary;
         else
         {
-            LOG() << log::failed;
+            LOG() << logger::failed;
             throw IsenException("couldn't deduce archive type from file extension: %s", filename);
         }
     }
@@ -246,7 +246,7 @@ void Output::read(const std::string& filename)
     std::ifstream fin(filename, flags);
     if(!fin.is_open())
     {
-        LOG() << log::failed;
+        LOG() << logger::failed;
         throw IsenException("no such file: %f", filename.c_str());
     }
 
@@ -276,7 +276,7 @@ void Output::read(const std::string& filename)
         }
         default:
         {
-            LOG() << log::failed;
+            LOG() << logger::failed;
             throw IsenException("couldn't deduce archive type from file extension: %s", filename);
         }
     }

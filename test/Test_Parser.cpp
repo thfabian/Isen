@@ -22,7 +22,7 @@ ISEN_NAMESPACE_BEGIN
 
 TEST_CASE("Regex and Conversion", "[Parse]")
 {
-    LOG() << log::disable;
+    LOG() << logger::disable;
     Parser p;
 
     auto checkIdentifier = [&]() {
@@ -586,7 +586,7 @@ TEST_CASE("Parse - Regression", "[Parse]")
             "# END OF NAMELIST.PY",
         });
     CHECK_NOTHROW(res = p.parse(f.getFilename()));
-    LOG() << log::enable;
+    LOG() << logger::enable;
 }
 
 ISEN_NAMESPACE_END

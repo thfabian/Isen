@@ -21,9 +21,9 @@ using namespace Terminal;
 
 Logger* loggerInstance = new Logger;
 
-Logger& Logger::operator<<(log loggerEnum) noexcept
+Logger& Logger::operator<<(logger loggerEnum) noexcept
 {
-    if(loggerEnum != log::enable && disableLogger_)
+    if(loggerEnum != logger::enable && disableLogger_)
         return (*this);
 
     static int terminalWidth = getWidth();
@@ -32,7 +32,7 @@ Logger& Logger::operator<<(log loggerEnum) noexcept
 
     switch(loggerEnum)
     {
-        case log::ok:
+        case logger::ok:
         {
             std::string str = logStack_.str();
             std::string::size_type whiteSpace
@@ -46,7 +46,7 @@ Logger& Logger::operator<<(log loggerEnum) noexcept
             reset();
             break;
         }
-        case log::failed:
+        case logger::failed:
         {
             std::string str = logStack_.str();
             std::string::size_type whiteSpace = terminalWidth - ((str.size() + curlen_) % 80) - (11 + RightIndent);
@@ -59,13 +59,13 @@ Logger& Logger::operator<<(log loggerEnum) noexcept
             reset();
             break;
         }
-        case log::endl:
+        case logger::endl:
         {
             std::cout << logStack_.str() << std::endl;
             reset();
             break;
         }
-        case log::flush:
+        case logger::flush:
         {
             std::string str = logStack_.str();
             curlen_ += str.size();
@@ -73,14 +73,14 @@ Logger& Logger::operator<<(log loggerEnum) noexcept
             clear();
             break;
         }
-        case log::disable:
+        case logger::disable:
             disableLogger_ = true;
             break;
-        case log::enable:
+        case logger::enable:
             disableLogger_ = false;
             reset();
             break;
-        case log::nop:
+        case logger::nop:
         default:
             break;
     }

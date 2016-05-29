@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     Terminal::Color::disableColor = cl.has("no-color");
 
     if((Progressbar::disableProgressbar = cl.has("quiet")))
-        LOG() << Isen::log::disable;
+        LOG() << Isen::logger::disable;
 
     if(!cl.has("file"))
         fatalError("no input files");

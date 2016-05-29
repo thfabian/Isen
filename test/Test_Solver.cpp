@@ -30,7 +30,7 @@ ISEN_NAMESPACE_BEGIN
     {                                                                                                                  \
         Timer t;                                                                                                       \
         bool passed = true;                                                                                            \
-        LOG() << "Checking " << #field << "[t=" << #time << "] ... " << log::flush;                                    \
+        LOG() << "Checking " << #field << "[t=" << #time << "] ... " << logger::flush;                                 \
         auto field = FieldLoader::load((dir / boost::filesystem::path(#field "-" #time ".dat")).string());             \
         CHECK((passed = FieldVerifier::verify(#field, solver->field(), std::move((field)))));                          \
         if(passed)                                                                                                     \
@@ -39,12 +39,12 @@ ISEN_NAMESPACE_BEGIN
         }                                                                                                              \
         else                                                                                                           \
         {                                                                                                              \
-            LOG() << log::endl;                                                                                        \
+            LOG() << logger::endl;                                                                                     \
         }                                                                                                              \
     }                                                                                                                  \
     catch(...)                                                                                                         \
     {                                                                                                                  \
-        LOG() << "No test data found" << log::failed;                                                                  \
+        LOG() << "No test data found" << logger::failed;                                                               \
     }
 
 TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
@@ -68,7 +68,7 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
     {
         std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "MATLAB verification" << std::endl;
         Progressbar::printBar('-');
-        LOG() << log::disable;
+        LOG() << logger::disable;
 
         Parser parser;
         std::shared_ptr<NameList> namelist;
@@ -80,7 +80,7 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
         // Check inital-conditions
         //-------------------------------------------------
         solver->init();
-        LOG() << log::enable;
+        LOG() << logger::enable;
 
         CHECK_FIELD(topo, 0);
 
@@ -119,9 +119,9 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
         //-------------------------------------------------
         // Check evolution
         //-------------------------------------------------
-        LOG() << log::disable;
+        LOG() << logger::disable;
         solver->run();
-        LOG() << log::enable;
+        LOG() << logger::enable;
 
         //CHECK_FIELD(zhtold, 1);
         //CHECK_FIELD(zhtnow, 1);
