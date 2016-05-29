@@ -144,7 +144,7 @@ void SolverRef::run()
         Progressbar::printBar('=');
     
     if(logIsDisabled && itime)
-        std::printf("Elapsed time: %s\n", timeString(t.stop()));
+        std::printf("Elapsed time: %s\n", timeString(t.stop()).c_str());
 
     LOG() << "Finished time loop ...";
     LOG_SUCCESS(t);
