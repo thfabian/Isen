@@ -9,8 +9,16 @@ environment:
   matrix:
     - GENERATOR: "Visual Studio 14 Win64"
       CONFIG: Release
+      PYTHON_ENABLE: ON
     - GENERATOR: "Visual Studio 14 Win64"
       CONFIG: Debug
+      PYTHON_ENABLE: ON
+    - GENERATOR: "Visual Studio 14 Win64"
+      CONFIG: Release
+      PYTHON_ENABLE: OFF
+    - GENERATOR: "Visual Studio 14 Win64"
+      CONFIG: Debug
+      PYTHON_ENABLE: OFF
 
 init:
     - cmd: cmake --version
@@ -34,11 +42,12 @@ build_script:
     - cmd: set "BOOST_LIBRARYDIR=C:\Libraries\boost_1_60_0\lib64-msvc-14.0"
     
     # Build
-    - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON=OFF -DBoost_USE_STATIC_LIBS="ON" -DPYTHON_EXECUTABLE="%PYTHON_EXECUTABLE%"
+    - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON="%PYTHON_ENABLE%" -DBoost_USE_STATIC_LIBS="ON" -DPYTHON_EXECUTABLE="%PYTHON_EXECUTABLE%"
     - cmd: cmake --build build --config "%CONFIG%"
 
 test_script:
-  # To enable testing with python we would need to load the correct python dll
   - cmd: set "TEST_PATH=build\%CONFIG%"
   - cmd: cd %TEST_PATH%
-  - cmd: .\isen_test.exe
+    # To enable testing with python we would need to load the correct python dll
+  - cmd: if [%PYTHON_ENABLE%]==[OFF] .\isen_test.exe
+ 
