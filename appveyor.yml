@@ -20,16 +20,17 @@ build_script:
     # ------------
     - ps: git clone -q --branch=master https://github.com/RLovelett/eigen.git C:\projects\isen\ext\eigen3
     
-    # Setup Boost
-    # -----------
-    - cmd: set "BOOST_ROOT=C:\Libraries\boost_1_60_0"
-    
     # Setup Python (Numpy)
     # -------------------
     - cmd: C:\Python27\Scripts\pip.exe install numpy
     
+    # Setup Boost
+    # -----------
+    - cmd: set "BOOST_ROOT=C:\Libraries\boost_1_60_0"
+    - cmd: set "BOOST_LIBRARYDIR=C:\Libraries\boost_1_60_0\lib64-msvc-14.0"
+    
     # Build
-    - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON=ON
+    - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON=ON -DBoost_USE_STATIC_LIBS="ON"
     - cmd: cmake --build build --config "%CONFIG%"
 
 test_script:
