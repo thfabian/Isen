@@ -1,0 +1,31 @@
+branches:
+  only:
+    - master
+    
+platform: 
+    - x64
+
+environment:
+  matrix:
+    - GENERATOR: "Visual Studio 14 Win64"
+      CONFIG: Release
+    - GENERATOR: "Visual Studio 14 Win64"
+      CONFIG: Debug
+      
+init:
+    - cmd: cmake --version
+
+build_script:
+    # Setup Eigen3
+    - ps: git clone -q --branch=master https://github.com/RLovelett/eigen.git C:\projects\isen\ext\eigen3
+    
+    # Setup Boost
+    - cmd: set "BOOST_ROOT=C:\Libraries\boost_1_60_0"
+    
+    # Build
+    - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON=ON
+    - cmd: cmake --build build --config "%CONFIG%"
+
+test_script:
+  - ps: cd build
+  # - ctest -VV -C "%CONFIG%"
