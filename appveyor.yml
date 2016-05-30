@@ -38,5 +38,7 @@ build_script:
     - cmd: cmake --build build --config "%CONFIG%"
 
 test_script:
-  - cmd: set "TEST_PATH=C:\projects\isen\build\%CONFIG%\isen_test.exe"
-  - cmd: "%TEST_PATH%"
+  # To enable testing with python we would need to load the correct python dll
+  - cmd: set "TEST_PATH=build\%CONFIG%"
+  - cmd: cd %TEST_PATH%
+  - cmd: .\isen_test.exe
