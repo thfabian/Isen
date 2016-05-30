@@ -39,4 +39,4 @@ build_script:
 
 test_script:
   - cmd: set "TEST_PATH=C:\projects\isen\build\%CONFIG%\isen_test.exe"
-  - cmd: %TEST_PATH%
+  - cmd: "%TEST_PATH%"
