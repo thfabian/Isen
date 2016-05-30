@@ -278,7 +278,7 @@ inline bool isInteger(const boost::any& operand)
 
 inline bool isFloat(const boost::any& operand)
 {
-    return (operand.type() == typeid(Float));
+    return (operand.type() == typeid(double));
 }
 
 inline bool isString(const boost::any& operand)
@@ -298,19 +298,19 @@ std::string Parser::evalExpression(std::vector<std::string>::iterator first,
     if(isOperator(cur))
         parserError(getPositionInLine(cur), (boost::format("expected variable after '%s'") % cur).str());
 
-    // The evaluation will convert everything to float
-    float result = 1.0f;
+    // The evaluation will convert everything to double
+    double result = 1.0f;
 
     std::string opLeft, opRight, opOperator;
 
     // Evaluate the expression 'opLeft opOperator opRight'
-    auto evalExpr = [&](bool handleUnaryMinus) -> float {
+    auto evalExpr = [&](bool handleUnaryMinus) -> double {
         if(!isOperator(opOperator))
             parserError(getPositionInLine(opOperator),
                         (boost::format("invalid binary operator '%s'") % opOperator).str());
 
-        auto assign = [&](const std::string& op) -> float {
-            // String to float
+        auto assign = [&](const std::string& op) -> double {
+            // String to double
             if(isNumber(op))
                 return std::stof(op);
             // Is it a refrence to an already parsed variable?
@@ -318,14 +318,11 @@ std::string Parser::evalExpression(std::vector<std::string>::iterator first,
             {
                 boost::any var = parsedMap_[op];
                 if(isFloat(var))
-                {
-                    Float v = boost::any_cast<Float>(var);
-                    return ((sizeof(Float) == 4) ? v : static_cast<float>(v));
-                }
+                    return boost::any_cast<double>(var);
                 else if(isInteger(var))
-                    return static_cast<float>(boost::any_cast<int>(var));
+                    return static_cast<double>(boost::any_cast<int>(var));
                 else if(isBoolean(var))
-                    return static_cast<float>(boost::any_cast<bool>(var));
+                    return static_cast<double>(boost::any_cast<bool>(var));
                 else
                     parserError(getPositionInLine(op), "strings are not supported in expressions");
             }
@@ -335,8 +332,8 @@ std::string Parser::evalExpression(std::vector<std::string>::iterator first,
             return 0; // Make compiler happy
         };
 
-        float left = assign(opLeft);
-        float right = assign(opRight);
+        double left = assign(opLeft);
+        double right = assign(opRight);
 
         if(handleUnaryMinus)
             left *= -1;
@@ -478,12 +475,8 @@ void Parser::parseAssignment(std::shared_ptr<NameList>& nameList)
         }
         else if(isFloat(lhsValue))
         {
-            if(sizeof(Float) == sizeof(float))
-                lhsValue = std::stof(rhs);
-            else
-                lhsValue = std::stod(rhs);
-
-            nameList->setByName(lhs, boost::any_cast<Float>(lhsValue));
+            lhsValue = std::stod(rhs);
+            nameList->setByName(lhs, boost::any_cast<double>(lhsValue));
         }
         else if(isBoolean(lhsValue))
         {

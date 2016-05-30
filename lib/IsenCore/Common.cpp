@@ -44,7 +44,7 @@ void warning(std::string program, std::string msg)
     std::cerr << program << ": warning: " << msg << std::endl;
 }
 
-std::string timeString(Float time, bool precise)
+std::string timeString(double time, bool precise)
 {
     if(std::isnan(time) || std::isinf(time))
         return "inf";

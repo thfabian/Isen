@@ -25,15 +25,15 @@ namespace internal
 {
 
 template <class... Args>
-boost::python::object toNumpyArrayImpl(const Float* cdata, const Args&... dim)
+boost::python::object toNumpyArrayImpl(const double* cdata, const Args&... dim)
 {
     static_assert(sizeof...(dim) != 0, "no dimensions provided");
 
     npy_int nd = sizeof...(dim);
     npy_intp dims[sizeof...(dim)] = {dim...};
-    Float* data = const_cast<Float*>(cdata);
+    double* data = const_cast<double*>(cdata);
 
-    PyObject* pyObj = PyArray_SimpleNewFromData(nd, dims, sizeof(Float) == 4 ? NPY_FLOAT : NPY_DOUBLE, data);
+    PyObject* pyObj = PyArray_SimpleNewFromData(nd, dims, sizeof(double) == 4 ? NPY_FLOAT : NPY_DOUBLE, data);
 
     boost::python::handle<> handle(pyObj);
     boost::python::numeric::array arr(handle);

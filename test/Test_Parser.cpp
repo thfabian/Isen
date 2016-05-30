@@ -251,7 +251,7 @@ TEST_CASE("Parser - Simple assignment", "[Parse]")
 
     SECTION("Ignored")
     {
-        Float dth = NameList().dth;
+        double dth = NameList().dth;
         ProxyFile f(ProxyFile::PYTHON, {"dth = 0.0"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
         CHECK(res->dth == dth);
@@ -339,7 +339,7 @@ TEST_CASE("Parser - Simple expression", "[Parse]")
         CHECK(res->nx == 5);
     }
 
-    SECTION("Float - refrence/numerical (+)")
+    SECTION("double - refrence/numerical (+)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"dt = 0.5", "time = 10.0 + dt"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
@@ -347,7 +347,7 @@ TEST_CASE("Parser - Simple expression", "[Parse]")
         CHECK(res->time == 10.5);
     }
 
-    SECTION("Float - refrence/numerical (-)")
+    SECTION("double - refrence/numerical (-)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"dt = 0.5", "time = 10.0 - dt"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
@@ -355,7 +355,7 @@ TEST_CASE("Parser - Simple expression", "[Parse]")
         CHECK(res->time == 9.5);
     }
 
-    SECTION("Float - refrence/numerical (*)")
+    SECTION("double - refrence/numerical (*)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"dt = 0.5", "time = 10.0 * dt"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
@@ -363,7 +363,7 @@ TEST_CASE("Parser - Simple expression", "[Parse]")
         CHECK(res->time == 5.0);
     }
 
-    SECTION("Float - refrence/numerical (/)")
+    SECTION("double - refrence/numerical (/)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"dt = 0.5", "time = 10.0 / dt"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
@@ -379,7 +379,7 @@ TEST_CASE("Parser - Simple expression", "[Parse]")
         CHECK(res->nx == 5);
     }
 
-    SECTION("Float - unary minus (/)")
+    SECTION("double - unary minus (/)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"dt = 0.5", "time = -10.0 / dt"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
@@ -387,7 +387,7 @@ TEST_CASE("Parser - Simple expression", "[Parse]")
         CHECK(res->time == -20.0);
     }
 
-    SECTION("Integer/Float - mixed types")
+    SECTION("Integer/double - mixed types")
     {
         ProxyFile f(ProxyFile::PYTHON, {"xl = 2", "dt = 2.5", "time = 10.0 * xl", "nx = 10 * dt"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
@@ -395,7 +395,7 @@ TEST_CASE("Parser - Simple expression", "[Parse]")
         CHECK(res->nx == 25);
     }
 
-    SECTION("Integer/Boolean/Float - mixed types")
+    SECTION("Integer/Boolean/double - mixed types")
     {
         ProxyFile f(ProxyFile::PYTHON,
                     {"xl = 2", "dt = 2.5", "iiniout = 1", "time = iiniout * xl", "nx = iiniout * dt"});
@@ -452,28 +452,28 @@ TEST_CASE("Parser - Nested expression", "[Parse]")
         CHECK(res->iout == 6);
     }
 
-    SECTION("Float - numerical (*)")
+    SECTION("double - numerical (*)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"thl = 2.5 * 2.0 * 2.0"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
         CHECK(res->thl == 10.0);
     }
 
-    SECTION("Float - numerical (+)")
+    SECTION("double - numerical (+)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"thl = 2.5 + 2.0 + 2.0"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
         CHECK(res->thl == 6.5);
     }
 
-    SECTION("Float - numerical (mixed)")
+    SECTION("double - numerical (mixed)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"thl = 2.5 + 3.0 * 2.0"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));
         CHECK(res->thl == 8.5);
     }
 
-    SECTION("Float - numerical unary (*)")
+    SECTION("double - numerical unary (*)")
     {
         ProxyFile f(ProxyFile::PYTHON, {"thl = - 2.0 * 2.0 * 2.0"});
         CHECK_NOTHROW(res = p.parse(f.getFilename()));

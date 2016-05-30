@@ -25,10 +25,10 @@ ISEN_NAMESPACE_BEGIN
 class FieldVerifier
 {
 public:
-    static constexpr Float atol = 1e-10;
-    static constexpr Float rtol = 1e-06;
+    static constexpr double atol = 1e-10;
+    static constexpr double rtol = 1e-06;
 
-    static inline bool equal(Float a, Float b) noexcept
+    static inline bool equal(double a, double b) noexcept
     {
         return (std::fabs(a - b) <= (FieldVerifier::atol + FieldVerifier::rtol * std::fabs(b)));
     }

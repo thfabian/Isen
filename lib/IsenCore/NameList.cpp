@@ -43,7 +43,7 @@ inline std::string printHelper(const std::string& name, bool value)
     return (boost::format(" %-13s = %s\n") % name % (value ? "true" : "false")).str();
 }
 
-inline std::string printHelper(const std::string& name, Float value)
+inline std::string printHelper(const std::string& name, double value)
 {
     return (boost::format(" %-13s = %.4f\n") % name % value).str();
 }
@@ -125,7 +125,7 @@ void NameList::setByName(const std::string& name, const int& value)
 }
 
 
-void NameList::setByName(const std::string& name, const Float& value)
+void NameList::setByName(const std::string& name, const double& value)
 {
     if(name.empty())
         return;

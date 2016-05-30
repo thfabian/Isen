@@ -37,7 +37,7 @@ struct Boundary
 
     /// Relaxation of boundary conditions.
     template <class Derived>
-    static void relax(Eigen::MatrixBase<Derived>& phi, int nx, int nb, Float phi1, Float phi2) noexcept
+    static void relax(Eigen::MatrixBase<Derived>& phi, int nx, int nb, double phi1, double phi2) noexcept
     {
         //TODO: phi1 and phi2 should be arrays?
 
@@ -48,7 +48,7 @@ struct Boundary
         const int n = 2 * nb + nx;
 
         // Initialize relaxation array
-        constexpr std::array<Float, nr> rel{{1.0, 0.99, 0.95, 0.8, 0.5, 0.2, 0.05, 0.01}};
+        constexpr std::array<double, nr> rel{{1.0, 0.99, 0.95, 0.8, 0.5, 0.2, 0.05, 0.01}};
 
         for(int i = 0; i < nr; ++i)
         {

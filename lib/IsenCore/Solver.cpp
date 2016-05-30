@@ -157,7 +157,7 @@ void Solver::init() noexcept
 
     // Make upstream profiles and initial conditions
     //-------------------------------------------------------------
-    const Float g2 = g * g;
+    const double g2 = g * g;
 
     Timer t;
     LOG() << "Create initial profile ... " << logger::flush;
@@ -207,7 +207,7 @@ void Solver::init() noexcept
     //-------------------------------------------------------------
     mtg0_[0] = g * z0[0] + th00 * exn0_[0] + dth * exn0_[0] / 2.;
 
-    Float mtg0old = mtg0_[0];
+    double mtg0old = mtg0_[0];
     for(int k = 1; k < nz; ++k)
     {
         std::swap(mtg0_[k], mtg0old);
@@ -341,12 +341,12 @@ void Solver::init() noexcept
     LOG() << "Creating topography ... " << logger::flush;
     t.start();
 
-    Float x0 = (nxb - 1) / 2.0 + 1;
+    double x0 = (nxb - 1) / 2.0 + 1;
     VectorXf x = (VectorXf::LinSpaced(nxb, 0, nxb - 1).array() + 1 - x0) * dx;
 
     VectorXf toponf(nxb);
     for(int i = 0; i < nxb; ++i)
-        toponf[i] = topomx * std::exp(-(pow2(x[i] / Float(topowd))));
+        toponf[i] = topomx * std::exp(-(pow2(x[i] / double(topowd))));
 
     for(int i = 1; i < nxb - 1; ++i)
         topo_[i] = toponf[i] + 0.25 * (toponf[i - 1] - 2.0 * toponf[i] + toponf[i + 1]);

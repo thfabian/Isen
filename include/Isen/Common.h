@@ -23,8 +23,6 @@
 #include <memory>
 #include <string>
 
-using Isen::Float;
-
 ISEN_NAMESPACE_BEGIN
 
 namespace internal
@@ -59,7 +57,7 @@ extern void ISEN_NORETURN error(std::string program, std::string msg);
 extern void warning(std::string program, std::string msg);
 
 /// Convert a time value in milliseconds into a human-readable string
-extern std::string timeString(Float time, bool precise = false);
+extern std::string timeString(double time, bool precise = false);
 
 /// Convert a memory amount in bytes into a human-readable string
 extern std::string memString(std::size_t size, bool precise = false);

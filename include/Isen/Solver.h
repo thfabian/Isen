@@ -137,8 +137,8 @@ protected:
     //  2 denotes the rightern boundary
     //-------------------------------------------------
 
-    Float tbnd1_;
-    Float tbnd2_;
+    double tbnd1_;
+    double tbnd2_;
 
     /// Isentropic density
     VectorXf sbnd1_;
@@ -175,8 +175,8 @@ protected:
     //-------------------------------------------------
     // Define scalar fields
     //-------------------------------------------------
-    Float dtdx_;
-    Float topofact_;
+    double dtdx_;
+    double topofact_;
 
     /// Be verbose?
     bool verbose_;

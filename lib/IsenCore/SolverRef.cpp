@@ -45,7 +45,7 @@ void SolverRef::run()
     const bool logIsDisabled = LOG().isDisabled();
     pbar.disableProgressbar = logIsDisabled;
 
-    Float curTime = 0;
+    double curTime = 0;
 
     // Loop over all time steps
     //------------------------------------------------------------
@@ -115,8 +115,8 @@ void SolverRef::run()
         
         // Check maximum CFL condition   
         //--------------------------------------------------------  
-        Float umax = computeCFL();
-        Float cflmax = umax * dtdx_;
+        double umax = computeCFL();
+        double cflmax = umax * dtdx_;
 
         if(iprtcfl)
             std::printf("CFL max: %f U max: %f m/s \n", cflmax, umax);
@@ -150,11 +150,11 @@ void SolverRef::run()
     LOG_SUCCESS(t);
 }
 
-Float SolverRef::computeCFL() const noexcept
+double SolverRef::computeCFL() const noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
-    Float umax = -std::numeric_limits<Float>::max();
+    double umax = -std::numeric_limits<double>::max();
     for(int k = 0; k < nz; ++k)
         for(int i = 0; i < nxb; ++i)
             umax = std::max(umax, std::fabs(unow_(i, k)));
@@ -172,7 +172,7 @@ void SolverRef::horizontalDiffusion() noexcept
     //------------------------------------------------------------
     for(int k = 0; k < nz; ++k)
     {
-        const Float tau = tau_(k);
+        const double tau = tau_(k);
         const bool sel = tau_(k) > 0.0;
         const bool negSel = !sel;
 
@@ -227,8 +227,8 @@ void SolverRef::diagMontgomery() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
-    const Float dth05 = dth * 0.5;
-    const Float gtopofact_ = g * topofact_;
+    const double dth05 = dth * 0.5;
+    const double gtopofact_ = g * topofact_;
 
     // Exner function
     for(int k = 0; k < nz1; ++k)
@@ -248,7 +248,7 @@ void SolverRef::diagPressure() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
-    const Float gdth = g* dth;
+    const double gdth = g* dth;
 
     for(int i = 0; i < nxb; ++i)
         prs_(i, nz) = prs0_(nz);
@@ -262,7 +262,7 @@ void SolverRef::progIsendens() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
-    const Float dtdx05 = 0.5 * dtdx_;
+    const double dtdx05 = 0.5 * dtdx_;
     const int nxnb = nx + nb;
 
     for(int k = 0; k < nz; ++k)
@@ -276,8 +276,8 @@ void SolverRef::progVelocity() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
-    const Float dtdx = dtdx_;
-    const Float dtdx2 = 2 * dtdx_;
+    const double dtdx = dtdx_;
+    const double dtdx2 = 2 * dtdx_;
     const int nxnb = nx + nb + 1;
 
     for(int k = 0; k < nz; ++k)

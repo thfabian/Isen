@@ -42,7 +42,7 @@ public:
     virtual void write(std::string filename = "") override;
 
     /// Horizontal diffusion
-    Float computeCFL() const noexcept;
+    double computeCFL() const noexcept;
 
     //------------------------------------------------------------
     // Diffusion

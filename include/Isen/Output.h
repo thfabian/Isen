@@ -70,18 +70,18 @@ public:
     //-------------------------------------------------
     // Define output fields
     //-------------------------------------------------
-    std::vector<Float> z;        ///< Height in z-coordinates
-    std::vector<Float> u;        ///< Horizontal velocity
-    std::vector<Float> s;        ///< Isentropic density
-    std::vector<Float> t;        ///< Time vector
-    std::vector<Float> prec;     ///< Precipitation
-    std::vector<Float> tot_prec; ///< Accumulated precipitation
-    std::vector<Float> qv;       ///< Specific humidity
-    std::vector<Float> qc;       ///< Specific cloud water content
-    std::vector<Float> qr;       ///< Specific rain water content
-    std::vector<Float> nr;       ///< Rain-droplet number density
-    std::vector<Float> nc;       ///< Cloud droplet number density
-    std::vector<Float> dthetadt; ///< Latent heating
+    std::vector<double> z;        ///< Height in z-coordinates
+    std::vector<double> u;        ///< Horizontal velocity
+    std::vector<double> s;        ///< Isentropic density
+    std::vector<double> t;        ///< Time vector
+    std::vector<double> prec;     ///< Precipitation
+    std::vector<double> tot_prec; ///< Accumulated precipitation
+    std::vector<double> qv;       ///< Specific humidity
+    std::vector<double> qc;       ///< Specific cloud water content
+    std::vector<double> qr;       ///< Specific rain water content
+    std::vector<double> nr;       ///< Rain-droplet number density
+    std::vector<double> nc;       ///< Cloud droplet number density
+    std::vector<double> dthetadt; ///< Latent heating
 };
 }
 

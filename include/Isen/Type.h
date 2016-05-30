@@ -28,20 +28,13 @@
 
 ISEN_NAMESPACE_BEGIN
 
-/// Size of floating point numbers (default is 64-bit)
-#ifdef ISEN_FLOAT_32
-using Float = float;
-#else
-using Float = double;
-#endif
-
 /// Eigen3 typedefs (matrices are stored in ColMajor order)
-using MatrixXf = Eigen::Matrix<Isen::Float, Eigen::Dynamic, Eigen::Dynamic>;
-using VectorXf = Eigen::Matrix<Isen::Float, Eigen::Dynamic, 1>;
-using Vector2f = Eigen::Matrix<Isen::Float, 2, 1>;
-using Vector3f = Eigen::Matrix<Isen::Float, 3, 1>;
-using Matrix2f = Eigen::Matrix<Isen::Float, 2, 2>;
-using Matrix3f = Eigen::Matrix<Isen::Float, 3, 3>;
+using MatrixXf = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
+using VectorXf = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+using Vector2f = Eigen::Matrix<double, 2, 1>;
+using Vector3f = Eigen::Matrix<double, 3, 1>;
+using Matrix2f = Eigen::Matrix<double, 2, 2>;
+using Matrix3f = Eigen::Matrix<double, 3, 3>;
 using Vector2i = Eigen::Matrix<int, 2, 1>;
 using Vector3i = Eigen::Matrix<int, 3, 1>;
 using Matrix2i = Eigen::Matrix<int, 2, 2>;

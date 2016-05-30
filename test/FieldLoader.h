@@ -38,7 +38,7 @@ public:
         MatrixXf mat(n, m);
 
         // Read data (col-major)
-        std::copy(std::istream_iterator<Float>(fin), std::istream_iterator<Float>(), mat.data());
+        std::copy(std::istream_iterator<double>(fin), std::istream_iterator<double>(), mat.data());
 
         fin.close();
         return mat;
