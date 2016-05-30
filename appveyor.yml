@@ -34,11 +34,9 @@ build_script:
     - cmd: set "BOOST_LIBRARYDIR=C:\Libraries\boost_1_60_0\lib64-msvc-14.0"
     
     # Build
-    - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON=ON -DBoost_USE_STATIC_LIBS="ON" -DPYTHON_EXECUTABLE="%PYTHON_EXECUTABLE%"
+    - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON=OFF -DBoost_USE_STATIC_LIBS="ON" -DPYTHON_EXECUTABLE="%PYTHON_EXECUTABLE%"
     - cmd: cmake --build build --config "%CONFIG%"
 
 test_script:
-  - cmd: set "TEST_PATH=C:\projects\isen\build\%CONFIG%"
-  - cmd: echo %TEST_PATH%
-  - cmd: cd %TEST_PATH%
-  - cmd: .\isen.exe
+  - cmd: set "TEST_PATH=C:\projects\isen\build\%CONFIG%\isen_test.exe"
+  - cmd: "%TEST_PATH%"
