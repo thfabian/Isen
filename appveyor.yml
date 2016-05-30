@@ -21,7 +21,7 @@ build_script:
     - ps: git clone -q --branch=master https://github.com/RLovelett/eigen.git C:\projects\isen\ext\eigen3
     
     # Setup Python (Numpy)
-    # -------------------
+    # --------------------
     - cmd: set "PYTHON_INCLUDE_DIR=C:\Python27-x64\include"
     - cmd: set "DPYTHON_LIBRARY=C:\Python27-x64\libs"
     - cmd: set "PYTHON_EXECUTABLE=C:\Python27-x64\python.exe"
@@ -38,5 +38,7 @@ build_script:
     - cmd: cmake --build build --config "%CONFIG%"
 
 test_script:
-  - cmd: set "TEST_PATH=C:\projects\isen\build\%CONFIG%\isen_test.exe"
-  - cmd: "%TEST_PATH%"
+  - cmd: set "TEST_PATH=C:\projects\isen\build\%CONFIG%"
+  - cmd: echo %TEST_PATH%
+  - cmd: cd %TEST_PATH%
+  - cmd: .\isen_test.exe
