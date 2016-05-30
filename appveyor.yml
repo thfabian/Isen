@@ -38,6 +38,6 @@ build_script:
     - cmd: cmake --build build --config "%CONFIG%"
 
 test_script:
-  - ps: cd build\%CONFIG%
+  - cmd: set "TEST_PATH=build\%CONFIG"
+  - ps: cd "%TEST_PATH%"
   - cmd: .\isen_test.exe
-  # - ctest -VV -C "%CONFIG%"
