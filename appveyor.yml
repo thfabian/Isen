@@ -41,4 +41,4 @@ test_script:
   - cmd: set "TEST_PATH=C:\projects\isen\build\%CONFIG%"
   - cmd: echo %TEST_PATH%
   - cmd: cd %TEST_PATH%
-  - cmd: .\isen_test.exe
+  - cmd: .\isen.exe
