@@ -64,10 +64,13 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
         dir = "../data";
     }
 
+    Progressbar::printBar('-');
     if(!filename.empty())
     {
-        std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "MATLAB verification" << std::endl;
+        std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "Solver verification";
+        std::cout << " with MATLAB" << std::endl;
         Progressbar::printBar('-');
+
         LOG() << logger::disable;
 
         Parser parser;
@@ -123,8 +126,8 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
         solver->run();
         LOG() << logger::enable;
 
-        //CHECK_FIELD(zhtold, 1);
-        //CHECK_FIELD(zhtnow, 1);
+//        CHECK_FIELD(zhtold, 1);
+//        CHECK_FIELD(zhtnow, 1);
 
         CHECK_FIELD(uold, 1);
         CHECK_FIELD(unow, 1);
@@ -140,7 +143,11 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
         CHECK_FIELD(tau, 1);
     }
     else
-        std::cout << "MATLAB verification: No test data found -  Skipping" << std::endl;
+    {
+        std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "Solver verification";
+        std::cout << " with MATLAB: No test data found -  Skipping" << std::endl;
+        Progressbar::printBar('-');
+    }
 }
 
 #undef CHECK_FIELD

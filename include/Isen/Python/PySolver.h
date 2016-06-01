@@ -31,7 +31,7 @@ class PySolver
 public:
     enum SolverType
     {
-        SolverTypeRef
+        ESolverTypeRef
     };
 
     /// Set the implementation of the solver

@@ -22,7 +22,7 @@ PySolver::PySolver(const char* type) : parser_(new Parser), isInitialized_(false
     std::string typeS(type);
 
     if(typeS == "ref")
-        solverType_ = SolverTypeRef;
+        solverType_ = ESolverTypeRef;
     else
         throw IsenException("Solver: unknown type '%s'", typeS);
 }
@@ -48,7 +48,7 @@ void PySolver::init(const char* filename)
     // Construct Solver
     switch(solverType_)
     {
-        case SolverTypeRef:
+        case ESolverTypeRef:
             solver_ = std::make_shared<SolverRef>(namelist_);
     }
 
