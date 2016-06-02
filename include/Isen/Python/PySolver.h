@@ -19,6 +19,7 @@
 #include <Isen/Logger.h>
 #include <Isen/Python/IsenPython.h>
 #include <Isen/Python/PyType.h>
+#include <Isen/Python/PyNameList.h>
 #include <Isen/Solver.h>
 #include <memory>
 #include <string>
@@ -32,14 +33,14 @@ public:
     /// Set the implementation of the solver
     PySolver(const char* name = "ref");
 
-    /// Initialize simulation
-    void init(const char* filename = "");
+    /// Initialize simulation with a file which will be parsed to a namelist
+    void initWithFile(const char* filename = "");
+
+    /// Initialize simulation with a NameList
+    void initWithNameList(PyNameList namelist);
 
     /// Run simulation
     void run();
-
-    /// Print NameList
-    void print() const;
 
     /// Write to output file
     void write(Output::ArchiveType archiveType = Output::Unknown, const char* filename = "");
@@ -55,6 +56,9 @@ public:
         return toNumpyArray(mat);
     }
 
+    // Get the NameList
+    PyNameList getNameList() const noexcept;
+
 private:
     std::shared_ptr<Solver> solver_;
     std::shared_ptr<NameList> namelist_;
@@ -65,7 +69,7 @@ private:
 
 ISEN_NAMESPACE_END
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySolver_overload_init, init, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySolver_overload_init, initWithFile, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySolver_overload_write, write, 0, 2)
 
 #endif

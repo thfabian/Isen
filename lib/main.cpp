@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
             namelist = parser.parse(file);
 
             if(cl.has("print-namelist"))
-                namelist->print();
+                namelist->print(std::cout);
 
             if(!namelistJit.empty())
                 for(const auto& line : namelistJit)

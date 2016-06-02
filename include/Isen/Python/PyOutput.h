@@ -12,8 +12,8 @@
  */
 
 #pragma once
-#ifndef ISEN_PYTHON_TYPE_H
-#define ISEN_PYTHON_TYPE_H
+#ifndef ISEN_PYTHON_OUTPUT_H
+#define ISEN_PYTHON_OUTPUT_H
 
 #include <Isen/Common.h>
 #include <Isen/Output.h>

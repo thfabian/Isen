@@ -53,15 +53,16 @@ inline std::string printHelper(const std::string& name, std::string value)
     return (boost::format(" %-13s = %s\n") % name % value).str();
 }
 
-inline void header(std::string str)
+inline void header(std::ostream& out, bool color, std::string str)
 {
     static int width = Terminal::getWidth();
     int halfSize = int(width - str.size() + 1) / 2 - 1;
 
-    Terminal::Color white(Terminal::Color::getFileColor());
-    std::cout << std::string(halfSize, '-');
-    std::cout << " " << str << " ";
-    std::cout << std::string(halfSize - (width % 2 ^ str.size() % 2) - 1, '-') << "\n";
+    if(color)
+        Terminal::Color white(Terminal::Color::getFileColor());
+    out << std::string(halfSize, '-');
+    out << " " << str << " ";
+    out << std::string(halfSize - (width % 2 ^ str.size() % 2) - 1, '-') << "\n";
 }
 
 } // namespace internal
@@ -123,7 +124,6 @@ void NameList::setByName(const std::string& name, const int& value)
         throw IsenException("variable '%s' is not part of Namelist", name);
     }
 }
-
 
 void NameList::setByName(const std::string& name, const double& value)
 {
@@ -255,86 +255,86 @@ void NameList::setByName(const std::string& name, const std::string& value)
     }
 }
 
-
-#define PRINT(Name) std::cout << internal::printHelper(#Name, this->Name)
-
-void NameList::print() const
+void NameList::print(std::stringstream& out) const
 {
-    internal::header("Output control");
-    std::cout << internal::printHelper("run_name", this->run_name);
-    std::cout << internal::printHelper("iout", this->iout);
-    std::cout << internal::printHelper("iiniout", this->iiniout);
-
-    internal::header("Domain size");
-    std::cout << internal::printHelper("xl", this->xl);
-    std::cout << internal::printHelper("nx", this->nx);
-    std::cout << internal::printHelper("dx", this->dx);
-    std::cout << internal::printHelper("thl", this->thl);
-    std::cout << internal::printHelper("nz", this->nz);
-    std::cout << internal::printHelper("time", this->time);
-    std::cout << internal::printHelper("dt", this->dt);
-    std::cout << internal::printHelper("diff", this->diff);
-
-    internal::header("Topography");
-    std::cout << internal::printHelper("topomx", this->topomx);
-    std::cout << internal::printHelper("topowd", this->topowd);
-    std::cout << internal::printHelper("topotim", this->topotim);
-
-    internal::header("Initial atmosphere");
-    std::cout << internal::printHelper("u00", this->u00);
-    std::cout << internal::printHelper("bv00", this->bv00);
-    std::cout << internal::printHelper("th00", this->th00);
-    std::cout << internal::printHelper("ishear", this->ishear);
-    std::cout << internal::printHelper("k_shl", this->k_shl);
-    std::cout << internal::printHelper("k_sht", this->k_sht);
-    std::cout << internal::printHelper("u00_sh", this->u00_sh);
-
-    internal::header("Boundaries");
-    std::cout << internal::printHelper("nab", this->nab);
-    std::cout << internal::printHelper("diffabs", this->diffabs);
-    std::cout << internal::printHelper("irelax", this->irelax);
-    std::cout << internal::printHelper("nb", this->nb);
-
-    internal::header("Print options");
-    std::cout << internal::printHelper("idbg", this->idbg);
-    std::cout << internal::printHelper("iprtcfl", this->iprtcfl);
-    std::cout << internal::printHelper("itime", this->itime);
-
-    internal::header("Physics: Moisture");
-    std::cout << internal::printHelper("imoist", this->imoist);
-    std::cout << internal::printHelper("imoist_diff", this->imoist_diff);
-    std::cout << internal::printHelper("imicrophys", this->imicrophys);
-    std::cout << internal::printHelper("idthdt", this->idthdt);
-    std::cout << internal::printHelper("iern", this->iern);
-
-    internal::header("Options for Kessler scheme");
-    std::cout << internal::printHelper("vt_mult", this->vt_mult);
-    std::cout << internal::printHelper("autoconv_th", this->autoconv_th);
-    std::cout << internal::printHelper("autoconv_mult", this->autoconv_mult);
-    std::cout << internal::printHelper("sediment_on", this->sediment_on);
-
-    internal::header("Computed input parameters");
-    std::cout << internal::printHelper("dth", this->dth);
-    std::cout << internal::printHelper("nts", this->nts);
-    std::cout << internal::printHelper("nout", this->nout);
-    std::cout << internal::printHelper("nx1", this->nx1);
-    std::cout << internal::printHelper("nz1", this->nz1);
-    std::cout << internal::printHelper("nxb", this->nxb);
-    std::cout << internal::printHelper("nxb1", this->nxb1);
-
-    internal::header("Physical constants");
-    std::cout << internal::printHelper("g", this->g);
-    std::cout << internal::printHelper("cp", this->cp);
-    std::cout << internal::printHelper("r", this->r);
-    std::cout << internal::printHelper("r_v", this->r_v);
-    std::cout << internal::printHelper("rdcp", this->rdcp);
-    std::cout << internal::printHelper("cpdr", this->cpdr);
-    std::cout << internal::printHelper("pref", this->pref);
-    std::cout << internal::printHelper("z00", this->z00);
-    std::cout << internal::printHelper("prs00", this->prs00);
-    std::cout << internal::printHelper("exn00", this->exn00);
+    this->print(out, false);
 }
 
-#undef PRINT
+void NameList::print(std::ostream& out, bool color) const
+{
+    internal::header(out, color, "Output control");
+    out << internal::printHelper("run_name", this->run_name);
+    out << internal::printHelper("iout", this->iout);
+    out << internal::printHelper("iiniout", this->iiniout);
+
+    internal::header(out, color, "Domain size");
+    out << internal::printHelper("xl", this->xl);
+    out << internal::printHelper("nx", this->nx);
+    out << internal::printHelper("dx", this->dx);
+    out << internal::printHelper("thl", this->thl);
+    out << internal::printHelper("nz", this->nz);
+    out << internal::printHelper("time", this->time);
+    out << internal::printHelper("dt", this->dt);
+    out << internal::printHelper("diff", this->diff);
+
+    internal::header(out, color, "Topography");
+    out << internal::printHelper("topomx", this->topomx);
+    out << internal::printHelper("topowd", this->topowd);
+    out << internal::printHelper("topotim", this->topotim);
+
+    internal::header(out, color, "Initial atmosphere");
+    out << internal::printHelper("u00", this->u00);
+    out << internal::printHelper("bv00", this->bv00);
+    out << internal::printHelper("th00", this->th00);
+    out << internal::printHelper("ishear", this->ishear);
+    out << internal::printHelper("k_shl", this->k_shl);
+    out << internal::printHelper("k_sht", this->k_sht);
+    out << internal::printHelper("u00_sh", this->u00_sh);
+
+    internal::header(out, color, "Boundaries");
+    out << internal::printHelper("nab", this->nab);
+    out << internal::printHelper("diffabs", this->diffabs);
+    out << internal::printHelper("irelax", this->irelax);
+    out << internal::printHelper("nb", this->nb);
+
+    internal::header(out, color, "Print options");
+    out << internal::printHelper("idbg", this->idbg);
+    out << internal::printHelper("iprtcfl", this->iprtcfl);
+    out << internal::printHelper("itime", this->itime);
+
+    internal::header(out, color, "Physics: Moisture");
+    out << internal::printHelper("imoist", this->imoist);
+    out << internal::printHelper("imoist_diff", this->imoist_diff);
+    out << internal::printHelper("imicrophys", this->imicrophys);
+    out << internal::printHelper("idthdt", this->idthdt);
+    out << internal::printHelper("iern", this->iern);
+
+    internal::header(out, color, "Options for Kessler scheme");
+    out << internal::printHelper("vt_mult", this->vt_mult);
+    out << internal::printHelper("autoconv_th", this->autoconv_th);
+    out << internal::printHelper("autoconv_mult", this->autoconv_mult);
+    out << internal::printHelper("sediment_on", this->sediment_on);
+
+    internal::header(out, color, "Computed input parameters");
+    out << internal::printHelper("dth", this->dth);
+    out << internal::printHelper("nts", this->nts);
+    out << internal::printHelper("nout", this->nout);
+    out << internal::printHelper("nx1", this->nx1);
+    out << internal::printHelper("nz1", this->nz1);
+    out << internal::printHelper("nxb", this->nxb);
+    out << internal::printHelper("nxb1", this->nxb1);
+
+    internal::header(out, color, "Physical constants");
+    out << internal::printHelper("g", this->g);
+    out << internal::printHelper("cp", this->cp);
+    out << internal::printHelper("r", this->r);
+    out << internal::printHelper("r_v", this->r_v);
+    out << internal::printHelper("rdcp", this->rdcp);
+    out << internal::printHelper("cpdr", this->cpdr);
+    out << internal::printHelper("pref", this->pref);
+    out << internal::printHelper("z00", this->z00);
+    out << internal::printHelper("prs00", this->prs00);
+    out << internal::printHelper("exn00", this->exn00);
+}
 
 ISEN_NAMESPACE_END

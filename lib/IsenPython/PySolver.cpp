@@ -21,7 +21,19 @@ PySolver::PySolver(const char* name) : parser_(new Parser), isInitialized_(false
 {
 }
 
-void PySolver::init(const char* filename)
+void PySolver::initWithNameList(PyNameList namelist)
+{
+    // Copy NameList
+    namelist_ = namelist.getNameList();
+
+    // Construct Solver
+    solver_ = SolverFactory::create(name_, namelist_);
+
+    solver_->init();
+    isInitialized_ = true;
+}
+
+void PySolver::initWithFile(const char* filename)
 {
     // Construct NameList
     std::string filenameS(filename);
@@ -64,9 +76,9 @@ void PySolver::write(Output::ArchiveType archiveType, const char* filename)
 }
 
 
-void PySolver::print() const
+PyNameList PySolver::getNameList() const noexcept
 {
-    namelist_->print();
+    return PyNameList(namelist_);
 }
 
 ISEN_NAMESPACE_END

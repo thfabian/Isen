@@ -195,8 +195,11 @@ struct NameList
 
     //-------------------------------------------------
 
-    /// Print the NameList
-    void print() const;
+    /// Stream NameList to @out
+    void print(std::stringstream& out) const;
+
+    /// Stream the NameList to @out with colored output
+    void print(std::ostream& out, bool color = true) const;
 
     /// Set a variable by name [potentially slow]
     void setByName(const std::string& name, const int& value);
