@@ -90,30 +90,36 @@ void Output::makeOutput(const Solver* solver) noexcept
 
     // Horizontal destagger
     //------------------------------------------------------------
-    u_out_ = 0.5 * (solver->unow().block(nb, 0, nx, nz).array() + solver->unow().block(nb + 1, 0, nx, nz).array());
+    const auto& unow = solver->getMat("unow");
+    u_out_ = 0.5 * (unow.block(nb, 0, nx, nz).array() + unow.block(nb + 1, 0, nx, nz).array());
 
     // Vertical destagger
     //------------------------------------------------------------
     if(imoist && idthdt)
-        dthetadt_out_ = 0.5 * (solver->dthetadt().block(0, 0, nxb, nz) + solver->dthetadt().block(0, 1, nxb, nz + 1));
-
+    {
+        const auto& dthetadt = solver->getMat("dthetadt");        
+        dthetadt_out_ = 0.5 * (dthetadt.block(0, 0, nxb, nz) + dthetadt.block(0, 1, nxb, nz + 1));
+    }
+    
     // Height in z-coordinates
+    const auto& zhtnow = solver->getMat("zhtnow");            
     auto it_z = outputData_.z.begin() + curIt_ * nz1 * nx;
-    for(int j = 0; j < nz1; ++j)
+    for(int k = 0; k < nz1; ++k)
         for(int i = nb; i < (nx + nb); ++i, ++it_z)
-            *it_z = solver->zhtnow()(i, j);
+            *it_z = zhtnow(i, k);
 
     // Horizontal velocity
     auto it_u = outputData_.u.begin() + curIt_ * nz * nx;
-    for(int j = 0; j < nz; ++j)
+    for(int k = 0; k < nz; ++k)
         for(int i = 0; i < nx; ++i, ++it_u)
-            *it_u = u_out_(i, j);
+            *it_u = u_out_(i, k);
 
     // Isentropic density
+    const auto& snow = solver->getMat("snow");                
     auto it_s = outputData_.s.begin() + curIt_ * nz * nx;
-    for(int j = 0; j < nz; ++j)
+    for(int k = 0; k < nz; ++k)
         for(int i = nb; i < (nx + nb); ++i, ++it_s)
-            *it_s = solver->snow()(i, j);
+            *it_s = snow(i, k);
 
     // Time vector
     outputData_.t[curIt_] = curIt_ * iout * dt;

@@ -32,7 +32,7 @@ ISEN_NAMESPACE_BEGIN
         bool passed = true;                                                                                            \
         LOG() << "Checking " << #field << "[t=" << #time << "] ... " << logger::flush;                                 \
         auto field = FieldLoader::load((dir / boost::filesystem::path(#field "-" #time ".dat")).string());             \
-        CHECK((passed = FieldVerifier::verify(#field, solver->field(), std::move((field)))));                          \
+        CHECK((passed = FieldVerifier::verify(#field, MatrixXf(solver->getField(#field)), std::move((field)))));       \
         if(passed)                                                                                                     \
         {                                                                                                              \
             LOG_SUCCESS(t);                                                                                            \
@@ -165,24 +165,36 @@ TEST_CASE("Getter", "[Solver]")
     solver->init();
     LOG() << logger::enable;
 
-    SECTION("matrix success")
+    SECTION("Matrix success")
     {
         CHECK_NOTHROW(const auto& mat = solver->getMat("uold"));
     }
 
-    SECTION("matrix fail")
+    SECTION("Matrix fail")
     {
         CHECK_THROWS_AS(const auto& mat = solver->getMat("uoldXXX"), IsenException);
     }
 
-    SECTION("vector success")
+    SECTION("Vector success")
     {
         CHECK_NOTHROW(const auto& vec = solver->getVec("topo"));
     }
 
-    SECTION("vector fail")
+    SECTION("Vector fail")
     {
         CHECK_THROWS_AS(const auto& vec = solver->getVec("topoXXX"), IsenException);
+    }
+    
+    SECTION("Field success")
+    {
+        CHECK_NOTHROW(bool res = (MatrixXf(solver->getField("topo")) == solver->getVec("topo")));
+        CHECK_NOTHROW(bool res = (MatrixXf(solver->getField("uold")) == solver->getMat("uold")));
+    }
+
+    SECTION("Field fail")
+    {
+        CHECK_THROWS_AS(const auto fieldVec = solver->getField("topoXXX"), IsenException);
+        CHECK_THROWS_AS(const auto fieldMat = solver->getField("uoldXXX"), IsenException);
     }
 }
 

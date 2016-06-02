@@ -37,9 +37,10 @@ struct Boundary
 
     /// Relaxation of boundary conditions.
     template <class Derived>
-    static void relax(Eigen::MatrixBase<Derived>& phi, int nx, int nb, double phi1, double phi2) noexcept
+    static void
+    relax(Eigen::MatrixBase<Derived>& phi, int nx, int nb, const VectorXf& phi1, const VectorXf& phi2) noexcept
     {
-        //TODO: phi1 and phi2 should be arrays?
+        // TODO: phi1 and phi2 should be arrays?
 
         assert(phi.rows() == (nx + 2 * nb));
 
@@ -54,8 +55,8 @@ struct Boundary
         {
             for(int j = 0; j < phi.cols(); ++j)
             {
-                phi(i, j) = phi1 * rel[i] + phi(i, j) * (1 - rel[i]);
-                phi(n - 1 - i, j) = phi2 * rel[i] + phi(n - 1 - i, j) * (1 - rel[i]);
+                phi(i, j) = phi1[0] * rel[i] + phi(i, j) * (1 - rel[i]);
+                phi(n - 1 - i, j) = phi2[0] * rel[i] + phi(n - 1 - i, j) * (1 - rel[i]);
             }
         }
     }

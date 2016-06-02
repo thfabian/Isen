@@ -7,6 +7,15 @@ visualiter = IsenPython.Visualizer()
 
 solver = IsenPython.Solver()
 solver.init()
-solver.run()
+
+m = solver.getField("sold")
+print(m[1:5,0])
+print(np.shape(m))
+
+v = solver.getField("topo")
+print(v[1:5])
+print(np.shape(v))
+
+#solver.run()
 
 #solver.write(IsenPython.ArchiveType.Unknown)
