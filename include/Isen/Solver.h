@@ -21,7 +21,7 @@
 
 ISEN_NAMESPACE_BEGIN
 
-/// @brief Interface of all Solver implementations
+/// @brief Refrence implementation of all Solvers
 class Solver
 {
 public:
@@ -30,7 +30,7 @@ public:
     /// @throw IsenException if out of memory
     Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveType = Output::ArchiveType::Text);
 
-    /// @brief Free all memory
+    /// Free all memory
     virtual ~Solver() {}
 
     /// @brief Initialize the simulation
@@ -39,19 +39,66 @@ public:
     /// generates the topography.
     virtual void init() noexcept;
 
-    /// @brief Run the simulation
-    virtual void run() = 0;
+    /// Run the simulation
+    virtual void run();
 
     /// @brief Write simulation to output file
     ///
     /// If no filename is provided, NameList::run_name is being used.
     virtual void write(std::string filename = "");
 
-    /// @brief Access the output
+    /// Compute CFL condition
+    virtual double computeCFL() const noexcept;
+
+    //------------------------------------------------------------
+    // Diffusion
+    //------------------------------------------------------------
+
+    /// Horizontal diffusion
+    virtual void horizontalDiffusion() noexcept;
+
+    //------------------------------------------------------------
+    // Boundary
+    //------------------------------------------------------------
+
+    /// Exchange boundaries for periodicity of prognostic fields
+    virtual void applyPeriodicBoundary() noexcept;
+
+    /// Relaxation of prognostic fields
+    virtual void applyRelaxationBoundary() noexcept;
+
+    //------------------------------------------------------------
+    // Diagnostic
+    //------------------------------------------------------------
+
+    /// Diagnostic computation of Montgomery
+    virtual void diagMontgomery() noexcept;
+
+    /// Diagnostic computation of pressure
+    virtual void diagPressure() noexcept;
+
+    //------------------------------------------------------------
+    // Prognostic
+    //------------------------------------------------------------
+
+    /// Prognostic step for isentropic mass density
+    virtual void progIsendens() noexcept;
+
+    /// Prognostic step for momentum
+    virtual void progVelocity() noexcept;
+
+    /// Prognostic step for hydrometeors
+    virtual void progMoisture() noexcept;
+
+    /// Prognostic step for number densities
+    virtual void progNumdens() noexcept;
+
+    //------------------------------------------------------------
+    // Getter
+    //------------------------------------------------------------
+
+    /// Access the output
     std::shared_ptr<Output> getOutput() const { return output_; }
-
-protected:
-
 
 protected:
     std::shared_ptr<NameList> namelist_;

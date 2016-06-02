@@ -12,16 +12,16 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(CORE_SOURCE
-	CommandLine.cpp
+    CommandLine.cpp
     Common.cpp
     Logger.cpp
-	NameList.cpp
-	Output.cpp
+    NameList.cpp
+    Output.cpp
     Parse.cpp
-	Progressbar.cpp
+    Progressbar.cpp
     Terminal.cpp
     Solver.cpp
-	SolverRef.cpp
+    SolverOpt.cpp
     )
 
 set(CORE_HEADER
@@ -32,14 +32,15 @@ set(CORE_HEADER
     ${ISEN_INCLUDE_DIR}/Isen/Logger.h
     ${ISEN_INCLUDE_DIR}/Isen/MeteoUtils.h
     ${ISEN_INCLUDE_DIR}/Isen/NameList.h
-	${ISEN_INCLUDE_DIR}/Isen/Output.h
+    ${ISEN_INCLUDE_DIR}/Isen/Output.h
     ${ISEN_INCLUDE_DIR}/Isen/Parse.h
-	${ISEN_INCLUDE_DIR}/Isen/Progressbar.h
+    ${ISEN_INCLUDE_DIR}/Isen/Progressbar.h
     ${ISEN_INCLUDE_DIR}/Isen/Terminal.h
     ${ISEN_INCLUDE_DIR}/Isen/Timer.h
     ${ISEN_INCLUDE_DIR}/Isen/Type.h
     ${ISEN_INCLUDE_DIR}/Isen/Solver.h
-    ${ISEN_INCLUDE_DIR}/Isen/SolverRef.h
+    ${ISEN_INCLUDE_DIR}/Isen/SolverFactory.h
+    ${ISEN_INCLUDE_DIR}/Isen/SolverOpt.h
     )
 
 add_library(IsenCore ${CORE_SOURCE} ${CORE_HEADER})

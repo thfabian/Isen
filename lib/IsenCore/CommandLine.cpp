@@ -13,9 +13,9 @@
 
 #include <Isen/CommandLine.h>
 #include <Isen/Terminal.h>
-#include <algorithm>
 #include <boost/filesystem.hpp>
 #include <boost/version.hpp>
+#include <algorithm>
 #include <cstdlib>
 #include <initializer_list>
 #include <iostream>

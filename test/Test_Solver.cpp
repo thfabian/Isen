@@ -18,7 +18,7 @@
 #include <Isen/Logger.h>
 #include <Isen/Parse.h>
 #include <Isen/Progressbar.h>
-#include <Isen/SolverRef.h>
+#include <Isen/SolverFactory.h>
 #include <Isen/Terminal.h>
 #include <boost/filesystem.hpp>
 
@@ -47,7 +47,7 @@ ISEN_NAMESPACE_BEGIN
         LOG() << "No test data found" << logger::failed;                                                               \
     }
 
-TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
+TEST_CASE("MATLAB verification (Solver)", "[Solver]")
 {
     std::string filename;
     boost::filesystem::path dir;
@@ -77,7 +77,7 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
         std::shared_ptr<NameList> namelist;
 
         CHECK_NOTHROW(namelist = parser.parse(filename));
-        std::shared_ptr<Solver> solver(new SolverRef(namelist));
+        std::shared_ptr<Solver> solver = SolverFactory::create("ref", namelist);
 
         //-------------------------------------------------
         // Check inital-conditions
@@ -151,5 +151,10 @@ TEST_CASE("MATLAB verification (SolverRef)", "[Solver]")
 }
 
 #undef CHECK_FIELD
+
+TEST_CASE("Cross validation (SolverOpt)", "[Solver]")
+{
+
+}
 
 ISEN_NAMESPACE_END

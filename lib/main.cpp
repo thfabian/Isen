@@ -17,7 +17,7 @@
 #include <Isen/NameList.h>
 #include <Isen/Parse.h>
 #include <Isen/Progressbar.h>
-#include <Isen/SolverRef.h>
+#include <Isen/SolverFactory.h>
 #include <Isen/Terminal.h>
 #include <Isen/Timer.h>
 #include <functional>
@@ -112,8 +112,7 @@ int main(int argc, char* argv[])
             if(!namelistJit.empty())
                 for(const auto& line : namelistJit)
                     parser.parseSingleLine(namelist, line);
-
-            solver = std::make_shared<SolverRef>(namelist, archiveType);
+            solver =  SolverFactory::create("ref", namelist, archiveType);
         }
         catch(const std::exception& e)
         {

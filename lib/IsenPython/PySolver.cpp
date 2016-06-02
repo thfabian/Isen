@@ -13,18 +13,12 @@
 
 #include <Isen/Parse.h>
 #include <Isen/Python/PySolver.h>
-#include <Isen/SolverRef.h>
+#include <Isen/SolverFactory.h>
 
 ISEN_NAMESPACE_BEGIN
 
-PySolver::PySolver(const char* type) : parser_(new Parser), isInitialized_(false)
+PySolver::PySolver(const char* name) : parser_(new Parser), isInitialized_(false), name_(name)
 {
-    std::string typeS(type);
-
-    if(typeS == "ref")
-        solverType_ = ESolverTypeRef;
-    else
-        throw IsenException("Solver: unknown type '%s'", typeS);
 }
 
 void PySolver::init(const char* filename)
@@ -46,11 +40,7 @@ void PySolver::init(const char* filename)
     }
 
     // Construct Solver
-    switch(solverType_)
-    {
-        case ESolverTypeRef:
-            solver_ = std::make_shared<SolverRef>(namelist_);
-    }
+    solver_ = SolverFactory::create(name_, namelist_);
 
     solver_->init();
     isInitialized_ = true;

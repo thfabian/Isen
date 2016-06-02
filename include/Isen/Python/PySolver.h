@@ -29,13 +29,8 @@ ISEN_NAMESPACE_BEGIN
 class PySolver
 {
 public:
-    enum SolverType
-    {
-        ESolverTypeRef
-    };
-
     /// Set the implementation of the solver
-    PySolver(const char* type = "ref");
+    PySolver(const char* name = "ref");
 
     /// Initialize simulation
     void init(const char* filename = "");
@@ -54,7 +49,7 @@ private:
     std::shared_ptr<NameList> namelist_;
     std::shared_ptr<Parser> parser_;
     bool isInitialized_;
-    SolverType solverType_;
+    std::string name_;
 
 public:
     boost::python::object topo() const

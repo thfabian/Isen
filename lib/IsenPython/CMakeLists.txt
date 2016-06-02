@@ -19,13 +19,13 @@ set(ISEN_PYTHON_SOURCE
     PyNameList.cpp
     PyOutput.cpp
     )
-                
-set(ISEN_PYTHON_HEADER 
+
+set(ISEN_PYTHON_HEADER
     ${ISEN_INCLUDE_DIR}/Isen/Python/IsenPython.h
     ${ISEN_INCLUDE_DIR}/Isen/Python/PySolver.h
     ${ISEN_INCLUDE_DIR}/Isen/Python/PyLogger.h
-	${ISEN_INCLUDE_DIR}/Isen/Python/PyType.h
-    ${ISEN_INCLUDE_DIR}/Isen/Python/PyNameList.h	
+    ${ISEN_INCLUDE_DIR}/Isen/Python/PyType.h
+    ${ISEN_INCLUDE_DIR}/Isen/Python/PyNameList.h
     ${ISEN_INCLUDE_DIR}/Isen/Python/PyOutput.h
     )
     
@@ -39,7 +39,7 @@ source_group("Python" FILES ${ISEN_PYTHON_PYFILES})
 # Add shared library
 add_library(IsenPython SHARED ${ISEN_PYTHON_SOURCE} 
                               ${ISEN_PYTHON_HEADER}
-                              ${ISEN_PYTHON_PYFILES})
+                              ${ISEN_HEADERS})
 
 target_link_libraries(IsenPython ${ISEN_LIBRARIES} 
                                  ${Boost_LIBRARIES}
