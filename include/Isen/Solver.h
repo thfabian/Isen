@@ -18,6 +18,7 @@
 #include <Isen/Common.h>
 #include <Isen/NameList.h>
 #include <Isen/Output.h>
+#include <map>
 
 ISEN_NAMESPACE_BEGIN
 
@@ -100,9 +101,18 @@ public:
     /// Access the output
     std::shared_ptr<Output> getOutput() const { return output_; }
 
+    /// Get matrix by @name
+    const MatrixXf& getMat(const std::string& name) const;
+
+    /// Get vector by @name
+    const VectorXf& getVec(const std::string& name) const;
+
 protected:
     std::shared_ptr<NameList> namelist_;
     std::shared_ptr<Output> output_;
+
+    std::map<std::string, const MatrixXf&> matMap_;
+    std::map<std::string, const VectorXf&> vecMap_;
 
     //-------------------------------------------------
     // Define physical fields

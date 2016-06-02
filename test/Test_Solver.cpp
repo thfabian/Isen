@@ -157,4 +157,34 @@ TEST_CASE("Cross validation (SolverOpt)", "[Solver]")
 
 }
 
+TEST_CASE("Getter", "[Solver]")
+{
+    std::shared_ptr<Solver> solver = SolverFactory::create("ref");
+
+    LOG() << logger::disable;
+    solver->init();
+    LOG() << logger::enable;
+
+    SECTION("matrix success")
+    {
+        CHECK_NOTHROW(const auto& mat = solver->getMat("uold"));
+    }
+
+    SECTION("matrix fail")
+    {
+        CHECK_THROWS_AS(const auto& mat = solver->getMat("uoldXXX"), IsenException);
+    }
+
+    SECTION("vector success")
+    {
+        CHECK_NOTHROW(const auto& vec = solver->getVec("topo"));
+    }
+
+    SECTION("vector fail")
+    {
+        CHECK_THROWS_AS(const auto& vec = solver->getVec("topoXXX"), IsenException);
+    }
+}
+
+
 ISEN_NAMESPACE_END

@@ -389,8 +389,87 @@ void Solver::init() noexcept
     //-------------------------------------------------------------
     if(iiniout)
         output_->makeOutput(this);
+
+    // Set up getter maps
+    //-------------------------------------------------------------
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("zhtold", zhtold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("zhtnow", zhtnow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("uold", uold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("unow", unow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("unew", unew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("sold", sold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("snow", snow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("snew", snew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("mtg", mtg_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("mtgnew", mtgnew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("exn", exn_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("prs", prs_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qvold", qvold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qvnow", qvnow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qvnew", qvnew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qrold", qrold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qrnow", qrnow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qrnew", qrnew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qcold", qcold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qcnow", qcnow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("qcnew", qcnew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("nrold", nrold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("nrnow", nrnow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("nrnew", nrnew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("ncold", ncold_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("ncnow", ncnow_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("ncnew", ncnew_));
+    matMap_.insert(std::make_pair<std::string, const MatrixXf&>("dthetadt", dthetadt_));
+
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("topo", topo_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("mtg0", mtg0_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("exn0", exn0_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("prs0", prs0_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("tau", tau_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("th0", th0_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("prec", prec_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("tot_prec", tot_prec_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("sbnd1", sbnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("sbnd2", sbnd2_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("ubnd1", ubnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("ubnd2", ubnd2_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("qvbnd1", qvbnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("qvbnd2", qvbnd2_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("qcbnd1", qcbnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("qcbnd2", qcbnd2_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("qrbnd1", qrbnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("qrbnd2", qrbnd2_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("dthetadtbnd1", dthetadtbnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("dthetadtbnd2", dthetadtbnd2_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("nrbnd1", nrbnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("nrbnd2", nrbnd2_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("ncbnd1", ncbnd1_));
+    vecMap_.insert(std::make_pair<std::string, const VectorXf&>("ncbnd2", ncbnd2_));
 }
 
+const MatrixXf& Solver::getMat(const std::string& name) const
+{
+    try
+    {
+        return matMap_.at(name);
+    }
+    catch(std::out_of_range&)
+    {
+        throw IsenException("no matrix named '%s' in Solver", name);
+    }
+}
+
+const VectorXf& Solver::getVec(const std::string& name) const
+{
+    try
+    {
+        return vecMap_.at(name);
+    }
+    catch(std::out_of_range&)
+    {
+        throw IsenException("no vector named '%s' in Solver", name);
+    }
+}
 
 void Solver::run()
 {

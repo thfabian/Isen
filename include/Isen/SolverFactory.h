@@ -29,12 +29,12 @@ struct SolverFactory
     /// @brief Create the Solver instance given by @c name
     ///
     /// @param name         Name of the Solver. If the name is empty, the refrence implementation will be used.
-    /// @param namelist     Namelist containing the simulation variables.
+    /// @param namelist     NameList containing the simulation variables.
     /// @param archiveType  Archive used for serializing the output [default: Output::ArchiveType::Text].
     ///
     /// @return pointer to the newly created Solver
     static std::shared_ptr<Solver> create(std::string name,
-                                          std::shared_ptr<NameList> namelist,
+                                          std::shared_ptr<NameList> namelist = std::make_shared<NameList>(),
                                           Output::ArchiveType archiveType = Output::ArchiveType::Text)
     {
         if(name.empty() || name == "ref")
