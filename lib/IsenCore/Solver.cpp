@@ -25,8 +25,10 @@
 
 ISEN_NAMESPACE_BEGIN
 
-Solver::Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveType) : namelist_(namelist)
+Solver::Solver(const std::shared_ptr<NameList>& namelist, Output::ArchiveType archiveType)
 {
+    // Copy NameList
+    namelist_ = std::make_shared<NameList>(*namelist);
     SOLVER_DECLARE_ALL_ALIASES
 
     Timer t;

@@ -30,6 +30,15 @@ ISEN_NAMESPACE_BEGIN
 /// The Parser class can read Python or MATLAB Namelist file. All variables have a default initialization.
 struct NameList
 {
+    /// Default constructor
+    NameList() = default;
+
+    /// Copy constructor
+    NameList(const NameList& other) = default;
+
+    /// Copy assignment
+    NameList& operator=(const NameList& other) = default;
+
     //-------------------------------------------------
     // Output control
     //-------------------------------------------------

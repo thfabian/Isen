@@ -112,7 +112,7 @@ Parser::Parser(Style style, bool prettyPrintErrors)
 {
 
     // Initialize all the known variables
-    #define ADD_KNOWN_VARIABLE(name) addVariable<decltype(NameList().name)>(#name)
+    #define ADD_KNOWN_VARIABLE(name) addVariable<decltype(std::declval<NameList>().name)>(#name)
 
     ADD_KNOWN_VARIABLE(run_name);
     ADD_KNOWN_VARIABLE(iout);

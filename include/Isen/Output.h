@@ -140,41 +140,41 @@ private:
     internal::OutputData outputData_; ///< Store the actual data
 
 public:
-    auto z() const -> const decltype(outputData_.z)& { return outputData_.z; }
-    auto z() -> decltype(outputData_.z)& { return outputData_.z; }
+    /// Height in z-coordinates
+    const std::vector<double>& z() const { return outputData_.z; }
 
-    auto u() const -> const decltype(outputData_.u)& { return outputData_.u; }
-    auto u() -> decltype(outputData_.u)& { return outputData_.u; }
+    /// Horizontal velocity
+    const std::vector<double>& u() const { return outputData_.u; }
 
-    auto s() const -> const decltype(outputData_.s)& { return outputData_.s; }
-    auto s() -> decltype(outputData_.s)& { return outputData_.s; }
+    /// Isentropic density
+    const std::vector<double>& s() const { return outputData_.s; }
 
-    auto t() const -> const decltype(outputData_.t)& { return outputData_.t; }
-    auto t() -> decltype(outputData_.t)& { return outputData_.t; }
+    /// Time vector
+    const std::vector<double>& t() const { return outputData_.t; }
 
-    auto prec() const -> const decltype(outputData_.prec)& { return outputData_.prec; }
-    auto prec() -> decltype(outputData_.prec)& { return outputData_.prec; }
+    /// Accumulated precipitation
+    const std::vector<double>& prec() const  { return outputData_.prec; }
 
-    auto tot_prec() const -> const decltype(outputData_.tot_prec)& { return outputData_.tot_prec; }
-    auto tot_prec() -> decltype(outputData_.tot_prec)& { return outputData_.tot_prec; }
+    /// Specific humidity
+    const std::vector<double>& tot_prec() const { return outputData_.tot_prec; }
 
-    auto qv() const -> const decltype(outputData_.qv)& { return outputData_.qv; }
-    auto qv() -> decltype(outputData_.qv)& { return outputData_.qv; }
+    /// Specific cloud water content
+    const std::vector<double>& qv() const { return outputData_.qv; }
 
-    auto qc() const -> const decltype(outputData_.qc)& { return outputData_.qc; }
-    auto qc() -> decltype(outputData_.qc)& { return outputData_.qc; }
+    /// Specific rain water content
+    const std::vector<double>& qc() const { return outputData_.qc; }
 
-    auto qr() const -> const decltype(outputData_.qr)& { return outputData_.qr; }
-    auto qr() -> decltype(outputData_.qr)& { return outputData_.qr; }
+    /// Rain-droplet number density
+    const std::vector<double>& qr() const { return outputData_.qr; }
 
-    auto nr() const -> const decltype(outputData_.nr)& { return outputData_.nr; }
-    auto nr() -> decltype(outputData_.nr)& { return outputData_.nr; }
+    /// Rain-droplet number density
+    const std::vector<double>& nr() const { return outputData_.nr; }
 
-    auto nc() const -> const decltype(outputData_.nc)& { return outputData_.nc; }
-    auto nc() -> decltype(outputData_.nc)& { return outputData_.nc; }
+    /// Cloud droplet number density
+    const std::vector<double>& nc() const { return outputData_.nc; }
 
-    auto dthetadt() const -> const decltype(outputData_.dthetadt)& { return outputData_.dthetadt; }
-    auto dthetadt() -> decltype(outputData_.dthetadt)& { return outputData_.dthetadt; }
+    /// Latent heating
+    const std::vector<double>& dthetadt() const { return outputData_.dthetadt; }
 };
 
 ISEN_NAMESPACE_END

@@ -20,6 +20,7 @@
 #include <Isen/Python/IsenPython.h>
 #include <Isen/Python/PyType.h>
 #include <Isen/Python/PyNameList.h>
+#include <Isen/Python/PyOutput.h>
 #include <Isen/Solver.h>
 #include <memory>
 #include <string>
@@ -31,7 +32,7 @@ class PySolver
 {
 public:
     /// Set the implementation of the solver
-    PySolver(const char* name = "ref");
+    explicit PySolver(const char* name = "ref");
 
     /// Initialize simulation with a file which will be parsed to a namelist
     void initWithFile(const char* filename = "");
@@ -57,7 +58,10 @@ public:
     }
 
     // Get the NameList
-    PyNameList getNameList() const noexcept;
+    PyNameList getNameList() const;
+
+    // Get the NameList
+    PyOutput getOutput() const;
 
 private:
     std::shared_ptr<Solver> solver_;

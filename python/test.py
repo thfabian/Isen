@@ -7,9 +7,13 @@ visualiter = IsenPython.Visualizer()
 
 namelist = IsenPython.NameList()
 namelist.iprtcfl = False
+namelist.nz = 61
 
 solver = IsenPython.Solver()
 solver.init(namelist)
+
+output = solver.getOutput()
+print(output.getNameList().nz)
 
 m = solver.getField("sold")
 print(m[1:5,0])
@@ -19,7 +23,7 @@ v = solver.getField("topo")
 print(v[1:5])
 print(np.shape(v))
 
-solver.run()
+# solver.run()
 
 # print(solver.getNameList())
 #solver.write(IsenPython.ArchiveType.Unknown)

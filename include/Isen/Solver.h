@@ -29,7 +29,7 @@ public:
     /// @brief Allocate memory 
     ///
     /// @throw IsenException if out of memory
-    Solver(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveType = Output::ArchiveType::Text);
+    Solver(const std::shared_ptr<NameList>& namelist, Output::ArchiveType archiveType = Output::ArchiveType::Text);
 
     /// Free all memory
     virtual ~Solver() {}

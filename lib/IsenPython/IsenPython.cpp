@@ -101,6 +101,12 @@ BOOST_PYTHON_MODULE(IsenPythonCxx)
         // String point getter/setters
         .add_property("run_name", &Isen::PyNameList::get_run_name, &Isen::PyNameList::set_run_name);
 
+    // PyOutput
+    class_<Isen::PyOutput>("Output")
+        .def(init<>())
+        .def("read", &Isen::PyOutput::read)
+        .def("getNameList", &Isen::PyOutput::getNameList);
+
     // PySolver
     class_<Isen::PySolver>("Solver")
         .def(init<boost::python::optional<const char*>>())
@@ -108,6 +114,7 @@ BOOST_PYTHON_MODULE(IsenPythonCxx)
         .def("init", &Isen::PySolver::initWithNameList)
         .def("run", &Isen::PySolver::run)
         .def("getField", &Isen::PySolver::getField)
+        .def("getOutput", &Isen::PySolver::getOutput)
         .def("getNameList", &Isen::PySolver::getNameList)
         .def("write", &Isen::PySolver::write, PySolver_overload_write());
 }

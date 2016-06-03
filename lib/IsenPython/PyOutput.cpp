@@ -12,7 +12,28 @@
  */
 
 #include <Isen/Python/PyOutput.h>
+#include <new>
 
 ISEN_NAMESPACE_BEGIN
+
+PyNameList PyOutput::getNameList() const
+{
+    if(!output_)
+        throw IsenException("Output: not initialized");
+    return PyNameList(namelist_);
+}
+
+void PyOutput::set(std::shared_ptr<Output> output) noexcept
+{
+    output_ = output;
+    namelist_ = std::make_shared<NameList>(*output_->getNameList());
+}
+
+void PyOutput::read(const char* file)
+{
+    output_ = std::make_shared<Output>();
+    output_->read(std::string(file));
+    namelist_ = std::make_shared<NameList>(*output_->getNameList());
+}
 
 ISEN_NAMESPACE_END

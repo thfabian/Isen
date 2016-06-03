@@ -76,9 +76,20 @@ void PySolver::write(Output::ArchiveType archiveType, const char* filename)
 }
 
 
-PyNameList PySolver::getNameList() const noexcept
+PyNameList PySolver::getNameList() const
 {
+    if(!isInitialized_)
+        throw IsenException("Solver: not initialized");
     return PyNameList(namelist_);
+}
+
+PyOutput PySolver::getOutput() const
+{
+    if(!isInitialized_)
+        throw IsenException("Solver: not initialized");
+    PyOutput output;
+    output.set(solver_->getOutput());
+    return output;
 }
 
 ISEN_NAMESPACE_END
