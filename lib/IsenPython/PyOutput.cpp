@@ -12,9 +12,14 @@
  */
 
 #include <Isen/Python/PyOutput.h>
-#include <new>
 
 ISEN_NAMESPACE_BEGIN
+
+PyOutput::PyOutput(const char* file)
+{
+    if(file)
+        read(file);
+}
 
 PyNameList PyOutput::getNameList() const
 {

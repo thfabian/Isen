@@ -44,8 +44,6 @@ Output::Output(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
     // Allocate memory
     try
     {
-        u_out_ = MatrixXf::Zero(nx, nz);
-
         outputData_.z.resize(nout * nz1 * nx);
         outputData_.u.resize(nout * nz * nx);
         outputData_.s.resize(nout * nz * nx);
@@ -67,7 +65,6 @@ Output::Output(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
 
             if(idthdt)
             {
-                dthetadt_out_ = MatrixXf::Zero(nxb, nz);
                 outputData_.dthetadt.resize(nout * nz * nx);
             }
         }
@@ -87,56 +84,44 @@ Output::Output(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveTy
 void Output::makeOutput(const Solver* solver) noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
-
-    // Horizontal destagger
-    //------------------------------------------------------------
-    const auto& unow = solver->getMat("unow");
-    u_out_ = 0.5 * (unow.block(nb, 0, nx, nz).array() + unow.block(nb + 1, 0, nx, nz).array());
-
-    // Vertical destagger
-    //------------------------------------------------------------
-    if(imoist && idthdt)
-    {
-        const auto& dthetadt = solver->getMat("dthetadt");        
-        dthetadt_out_ = 0.5 * (dthetadt.block(0, 0, nxb, nz) + dthetadt.block(0, 1, nxb, nz + 1));
-    }
     
-    // Height in z-coordinates
+    // Height in z-coordinates (transposed)
     const auto& zhtnow = solver->getMat("zhtnow");            
     auto it_z = outputData_.z.begin() + curIt_ * nz1 * nx;
-    for(int k = 0; k < nz1; ++k)
-        for(int i = nb; i < (nx + nb); ++i, ++it_z)
+    for(int i = nb; i < (nx + nb); ++i)
+        for(int k = 0; k < nz1; ++k, ++it_z)
             *it_z = zhtnow(i, k);
 
-    // Horizontal velocity
+    // Horizontal velocity (transposed)
+    const auto& unow = solver->getMat("unow");
     auto it_u = outputData_.u.begin() + curIt_ * nz * nx;
-    for(int k = 0; k < nz; ++k)
-        for(int i = 0; i < nx; ++i, ++it_u)
-            *it_u = u_out_(i, k);
+    for(int i = 0; i < nx; ++i)
+        for(int k = 0; k < nz; ++k, ++it_u)
+            *it_u = 0.5 * (unow(i, k) + unow(i + 1, k));
 
-    // Isentropic density
+    // Isentropic density (transposed)
     const auto& snow = solver->getMat("snow");                
     auto it_s = outputData_.s.begin() + curIt_ * nz * nx;
-    for(int k = 0; k < nz; ++k)
-        for(int i = nb; i < (nx + nb); ++i, ++it_s)
+    for(int i = nb; i < (nx + nb); ++i)
+        for(int k = 0; k < nz; ++k, ++it_s)
             *it_s = snow(i, k);
 
     // Time vector
     outputData_.t[curIt_] = curIt_ * iout * dt;
 
-    // Precipitation
+    // Precipitation (transposed)
 
-    // Accumulated precipitation
+    // Accumulated precipitation (transposed)
 
-    // Specific humidity
+    // Specific humidity (transposed)
 
-    // Specific cloud water content
+    // Specific cloud water content (transposed)
 
-    // Specific rain water content
+    // Specific rain water content (transposed)
 
-    // Rain-droplet number density
+    // Rain-droplet number density (transposed)
 
-    // Cloud droplet number density
+    // Cloud droplet number density (transposed)
 
     // Latent heating
 
@@ -145,8 +130,6 @@ void Output::makeOutput(const Solver* solver) noexcept
 
 void Output::write(std::string filename)
 {
-    std::ios_base::openmode flags = std::ios::out;
-
     if(filename.empty())
     {
         std::string ext;
@@ -160,7 +143,6 @@ void Output::write(std::string filename)
                 break;
             case ArchiveType::Binary:
                 ext = ".bin";
-                flags |= std::ios::binary;
                 break;
             default:
                 throw IsenException("unknown archive type");
@@ -179,6 +161,9 @@ void Output::write(std::string filename)
         }
         filename += ext;
     }
+
+    std::ios_base::openmode flags
+        = archiveType_ == ArchiveType::Binary ? std::ios::out | std::ios::binary : std::ios::out;
 
     Timer t;
     LOG() << "Writing to '" << filename << "' ..." << logger::flush;
@@ -250,7 +235,7 @@ void Output::read(const std::string& filename)
         = archiveType_ == ArchiveType::Binary ? std::ios::in | std::ios::binary : std::ios::in;
 
     std::ifstream fin(filename, flags);
-    if(!fin.is_open())
+    if(!boost::filesystem::exists(filename) || !fin.is_open())
     {
         LOG() << logger::failed;
         throw IsenException("no such file: %f", filename.c_str());

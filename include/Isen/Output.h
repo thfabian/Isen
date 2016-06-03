@@ -135,8 +135,6 @@ private:
     boost::shared_ptr<NameList> namelist_;
 
     int curIt_;                       ///< Output step
-    MatrixXf u_out_;                  ///< Destaggered velocity
-    MatrixXf dthetadt_out_;           ///< Destaggered latent heating
     internal::OutputData outputData_; ///< Store the actual data
 
 public:
@@ -152,19 +150,19 @@ public:
     /// Time vector
     const std::vector<double>& t() const { return outputData_.t; }
 
-    /// Accumulated precipitation
-    const std::vector<double>& prec() const  { return outputData_.prec; }
+    /// Precipitation
+    const std::vector<double>& prec() const { return outputData_.prec; }
 
-    /// Specific humidity
+    /// Accumulated precipitation
     const std::vector<double>& tot_prec() const { return outputData_.tot_prec; }
 
-    /// Specific cloud water content
+    /// Specific humidity
     const std::vector<double>& qv() const { return outputData_.qv; }
 
-    /// Specific rain water content
+    /// Specific cloud water content
     const std::vector<double>& qc() const { return outputData_.qc; }
 
-    /// Rain-droplet number density
+    /// Specific rain water content
     const std::vector<double>& qr() const { return outputData_.qr; }
 
     /// Rain-droplet number density

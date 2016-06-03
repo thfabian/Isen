@@ -17,8 +17,8 @@
 
 #include <Isen/Common.h>
 #include <Isen/Output.h>
-#include <Isen/Python/PyType.h>
 #include <Isen/Python/PyNameList.h>
+#include <Isen/Python/PyType.h>
 
 ISEN_NAMESPACE_BEGIN
 
@@ -27,7 +27,7 @@ class PyOutput
 {
 public:
     /// Default constructor
-    PyOutput() = default;
+    PyOutput(const char* file = nullptr);
 
     /// Copy constructor
     PyOutput(const PyOutput& other) = default;
@@ -41,7 +41,7 @@ public:
     /// Set the Output
     void set(std::shared_ptr<Output> output) noexcept;
 
-    /// Read Output from file 
+    /// Read Output from file
     void read(const char* file);
 
 private:
@@ -54,41 +54,126 @@ public:
     {
         if(!output_)
             throw IsenException("Output: not initialized");
-        return internal::toNumpyArrayImpl(output_->z().data(), namelist_->nx, namelist_->nz1, namelist_->nout);
+        return internal::toNumpyArrayImpl(output_->z().data(), namelist_->nout, namelist_->nx, namelist_->nz1);
     }
 
-    ///// Horizontal velocity
-    //const std::vector<double>& u() const { return outputData_.u; }
+    /// Horizontal velocity
+    boost::python::object u() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+        return internal::toNumpyArrayImpl(output_->u().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
 
-    ///// Isentropic density
-    //const std::vector<double>& s() const { return outputData_.s; }
+    /// Isentropic density
+    boost::python::object s() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+        return internal::toNumpyArrayImpl(output_->s().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
 
-    ///// Time vector
-    //const std::vector<double>& t() const { return outputData_.t; }
+    /// Time vector
+    boost::python::object t() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+        return internal::toNumpyArrayImpl(output_->t().data(), namelist_->nout);
+    }
+    /// Precipitation
+    boost::python::object prec() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
 
-    ///// Accumulated precipitation
-    //const std::vector<double>& prec() const  { return outputData_.prec; }
+        if(!namelist_->imoist)
+            throw IsenException("Output: prec is not available");
+        return internal::toNumpyArrayImpl(output_->prec().data(), namelist_->nout, namelist_->nx);
+    }
 
-    ///// Specific humidity
-    //const std::vector<double>& tot_prec() const { return outputData_.tot_prec; }
+    /// Accumulated precipitation
+    boost::python::object tot_prec() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
 
-    ///// Specific cloud water content
-    //const std::vector<double>& qv() const { return outputData_.qv; }
+        if(!namelist_->imoist)
+            throw IsenException("Output: tot_prec is not available");
 
-    ///// Specific rain water content
-    //const std::vector<double>& qc() const { return outputData_.qc; }
+        return internal::toNumpyArrayImpl(output_->tot_prec().data(), namelist_->nout, namelist_->nx);
+    }
 
-    ///// Rain-droplet number density
-    //const std::vector<double>& qr() const { return outputData_.qr; }
+    /// Specific humidity
+    boost::python::object qv() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
 
-    ///// Rain-droplet number density
-    //const std::vector<double>& nr() const { return outputData_.nr; }
+        if(!namelist_->imoist)
+            throw IsenException("Output: qv is not available");
 
-    ///// Cloud droplet number density
-    //const std::vector<double>& nc() const { return outputData_.nc; }
+        return internal::toNumpyArrayImpl(output_->qv().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
 
-    ///// Latent heating
-    //const std::vector<double>& dthetadt() const { return outputData_.dthetadt; }
+    /// Specific cloud water content
+    boost::python::object qc() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+
+        if(!namelist_->imoist)
+            throw IsenException("Output: qc is not available");
+
+        return internal::toNumpyArrayImpl(output_->qc().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
+
+    /// Specific rain water content
+    boost::python::object qr() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+
+        if(!namelist_->imoist)
+            throw IsenException("Output: qr is not available");
+
+        return internal::toNumpyArrayImpl(output_->qr().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
+
+    /// Rain-droplet number density
+    boost::python::object nr() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+
+        if(!namelist_->imoist && namelist_->imicrophys != 2)
+            throw IsenException("Output: nr is not available");
+
+        return internal::toNumpyArrayImpl(output_->nr().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
+
+    /// Cloud droplet number density
+    boost::python::object nc() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+
+        if(!namelist_->imoist && namelist_->imicrophys != 2)
+            throw IsenException("Output: nc is not available");
+
+        return internal::toNumpyArrayImpl(output_->nc().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
+
+    /// Latent heating
+    boost::python::object dthetadt() const
+    {
+        if(!output_)
+            throw IsenException("Output: not initialized");
+
+        if(!namelist_->imoist && namelist_->idthdt)
+            throw IsenException("Output: dthetadt is not available");
+
+        return internal::toNumpyArrayImpl(output_->dthetadt().data(), namelist_->nout, namelist_->nx, namelist_->nz);
+    }
 };
 
 ISEN_NAMESPACE_END

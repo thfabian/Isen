@@ -103,9 +103,21 @@ BOOST_PYTHON_MODULE(IsenPythonCxx)
 
     // PyOutput
     class_<Isen::PyOutput>("Output")
-        .def(init<>())
+        .def(init<boost::python::optional<const char*>>())
         .def("read", &Isen::PyOutput::read)
-        .def("getNameList", &Isen::PyOutput::getNameList);
+        .def("getNameList", &Isen::PyOutput::getNameList)
+        .def("z", &Isen::PyOutput::z)
+        .def("u", &Isen::PyOutput::u)
+        .def("s", &Isen::PyOutput::s)
+        .def("t", &Isen::PyOutput::t)
+        .def("prec", &Isen::PyOutput::prec)
+        .def("tot_prec", &Isen::PyOutput::tot_prec)
+        .def("qv", &Isen::PyOutput::qv)
+        .def("qc", &Isen::PyOutput::qc)
+        .def("qr", &Isen::PyOutput::qr)
+        .def("nr", &Isen::PyOutput::nr)
+        .def("nc", &Isen::PyOutput::nc)
+        .def("dthetadt", &Isen::PyOutput::dthetadt);
 
     // PySolver
     class_<Isen::PySolver>("Solver")
