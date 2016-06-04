@@ -36,7 +36,7 @@ set(ISEN_PYTHON_PYFILES
 
 source_group("Python" FILES ${ISEN_PYTHON_PYFILES})  
  
-# Add shared library
+## Add shared library
 add_library(IsenPython SHARED ${ISEN_PYTHON_SOURCE} 
                               ${ISEN_PYTHON_HEADER}
                               ${ISEN_HEADERS})
@@ -58,7 +58,7 @@ else(WIN32)
                           OUTPUT_NAME "IsenPythonCxx")
 endif(WIN32)
 
-# Copy pure python code
+## Copy pure python code to python build dir
 add_custom_target(IsenPythonCopy
                   COMMAND ${CMAKE_COMMAND} -E copy_directory
                   ${CMAKE_SOURCE_DIR}/python
@@ -67,7 +67,7 @@ add_custom_target(IsenPythonCopy
                   )
 add_dependencies(IsenPython IsenPythonCopy)
                    
-# Copy library
+## Copy library to python build dir
 add_custom_command(TARGET IsenPython POST_BUILD
            COMMAND ${CMAKE_COMMAND} -E copy
            $<TARGET_FILE:IsenPython> 
@@ -78,3 +78,8 @@ add_custom_command(TARGET IsenPython POST_BUILD
            COMMAND ${CMAKE_COMMAND} -E copy
            $<TARGET_FILE:IsenPython> 
            ${CMAKE_SOURCE_DIR}/python/IsenPython/$<TARGET_FILE_NAME:IsenPython>)
+           
+## Installation
+install(TARGETS IsenPython LIBRARY DESTINATION ${CMAKE_SYSTEM_NAME}/python/IsenPython)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/python DESTINATION ${CMAKE_SYSTEM_NAME})
+

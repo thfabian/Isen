@@ -14,3 +14,4 @@ add_executable(isen main.cpp)
 target_link_libraries(isen ${ISEN_LIBRARIES} 
                            ${Boost_LIBRARIES}
                            ${PYTHON_LIBRARIES})
+install(TARGETS isen RUNTIME DESTINATION ${CMAKE_SYSTEM_NAME})

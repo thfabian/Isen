@@ -7,7 +7,8 @@ install:
   - echo ${CXX}
   - ${CXX} --version
   - ${CXX} -v
-  
+  - python --version
+
   # Info about OS
   - uname -a
   - echo $TRAVIS_OS_NAME
@@ -59,6 +60,7 @@ matrix:
 
 before_script:
   - mkdir build
+  - pushd $(pwd)
   - cd build
 
   # Build Linux (with Python)
@@ -66,11 +68,22 @@ before_script:
   
   # Build OSX (without Python)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=OFF -DCMAKE_BUILD_TYPE=$CONFIG; fi
+  
+  # Build & Install
   - make
+  - make install
+  
+  - popd
 
 script:
+   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cd bin/Linux; fi
+   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cd bin/Darwin/; fi
+   
+   # Run C++ unittests
    - ./isen_test
 
+   # Run Python unittests
+   
 notifications:
   email:
     recipients:
@@ -79,3 +92,4 @@ notifications:
     on_failure: always
     
 sudo: false
+

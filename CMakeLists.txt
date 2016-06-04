@@ -10,6 +10,9 @@
 #  This file is distributed under the MIT Open Source License. See LICENSE.TXT for details.
 
 cmake_minimum_required(VERSION 2.8)
+
+set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/bin/" CACHE PATH "CMake installation prefix")
+
 project(Isen)
 
 if(NOT(CMAKE_MAJOR_VERSION LESS 3) AND NOT(CMAKE_MINOR_VERSION LESS 2))
@@ -35,12 +38,7 @@ endif(${ISEN_PYTHON})
 option(ISEN_BENCHMARK "Use certain flags (-fno-omit-frame-prointer) for improved profiling" OFF)
 
 # Report on SIMD vectorization
-option(ISEN_VEC_REPORT "Optimization reports on vectorization [Intel]" OFF)
-
-if(APPLE)
-    #TODO: Thats not really a solution here ;)
-    set(CMAKE_MACOSX_RPATH 0)
-endif()
+option(ISEN_VEC_REPORT "Optimization reports on vectorization" OFF)
 
 if(NOT(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC"))
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -march=native -Wall")
@@ -111,11 +109,17 @@ endif(ISEN_BENCHMARK)
 ########################################################################################################################
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+# Set build type
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING
         "Choose the type of build, options are: Debug Release" FORCE)
     message(STATUS "Setting build type to 'Release' as none was specified")
 endif(NOT CMAKE_BUILD_TYPE)
+
+# Set runtime paths 
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_SYSTEM_NAME}")
+set(CMAKE_MACOSX_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_SYSTEM_NAME}")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Inlcude all Find*.cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
@@ -133,12 +137,6 @@ if(ISEN_PYTHON)
     # Python2
     find_package(PythonLibs 2 REQUIRED)
     include_directories(${PYTHON_INCLUDE_DIRS})
-    
-    # Python3
-    #set(Python_ADDITIONAL_VERSIONS 3.5)
-    #find_package(PythonLibs 3 REQUIRED)
-    #include_directories(${PYTHON_INCLUDE_DIRS})
-    #boost: python-py34 (linux) or python3 (mac)
 
     # Numpy
     find_package(NumPy REQUIRED)
@@ -198,3 +196,4 @@ endif(DOXYGEN_FOUND)
 if(ISEN_PYTHON)
     add_subdirectory(${PROJECT_SOURCE_DIR}/lib/IsenPython)
 endif(ISEN_PYTHON)
+

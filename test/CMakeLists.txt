@@ -26,3 +26,7 @@ add_custom_target(isen_test_data
                   ${CMAKE_BINARY_DIR}/data
                   )
 add_dependencies(isen_test isen_test_data)
+
+# Install 
+install(TARGETS isen_test RUNTIME DESTINATION ${CMAKE_SYSTEM_NAME})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/test/data DESTINATION ${CMAKE_SYSTEM_NAME})
