@@ -19,10 +19,6 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH=/usr/local/bin:$PATH; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pip install numpy; fi
   
-  - python-config --includes
-  - python-config --prefix
-  - ls /usr/local/Cellar
-  
 # APT (Linux)
 addons:
   apt:
@@ -75,9 +71,9 @@ before_script:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG; fi
   
   # Build OSX
-  #- export OSX_PYTHON_INCLUDE="$(python-config --includes | sed 's/^..//')"
-  #- export OSX_PYTHON_LIBRARY="$(python-config --prefix)/lib/libpython2.7.dylib"
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG; fi
+  - export OSX_PYTHON_INCLUDE="$(python-config --prefix)/include/python2.7"
+  - export OSX_PYTHON_LIBRARY="$(python-config --prefix)/lib/libpython2.7.dylib"
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG -DPYTHON_INCLUDE_DIR="${OSX_PYTHON_INCLUDE}" -DPYTHON_LIBRARY="${OSX_PYTHON_LIBRARY}"; fi
   
   # Build & Install
   - make
@@ -93,6 +89,8 @@ script:
    - ./isen_test
 
    # Run Python unittests
+   - cd python
+   - python test.py
    
 notifications:
   email:
