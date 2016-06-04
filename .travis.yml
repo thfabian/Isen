@@ -17,7 +17,10 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install eigen; fi
   
   - brew info python
-  - brew info boost
+  - brew info boost-python
+  
+  # Make homebrew python default
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; export PATH=/usr/local/bin:$PATH; fi
 
 addons:
   apt:
