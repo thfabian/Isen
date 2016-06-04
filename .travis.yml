@@ -18,6 +18,8 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install eigen python boost-python; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH=/usr/local/bin:$PATH; fi
 
+  - python --version
+  
 # APT (Linux)
 addons:
   apt:
@@ -66,14 +68,13 @@ before_script:
   - pushd $(pwd)
   - cd build
 
-  # Build Linux (with Python)
+  # Build Linux
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG; fi
   
-  # Build OSX (without Python)
-  
-  - export OSX_PYTHON_INCLUDE="$(python-config --includes | sed 's/^..//')"
-  - export OSX_PYTHON_LIBRARY="$(python-config --prefix)/lib/libpython2.7.dylib"
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=ON -DPYTHON_INCLUDE_DIR=${OSX_PYTHON_INCLUDE} -DPYTHON_LIBRARY=${OSX_PYTHON_LIBRARY} -DCMAKE_BUILD_TYPE=$CONFIG; fi
+  # Build OSX
+  #- export OSX_PYTHON_INCLUDE="$(python-config --includes | sed 's/^..//')"
+  #- export OSX_PYTHON_LIBRARY="$(python-config --prefix)/lib/libpython2.7.dylib"
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG; fi
   
   # Build & Install
   - make
