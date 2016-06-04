@@ -17,7 +17,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install eigen python boost-python; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH=/usr/local/bin:$PATH; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pip install numpy; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pip install numpy matplotlib; fi
   
 # APT (Linux)
 addons:
@@ -36,6 +36,7 @@ addons:
       - libeigen3-dev
       - python-dev
       - python-numpy
+      - python-matplotlib
 
 os:
 #  - linux
@@ -70,7 +71,7 @@ before_script:
   # Build Linux
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG; fi
   
-  # Build OSX
+  # Build OSX (use homebrew python)
   - export OSX_PYTHON_INCLUDE="$(python-config --prefix)/include/python2.7"
   - export OSX_PYTHON_LIBRARY="$(python-config --prefix)/lib/libpython2.7.dylib"
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then cmake ../ -DISEN_PYTHON=ON -DCMAKE_BUILD_TYPE=$CONFIG -DPYTHON_INCLUDE_DIR="${OSX_PYTHON_INCLUDE}" -DPYTHON_LIBRARY="${OSX_PYTHON_LIBRARY}"; fi
