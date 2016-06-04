@@ -17,8 +17,11 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install eigen python boost-python; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH=/usr/local/bin:$PATH; fi
-
-  - python --version
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pip install numpy; fi
+  
+  - python-config --includes
+  - python-config --prefix
+  - ls /usr/local/Cellar
   
 # APT (Linux)
 addons:
