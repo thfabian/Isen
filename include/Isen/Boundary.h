@@ -35,13 +35,11 @@ struct Boundary
         phi.block(nx + nb, 0, nb, phi.cols()) = phi.block(nb, 0, nb, phi.cols());
     }
 
-    /// Relaxation of boundary conditions.
+    /// Relax of boundary conditions.
     template <class Derived>
     static void
     relax(Eigen::MatrixBase<Derived>& phi, int nx, int nb, const VectorXf& phi1, const VectorXf& phi2) noexcept
     {
-        // TODO: phi1 and phi2 should be arrays?
-
         assert(phi.rows() == (nx + 2 * nb));
 
         // Relaxation is done over nr grid points
@@ -51,13 +49,22 @@ struct Boundary
         // Initialize relaxation array
         constexpr std::array<double, nr> rel{{1.0, 0.99, 0.95, 0.8, 0.5, 0.2, 0.05, 0.01}};
 
-        for(int i = 0; i < nr; ++i)
+        if(phi.cols() == 1)
         {
-            for(int j = 0; j < phi.cols(); ++j)
+            for(int i = 0; i < nr; ++i)
             {
-                phi(i, j) = phi1[0] * rel[i] + phi(i, j) * (1 - rel[i]);
-                phi(n - 1 - i, j) = phi2[0] * rel[i] + phi(n - 1 - i, j) * (1 - rel[i]);
+                phi(i) = phi1[0] * rel[i] + phi(i) * (1 - rel[i]);
+                phi(n - 1 - i) = phi2[0] * rel[i] + phi(n - 1 - i) * (1 - rel[i]);
             }
+        }
+        else
+        {
+            for(int i = 0; i < nr; ++i)
+                for(int k = 0; k < phi.cols(); ++k)
+                {
+                    phi(i, k) = phi1[k] * rel[i] + phi(i, k) * (1 - rel[i]);
+                    phi(n - 1 - i, k) = phi2[k] * rel[i] + phi(n - 1 - i, k) * (1 - rel[i]);
+                }
         }
     }
 };

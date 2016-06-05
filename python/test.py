@@ -1,17 +1,18 @@
 from __future__ import print_function, division
 
-import numpy as np
-import IsenPython
+from IsenPython import Solver, NameList, Output
+from IsenPython.Visualizer import Visualizer
 
-namelist = IsenPython.NameList()
+namelist = NameList()
 namelist.iprtcfl = False
 
-solver = IsenPython.Solver()
+solver = Solver()
 solver.init(namelist)
 
-# solver.run()
+solver.run()
 
 output = solver.getOutput()
-visualizer = IsenPython.Visualizer(output)
-visualizer.plotVelocityContour(0)
+visualizer = Visualizer(output)
 
+i = 6
+visualizer.plot('horizontal_velocity', i, "DownSlope-{0}.pdf".format(i))

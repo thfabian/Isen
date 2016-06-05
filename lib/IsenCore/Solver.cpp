@@ -12,15 +12,15 @@
  *  LICENSE.TXT for details.
  */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include <Isen/Boundary.h>
 #include <Isen/Logger.h>
 #include <Isen/Output.h>
 #include <Isen/Progressbar.h>
 #include <Isen/Solver.h>
 #include <Isen/Timer.h>
-
-#define _USE_MATH_DEFINES
-#include <cmath>
 
 #ifdef ISEN_PYTHON
 #include <boost/python.hpp>
@@ -234,13 +234,14 @@ void Solver::init() noexcept
 
     if(ishear)
     {
-        // *** Exercise 3.3 Downslope windstorm ***
-        // *** use indices k_shl, k_sht, and wind speeds u00_sh, u00
+        for(int k = 0; k < k_shl; ++k)
+            u0(k) = u00_sh;
 
-        // *** edit here ...
-    }
-    else
-    {
+        for(int k = k_shl; k < k_sht; ++k)
+            u0(k) = u00_sh - (u00_sh - u00) * (k - k_shl) / (k_sht - k_shl);
+
+        for(int k = k_sht; k < nz; ++k)
+            u0(k) = u00;
     }
 
     // Upstream profile for moisture (unstaggered)
@@ -386,7 +387,7 @@ void Solver::init() noexcept
 
     // Height-dependent diffusion coefficient
     //-------------------------------------------------------------
-    LOG() << " Height-dependent diffusion coefficient ... " << logger::flush;
+    LOG() << "Height-dependent diffusion coefficient ... " << logger::flush;
     t.start(); 
     
     tau_ = diff * VectorXf::Ones(nz).array();
@@ -706,8 +707,21 @@ void Solver::applyRelaxationBoundary() noexcept
     SOLVER_DECLARE_ALL_ALIASES
 
     assert(irelax);
-    //Boundary::relax(snew_, nx, nb, sbnd1_, sbnd2_);
-    //Boundary::relax(unew_, nx1, nb, ubnd1_ ,ubnd2_);
+    Boundary::relax(snew_, nx, nb, sbnd1_, sbnd2_);
+    Boundary::relax(unew_, nx1, nb, ubnd1_ ,ubnd2_);
+
+    if(imoist)
+    {
+        Boundary::relax(qvnew_, nx, nb, qvbnd1_, qvbnd2_);
+        Boundary::relax(qcnew_, nx, nb, qcbnd1_ ,qcbnd2_);
+        Boundary::relax(qrnew_, nx, nb, qrbnd1_, qrbnd2_);
+
+        if(imicrophys == 2)
+        {
+            Boundary::relax(ncnew_, nx, nb, ncbnd1_, ncbnd2_);
+            Boundary::relax(nrnew_, nx, nb, nrbnd1_, nrbnd2_);
+        }
+    }
 }
 
 void Solver::diagMontgomery() noexcept
