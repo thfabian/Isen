@@ -126,8 +126,8 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         solver->run();
         LOG() << logger::enable;
 
-//        CHECK_FIELD(zhtold, 1);
-//        CHECK_FIELD(zhtnow, 1);
+        CHECK_FIELD(zhtold, 1);
+        CHECK_FIELD(zhtnow, 1);
 
         CHECK_FIELD(uold, 1);
         CHECK_FIELD(unow, 1);
@@ -159,11 +159,9 @@ TEST_CASE("Cross validation (SolverOpt)", "[Solver]")
 
 TEST_CASE("Getter", "[Solver]")
 {
-    std::shared_ptr<Solver> solver = SolverFactory::create("ref");
-
     LOG() << logger::disable;
+    std::shared_ptr<Solver> solver = SolverFactory::create("ref");
     solver->init();
-    LOG() << logger::enable;
 
     SECTION("Matrix success")
     {
@@ -196,6 +194,8 @@ TEST_CASE("Getter", "[Solver]")
         CHECK_THROWS_AS(const auto fieldVec = solver->getField("topoXXX"), IsenException);
         CHECK_THROWS_AS(const auto fieldMat = solver->getField("uoldXXX"), IsenException);
     }
+
+    LOG() << logger::enable;
 }
 
 

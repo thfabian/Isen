@@ -19,6 +19,9 @@
 #include <Isen/Solver.h>
 #include <Isen/Timer.h>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #ifdef ISEN_PYTHON
 #include <boost/python.hpp>
 #endif
@@ -164,7 +167,7 @@ void Solver::init() noexcept
 
     // Make upstream profiles and initial conditions
     //-------------------------------------------------------------
-    const double g2 = g * g;
+        const double g2 = g * g;
 
     Timer t;
     LOG() << "Create initial profile ... " << logger::flush;
@@ -199,7 +202,7 @@ void Solver::init() noexcept
     exn0_[0] = exn00;
     for(int k = 1; k < nz1; ++k)
         exn0_[k]
-            = exn0_[k - 1] - (16 * g2 * (th0_[k] - th0_[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * pow2(th0_[k - 1] + th0_[k])));
+        = exn0_[k - 1] - (16 * g2 * (th0_[k] - th0_[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * pow2(th0_[k - 1] + th0_[k])));
 
     for(int k = 0; k < nz1; ++k)
         prs0_[k] = pref * std::pow(exn0_[k] / cp, cpdr);
@@ -339,8 +342,8 @@ void Solver::init() noexcept
     for(int k = 1; k < nz1; ++k)
     {
         zhtnow_.col(k) = zhtnow_.col(k - 1).array()
-                         - rdcp / g * 0.5 * (th0_[k - 1] * exn0_[k - 1] + th0_[k] * exn0_[k]) * (prs0_[k] - prs0_[k - 1])
-                               / (0.5 * (prs0_[k] + prs0_[k - 1]));
+            - rdcp / g * 0.5 * (th0_[k - 1] * exn0_[k - 1] + th0_[k] * exn0_[k]) * (prs0_[k] - prs0_[k - 1])
+            / (0.5 * (prs0_[k] + prs0_[k - 1]));
     }
 
     // Make topography
@@ -383,10 +386,19 @@ void Solver::init() noexcept
 
     // Height-dependent diffusion coefficient
     //-------------------------------------------------------------
+    LOG() << " Height-dependent diffusion coefficient ... " << logger::flush;
+    t.start(); 
+    
     tau_ = diff * VectorXf::Ones(nz).array();
 
-    // *** Exercise 3.1 height-dependent diffusion coefficient ***
+    for(int k = nz - nab; k < nz; ++k)
+    {
+        double sint = std::sin(0.5 * M_PI * ((k + 1) - (nz - nab)) / nab);
+        tau_(k) = diff + (diffabs - diff) * (sint * sint);
+    }
 
+    LOG_SUCCESS(t);
+    
     // Set up getter maps
     //-------------------------------------------------------------
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("zhtold", &zhtold_));
@@ -566,7 +578,9 @@ void Solver::run()
 
 
         // Microphysics
-        //--------------------------------------------------------
+        //---------------------------------------------------------
+        zhtnow_.swap(zhtold_);
+        geometricHeight();
 
 
         // Check maximum CFL condition
@@ -650,7 +664,19 @@ void Solver::horizontalDiffusion() noexcept
 
 void Solver::geometricHeight() noexcept
 {
+    SOLVER_DECLARE_ALL_ALIASES
     
+    for(int i = 0; i < nxb; ++i) 
+        zhtnow_(i, 0) = topo_(i) * topofact_;
+
+    const double rcpg05 = 0.5 * r / cp / g;
+    for(int k = 1; k < nz1; ++k)
+        for(int i = 0; i < nxb; ++i)
+        {
+            double th0exn = (th0_(k - 1) * exn_(i, k - 1) + th0_(k) * exn_(i, k));
+            double prs = (prs_(i, k) - prs_(i, k - 1)) / (0.5 * (prs_(i, k) + prs_(i, k - 1)));
+            zhtnow_(i, k) = zhtnow_(i, k - 1) - rcpg05 * th0exn * prs;
+        }
 }
 
 void Solver::applyPeriodicBoundary() noexcept
