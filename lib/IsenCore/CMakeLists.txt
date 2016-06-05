@@ -21,7 +21,7 @@ set(CORE_SOURCE
     Progressbar.cpp
     Terminal.cpp
     Solver.cpp
-    SolverOpt.cpp
+    SolverCpu.cpp
     )
 
 set(CORE_HEADER
@@ -39,8 +39,8 @@ set(CORE_HEADER
     ${ISEN_INCLUDE_DIR}/Isen/Timer.h
     ${ISEN_INCLUDE_DIR}/Isen/Type.h
     ${ISEN_INCLUDE_DIR}/Isen/Solver.h
+    ${ISEN_INCLUDE_DIR}/Isen/SolverCpu.h    
     ${ISEN_INCLUDE_DIR}/Isen/SolverFactory.h
-    ${ISEN_INCLUDE_DIR}/Isen/SolverOpt.h
     )
 
 add_library(IsenCore ${CORE_SOURCE} ${CORE_HEADER})

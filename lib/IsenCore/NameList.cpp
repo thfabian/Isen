@@ -123,6 +123,7 @@ void NameList::setByName(const std::string& name, const int& value)
     {
         throw IsenException("variable '%s' is not part of Namelist", name);
     }
+    this->update();
 }
 
 void NameList::setByName(const std::string& name, const double& value)
@@ -185,6 +186,7 @@ void NameList::setByName(const std::string& name, const double& value)
     {
         throw IsenException("variable '%s' is not part of Namelist", name);
     }
+    this->update();    
 }
 
 void NameList::setByName(const std::string& name, const bool& value)
@@ -239,6 +241,7 @@ void NameList::setByName(const std::string& name, const bool& value)
     {
         throw IsenException("variable '%s' is not part of Namelist", name);
     }
+    this->update();    
 }
 
 void NameList::setByName(const std::string& name, const std::string& value)
@@ -253,6 +256,7 @@ void NameList::setByName(const std::string& name, const std::string& value)
     {
         throw IsenException("variable '%s' is not part of Namelist", name);
     }
+    this->update();    
 }
 
 void NameList::print(std::stringstream& out) const

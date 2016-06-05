@@ -512,7 +512,7 @@ void Solver::run()
 
     Progressbar pbar(nts);
     const bool logIsDisabled = LOG().isDisabled();
-    pbar.disableProgressbar = logIsDisabled;
+    Progressbar::disableProgressbar = logIsDisabled;
 
     double curTime = 0;
 
@@ -576,12 +576,11 @@ void Solver::run()
 
         // Calculation of geometric height (staggered)
         //--------------------------------------------------------
-
+        zhtnow_.swap(zhtold_);
+        geometricHeight();
 
         // Microphysics
         //---------------------------------------------------------
-        zhtnow_.swap(zhtold_);
-        geometricHeight();
 
 
         // Check maximum CFL condition
@@ -779,11 +778,11 @@ void Solver::progVelocity() noexcept
 
     const double dtdx = dtdx_;
     const double dtdx2 = 2 * dtdx_;
-    const int nxnb = nx + nb + 1;
+    const int nx1nb = nx + nb + 1;
 
     for(int k = 0; k < nz; ++k)
     {
-        for(int i = nb; i < nxnb; ++i)
+        for(int i = nb; i < nx1nb; ++i)
         {
             unew_(i, k) = uold_(i, k) - dtdx * unow_(i, k) * (unow_(i + 1, k) - unow_(i - 1, k))
                           - dtdx2 * (mtg_(i, k) - mtg_(i - 1, k));

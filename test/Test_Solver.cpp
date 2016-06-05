@@ -24,7 +24,7 @@
 
 ISEN_NAMESPACE_BEGIN
 
-// Check field
+// Check field by loading the refrence field from disk
 #define CHECK_FIELD(field, time)                                                                                       \
     try                                                                                                                \
     {                                                                                                                  \
@@ -64,6 +64,7 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         dir = "../data";
     }
 
+    Progressbar::disableProgressbar = false;            
     Progressbar::printBar('-');
     if(!filename.empty())
     {
@@ -75,8 +76,9 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
 
         Parser parser;
         std::shared_ptr<NameList> namelist;
-
         CHECK_NOTHROW(namelist = parser.parse(filename));
+        namelist->iprtcfl = false;
+        
         std::shared_ptr<Solver> solver = SolverFactory::create("ref", namelist);
 
         //-------------------------------------------------
@@ -152,9 +154,66 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
 
 #undef CHECK_FIELD
 
-TEST_CASE("Cross validation (SolverOpt)", "[Solver]")
-{
+// Check field by comparing to refrence implemention
+#define CHECK_FIELD_IMPL(field, solverTest)                                                                            \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        t.start();                                                                                                     \
+        bool passed = true;                                                                                            \
+        LOG() << "Checking " << #field << " ... " << logger::flush;                                                    \
+        CHECK((passed = FieldVerifier::verify(#field, solverRef->getField(#field), solverTest->getField(#field))));    \
+        if(passed)                                                                                                     \
+        {                                                                                                              \
+            LOG_SUCCESS(t);                                                                                            \
+        }                                                                                                              \
+        else                                                                                                           \
+        {                                                                                                              \
+            LOG() << logger::failed;                                                                                   \
+        }                                                                                                              \
+    } while(0)
 
+#define CHECK_FIELD_OPT(field) CHECK_FIELD_IMPL(field, solverOpt)
+
+TEST_CASE("Cross verification (SolverOpt)", "[Solver]")
+{    
+    Timer t;         
+    LOG() << logger::disable;
+    
+    Progressbar::disableProgressbar = false;        
+    Progressbar::printBar('-');
+    std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "SolverOpt verification";
+    std::cout << " with Solver" << std::endl;
+    Progressbar::printBar('-');
+    
+    auto namelist = std::make_shared<NameList>();
+    namelist->setByName("time", 50.0);
+    namelist->setByName("iprtcfl", false);    
+    
+    std::shared_ptr<Solver> solverRef = SolverFactory::create("ref", namelist);
+    std::shared_ptr<Solver> solverOpt = SolverFactory::create("cpu", namelist);
+    
+    solverRef->init();
+    solverOpt->init();
+ 
+    solverRef->run();
+    solverOpt->run();    
+    LOG() << logger::enable;    
+
+    CHECK_FIELD_OPT(zhtold);
+    CHECK_FIELD_OPT(zhtnow);
+
+    CHECK_FIELD_OPT(uold);
+    CHECK_FIELD_OPT(unow);
+
+    CHECK_FIELD_OPT(sold);
+    CHECK_FIELD_OPT(snow);
+
+    CHECK_FIELD_OPT(mtg);
+
+    CHECK_FIELD_OPT(exn);
+    CHECK_FIELD_OPT(prs);
+
+    CHECK_FIELD_OPT(tau);
 }
 
 TEST_CASE("Getter", "[Solver]")

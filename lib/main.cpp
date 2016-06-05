@@ -112,7 +112,11 @@ int main(int argc, char* argv[])
             if(!namelistJit.empty())
                 for(const auto& line : namelistJit)
                     parser.parseSingleLine(namelist, line);
-            solver =  SolverFactory::create("ref", namelist, archiveType);
+            
+            if(cl.has("solver"))
+                solver =  SolverFactory::create(cl.as<std::string>("solver"), namelist, archiveType);            
+            else
+                solver =  SolverFactory::create("ref", namelist, archiveType);
         }
         catch(const std::exception& e)
         {

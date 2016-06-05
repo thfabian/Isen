@@ -51,12 +51,17 @@ CommandLine::CommandLine() : desc_("Options", Terminal::getWidth())
         ("no-output", "Don't write simulation to output file.")
         // --print-namelist
         ("print-namelist,p", "Print the parsed NameList.")
-        // --print-namelist
+        // --namelist
         ("namelist", po::value<std::vector<std::string>>(),
          "Namelist like string with comma seprated 'key=value' pair(s). The "
          "parsed variables take precedence over those provided by the input file.\nExample: --namelist=\"iprtcfl=0,itime=1\"")
         // --quiet
         ("quiet", "Be quit (no output to terminal).")
+         // --solver, -s
+        ("solver,s", po::value<std::string>(), "Set the solver implementation. Allowed values are:"
+                                                "\n ref - Refrence implementation"
+                                                "\n cpu - Parallel cpu optimized implementation"
+                                                "\nBy default the cpu implementation is used.")
         // --archive, -a
         ("archive,a", po::value<std::string>(), "Set the archive type of the output file(s). Allowed values are:"
                                                 "\n text - A portable plain text archive"
@@ -96,9 +101,9 @@ void CommandLine::parse(int argc, const char* const argv[])
         po::store(po::command_line_parser(argc, argv).options(desc_).positional(posDesc_).run(), variableMap_);
         po::notify(variableMap_);
 
-
         // Validation
         validate<std::string>("archive", variableMap_, {"text", "xml", "bin"});
+        validate<std::string>("solver", variableMap_, {"ref", "cpu"});        
         validate<std::string>("parsing-style", variableMap_, {"matlab", "python"});
     }
     catch(const std::exception& e)

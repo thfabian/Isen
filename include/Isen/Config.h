@@ -28,31 +28,6 @@
 #define ISEN_NAMESPACE_BEGIN namespace Isen {
 #define ISEN_NAMESPACE_END }
 
-// INLINE compiler intrinsic
-#if defined(__GNUC__)
-#define ISEN_INLINE inline __attribute__((always_inline))
-#elif defined(_MSC_VER)
-#define ISEN_INLINE inline __forceinline
-#else
-#define ISEN_INLINE inline
-#endif
-
-// NORETURN compiler intrinsic
-#if defined(_MSC_VER)
-#define ISEN_NORETURN __declspec(noreturn)
-#elif defined(__GNUC__)
-#define ISEN_NORETURN __attribute__((noreturn))
-#else
-#define ISEN_NORETURN
-#endif
-
-// UNUSED compiler instrinsic
-#if defined(__GNUC__)
-#define ISEN_UNUSED __attribute__((unused))
-#else
-#define ISEN_UNUSED
-#endif
-
 // Define platform
 #if defined(_MSC_VER) || defined(_WIN32) || defined(_WIN64)
 #define ISEN_PLATFORM_WINDOWS 1
@@ -81,6 +56,40 @@
 
 #if defined(_MSC_VER)
 #define ISEN_COMPILER_MSVC 1
+#endif
+
+// INLINE compiler intrinsic
+#if defined(ISEN_COMPILER_GNU)
+#define ISEN_INLINE inline __attribute__((always_inline))
+#elif defined(ISEN_COMPILER_MSVC)
+#define ISEN_INLINE inline __forceinline
+#else
+#define ISEN_INLINE inline
+#endif
+
+// NORETURN compiler intrinsic
+#if defined(ISEN_COMPILER_MSVC)
+#define ISEN_NORETURN __declspec(noreturn)
+#elif defined(ISEN_COMPILER_GNU)
+#define ISEN_NORETURN __attribute__((noreturn))
+#else
+#define ISEN_NORETURN
+#endif
+
+// UNUSED compiler instrinsic
+#if defined(ISEN_COMPILER_GNU)
+#define ISEN_UNUSED __attribute__((unused))
+#else
+#define ISEN_UNUSED
+#endif
+
+// RESTRICT keyword
+#if defined(ISEN_COMPILER_MSVC)
+#define ISEN_RESTRICT __restrict
+#elif defined(ISEN_COMPILER_GNU)
+#define ISEN_RESTRICT __restrict__
+#else
+#define ISEN_RESTRICT
 #endif
 
 // Exclude unnecessary APIs / Macros on Windows

@@ -18,7 +18,7 @@
 #include <Isen/Common.h>
 #include <Isen/Output.h>
 #include <Isen/Solver.h>
-#include <Isen/SolverOpt.h>
+#include <Isen/SolverCpu.h>
 #include <string>
 
 ISEN_NAMESPACE_BEGIN
@@ -39,8 +39,8 @@ struct SolverFactory
     {
         if(name.empty() || name == "ref")
             return std::make_shared<Solver>(namelist, archiveType);
-        else if(name == "opt")
-            return std::make_shared<SolverOpt>(namelist, archiveType);
+        else if(name == "cpu")
+            return std::make_shared<SolverCpu>(namelist, archiveType);
         else
             throw IsenException("invalid Solver name '%s'", name);
     }

@@ -66,7 +66,7 @@ if(NOT(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC"))
                             )
         string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd1478 -simd")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd1478 -simd -fma")
         
         # Report on vectorization
         if(ISEN_VEC_REPORT)
@@ -102,6 +102,11 @@ if(ISEN_BENCHMARK)
     if(NOT(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC"))
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
     endif(NOT(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC"))
+    
+    # Add debug flag for Intel VTune
+    if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel" )
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+    endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel" )
 endif(ISEN_BENCHMARK)
 
 ########################################################################################################################
@@ -149,6 +154,16 @@ endif(ISEN_PYTHON)
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
+
+########################################################################################################################
+# OpenMP 
+########################################################################################################################
+find_package(OpenMP)
+
+set(ISEN_USE_OPENMP ${OPENMP_FOUND} CACHE BOOL "Compile with OpenMP support")
+if(ISEN_USE_OPENMP AND OPENMP_FOUND)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif(ISEN_USE_OPENMP AND OPENMP_FOUND)
 
 ########################################################################################################################
 # Find Eigen3 (required)
