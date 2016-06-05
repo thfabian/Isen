@@ -167,7 +167,7 @@ void Solver::init() noexcept
 
     // Make upstream profiles and initial conditions
     //-------------------------------------------------------------
-        const double g2 = g * g;
+    const double g2 = g * g;
 
     Timer t;
     LOG() << "Create initial profile ... " << logger::flush;

@@ -14,4 +14,3 @@
 from __future__ import print_function, division
 
 from .IsenPythonCxx import *
-from .Visualizer import Visualizer
