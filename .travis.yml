@@ -39,11 +39,11 @@ addons:
       - python-matplotlib
 
 os:
-#  - linux
+  - linux
   - osx
   
 env:
-#  - CONFIG=Release
+  - CONFIG=Release
   - CONFIG=Debug
 
 language: cpp
@@ -91,7 +91,7 @@ script:
 
    # Run Python unittests
    - cd python
-   - python test.py
+   - python isen_test.py
    
 notifications:
   email:
