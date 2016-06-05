@@ -80,6 +80,6 @@ add_custom_command(TARGET IsenPython POST_BUILD
            ${CMAKE_SOURCE_DIR}/python/IsenPython/$<TARGET_FILE_NAME:IsenPython>)
            
 ## Installation
-install(TARGETS IsenPython LIBRARY DESTINATION ${CMAKE_SYSTEM_NAME}/python/IsenPython)
+install(TARGETS IsenPython DESTINATION ${CMAKE_SYSTEM_NAME}/python/IsenPython)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/python DESTINATION ${CMAKE_SYSTEM_NAME})
 

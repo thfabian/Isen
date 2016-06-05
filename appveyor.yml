@@ -31,7 +31,7 @@ build_script:
     # Setup Python (Numpy)
     # --------------------
     - cmd: set "PYTHON_INCLUDE_DIR=C:\Python27-x64\include"
-    - cmd: set "DPYTHON_LIBRARY=C:\Python27-x64\libs"
+    - cmd: set "PYTHON_LIBRARY=C:\Python27-x64\libs"
     - cmd: set "PYTHON_EXECUTABLE=C:\Python27-x64\python.exe"
     
     - cmd: C:\Python27-x64\Scripts\pip.exe install numpy
@@ -41,13 +41,21 @@ build_script:
     - cmd: set "BOOST_ROOT=C:\Libraries\boost_1_60_0"
     - cmd: set "BOOST_LIBRARYDIR=C:\Libraries\boost_1_60_0\lib64-msvc-14.0"
     
-    # Build
+    # Build & install
     - cmd: cmake "-G%GENERATOR%" -H. -Bbuild -DISEN_PYTHON="%PYTHON_ENABLE%" -DBoost_USE_STATIC_LIBS="ON" -DPYTHON_EXECUTABLE="%PYTHON_EXECUTABLE%"
     - cmd: cmake --build build --config "%CONFIG%"
+    - cmd: cmake --build build --config "%CONFIG%" --target INSTALL
 
 test_script:
-  - cmd: set "TEST_PATH=build\%CONFIG%"
-  - cmd: cd %TEST_PATH%
-    # To enable testing with python we would need to load the correct python dll
-  - cmd: if [%PYTHON_ENABLE%]==[OFF] .\isen_test.exe
- 
+  - cmd: cd bin\Windows
+  - cmd: PATH %PATH%;%BOOST_LIBRARYDIR%
+  - cmd: PATH %PATH%;%PYTHON_LIBRARY%
+  
+  # C++ tests
+  # -----------
+  - cmd: .\isen_test.exe
+  
+  # Python tests
+  # -----------
+  - cmd: cd python
+  - cmd: if [%PYTHON_ENABLE%]==[ON] python isen_test.py
