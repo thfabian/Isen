@@ -34,7 +34,7 @@ build_script:
     - cmd: set "PYTHON_LIBRARY=C:\Python27-x64\libs"
     - cmd: set "PYTHON_EXECUTABLE=C:\Python27-x64\python.exe"
     
-    - cmd: C:\Python27-x64\Scripts\pip.exe install numpy
+    - cmd: C:\Python27-x64\Scripts\pip.exe install numpy matplotlib
     
     # Setup Boost
     # -----------
@@ -57,5 +57,5 @@ test_script:
   
   # Python tests
   # -----------
-  - cmd: cd python
-  - cmd: if [%PYTHON_ENABLE%]==[ON] python isen_test.py
+  - cmd: if [%PYTHON_ENABLE%]==[ON] cd python
+  - cmd: if [%PYTHON_ENABLE%]==[ON] %PYTHON_EXECUTABLE% isen_test.py
