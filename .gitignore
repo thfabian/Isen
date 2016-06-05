@@ -35,7 +35,7 @@
 # Directories
 build*
 .idea
-build
+bin
 
 # Doc HTML files
 doc/html/
