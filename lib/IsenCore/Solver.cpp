@@ -638,8 +638,6 @@ void Solver::horizontalDiffusion() noexcept
     const int nxnb = nx + nb;
     const int nxnb1 = nx + nb + 1;
 
-    // Solve diffusion equation
-    //------------------------------------------------------------
     for(int k = 0; k < nz; ++k)
     {
         const double tau = tau_(k);

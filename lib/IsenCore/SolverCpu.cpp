@@ -82,22 +82,39 @@ void SolverCpu::geometricHeight() noexcept
             zhtnow_(i, k) = zhtnow_(i, k - 1) - rcpg05 * th0exn * prs;
         }
 }
+// -------------------------------------------------- diagMontgomery ---------------------------------------------------
+ISEN_NO_INLINE void kernel_diagMontgomery_Exner(const int nx,
+                                                const int nz,
+                                                const int nb,
+                                                double* ISEN_RESTRICT exn,
+                                                const double* ISEN_RESTRICT prs,
+                                                const double cp,
+                                                const double pref,
+                                                const double rdcp)
+{
+    const int nxb = nx + 2 * nb;
+    const int nz1 = nz + 1;
+    
+    const double fac = cp * std::pow(1.0 / pref, rdcp);
+
+    for(int k = 0; k < nz1; ++k)
+        for(int i = 0; i < nxb; ++i)
+            exn[k * nxb + i] = fac * std::pow(prs[k * nxb + i], rdcp);
+}
 
 void SolverCpu::diagMontgomery() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
     const double dth05 = dth * 0.5;
-    const double gtopofact_ = g * topofact_;
+    const double gtopofact = g * topofact_;
 
     // Exner function
-    for(int k = 0; k < nz1; ++k)
-        for(int i = 0; i < nxb; ++i)
-            exn_(i, k) = cp * std::pow(prs_(i, k) / pref, rdcp);
+    kernel_diagMontgomery_Exner(nx, nz, nb, exn_.data(), prs_.data(), cp, pref, rdcp);
 
     // Montgomery
     for(int i = 0; i < nxb; ++i)
-        mtg_(i, 0) = gtopofact_ * topo_(i) + th0_(0) * exn_(i, 0) + dth05 * exn_(i, 0);
+        mtg_(i, 0) = gtopofact * topo_(i) + th0_(0) * exn_(i, 0) + dth05 * exn_(i, 0);
 
     for(int k = 1; k < nz; ++k)
         for(int i = 0; i < nxb; ++i)
@@ -106,15 +123,15 @@ void SolverCpu::diagMontgomery() noexcept
 
 
 // -------------------------------------------------- diagPressure -----------------------------------------------------
-void kernel_diagPressure(const int nxb,
-                         const int nz,
-                         double* ISEN_RESTRICT prs,
-                         const double* ISEN_RESTRICT snow,
-                         const double gdth,
-                         const double prs0)
+ISEN_NO_INLINE void kernel_diagPressure(const int nxb,
+                                        const int nz,
+                                        double* ISEN_RESTRICT prs,
+                                        const double* ISEN_RESTRICT snow,
+                                        const double gdth,
+                                        const double prs0)
 {
     const int nz_offset = nz * nxb;
-    
+
     for(int i = 0; i < nxb; ++i)
         prs[nz_offset + i] = prs0;
 
@@ -130,14 +147,14 @@ void SolverCpu::diagPressure() noexcept
 }
 
 // -------------------------------------------------- progIsendens -----------------------------------------------------
-void kernel_progIsendens(const int nx,
-                         const int nz,
-                         const int nb,
-                         double* ISEN_RESTRICT snew,
-                         const double* ISEN_RESTRICT snow,
-                         const double* ISEN_RESTRICT sold,
-                         const double* ISEN_RESTRICT unow,
-                         const double dtdx05)
+ISEN_NO_INLINE void kernel_progIsendens(const int nx,
+                                        const int nz,
+                                        const int nb,
+                                        double* ISEN_RESTRICT snew,
+                                        const double* ISEN_RESTRICT snow,
+                                        const double* ISEN_RESTRICT sold,
+                                        const double* ISEN_RESTRICT unow,
+                                        const double dtdx05)
 {
     const int nxb = nx + 2 * nb;
     const int nxb1 = nx + 2 * nb + 1;
@@ -159,14 +176,14 @@ void SolverCpu::progIsendens() noexcept
 }
 
 // -------------------------------------------------- progVelocity -----------------------------------------------------
-void kernel_progVelocity(const int nx,
-                         const int nz,
-                         const int nb,
-                         double* ISEN_RESTRICT unew,
-                         const double* ISEN_RESTRICT unow,
-                         const double* ISEN_RESTRICT uold,
-                         const double* ISEN_RESTRICT mtg,
-                         const double dtdx)
+ISEN_NO_INLINE void kernel_progVelocity(const int nx,
+                                        const int nz,
+                                        const int nb,
+                                        double* ISEN_RESTRICT unew,
+                                        const double* ISEN_RESTRICT unow,
+                                        const double* ISEN_RESTRICT uold,
+                                        const double* ISEN_RESTRICT mtg,
+                                        const double dtdx)
 {
     const int nxb = nx + 2 * nb;
     const int nx1b = nx + 2 * nb + 1;

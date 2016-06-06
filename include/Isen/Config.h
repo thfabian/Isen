@@ -67,6 +67,15 @@
 #define ISEN_INLINE inline
 #endif
 
+// NO_INLINE compiler intrinsic
+#if defined(ISEN_COMPILER_GNU)
+#define ISEN_NO_INLINE __attribute__((noinline))
+#elif defined(ISEN_COMPILER_MSVC)
+#define ISEN_NO_INLINE __declspec(noinline)
+#else
+#define ISEN_NO_INLINE
+#endif
+
 // NORETURN compiler intrinsic
 #if defined(ISEN_COMPILER_MSVC)
 #define ISEN_NORETURN __declspec(noreturn)
@@ -90,6 +99,19 @@
 #define ISEN_RESTRICT __restrict__
 #else
 #define ISEN_RESTRICT
+#endif
+
+// VECTORIZE_LOOP compiler hint
+#if defined(ISEN_COMPILER_MSVC)
+#define ISEN_VECTORIZE_LOOP __pragma(loop(ivdep))
+#elif defined(ISEN_COMPILER_INTEL)
+#define ISEN_VECTORIZE_LOOP _Pragma("simd")
+#elif defined(ISEN_COMPILER_CLANG)
+#define ISEN_VECTORIZE_LOOP _Pragma("clang loop vectorize(enable)")
+#elif defined(ISEN_COMPILER_GNU)
+#define ISEN_VECTORIZE_LOOP _Pragma("simd") 
+#else
+#define ISEN_VECTORIZE_LOOP
 #endif
 
 // Exclude unnecessary APIs / Macros on Windows
