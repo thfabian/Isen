@@ -186,7 +186,7 @@ TEST_CASE("Cross verification (SolverOpt)", "[Solver]")
     Progressbar::printBar('-');
     
     auto namelist = std::make_shared<NameList>();
-    namelist->setByName("time", 50.0);
+    namelist->setByName("time", 100.0); // 10 timesteps
     namelist->setByName("iprtcfl", false);    
     
     std::shared_ptr<Solver> solverRef = SolverFactory::create("ref", namelist);

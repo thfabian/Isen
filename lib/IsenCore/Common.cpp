@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 namespace bf = boost::filesystem;
 
@@ -93,6 +94,28 @@ std::string memString(std::size_t size, bool precise)
     os << std::setprecision(suffix == 0 ? 0 : (precise ? 4 : 1)) << std::fixed << value << " " << suffixes[suffix];
 
     return os.str();
+}
+
+extern unsigned int getNumThreads(int nx, int nz)
+{
+#ifdef ISEN_NUM_CORES
+    unsigned int numThreads = ISEN_NUM_CORES;
+#else
+    unsigned int numThreads = std::thread::hardware_concurrency();
+    
+    // We assume hyper-threading
+    if(numThreads > 2)
+        numThreads /= 2;
+#endif
+
+     // Dual-Core
+    if(numThreads <= 2)
+        return numThreads;
+     // Quad-Core
+    else if(numThreads <= 4)
+        return numThreads;
+    else
+        return numThreads;
 }
 
 

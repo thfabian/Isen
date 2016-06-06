@@ -36,7 +36,6 @@ SolverCpu::SolverCpu(std::shared_ptr<NameList> namelist, Output::ArchiveType arc
     : Base(namelist, archiveType)
 {}
 
-
 void SolverCpu::horizontalDiffusion() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
@@ -97,28 +96,43 @@ ISEN_NO_INLINE void kernel_diagMontgomery_Exner(const int nx,
     
     const double fac = cp * std::pow(1.0 / pref, rdcp);
 
+//#pragma omp parallel for num_threads(getNumThreads(nx, nz))
     for(int k = 0; k < nz1; ++k)
         for(int i = 0; i < nxb; ++i)
             exn[k * nxb + i] = fac * std::pow(prs[k * nxb + i], rdcp);
+}
+
+ISEN_NO_INLINE void kernel_diagMontgomery_Montgomery(const int nx,
+                                                     const int nz,
+                                                     const int nb,
+                                                     double* ISEN_RESTRICT mtg,
+                                                     const double* ISEN_RESTRICT topo,
+                                                     const double* ISEN_RESTRICT exn,
+                                                     const double th0,
+                                                     const double cp,
+                                                     const double dth,
+                                                     const double gtopofact)
+{
+    const int nxb = nx + 2 * nb;
+    const double th0dth05 = dth * 0.5 + th0;
+
+    for(int i = 0; i < nxb; ++i)
+        mtg[i] = gtopofact * topo[i] + th0dth05 * exn[i];
+
+    for(int k = 1; k < nz; ++k)
+        for(int i = 0; i < nxb; ++i)
+            mtg[k * nxb + i] = mtg[(k - 1) * nxb + i] + dth * exn[k * nxb + i];
 }
 
 void SolverCpu::diagMontgomery() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
-    const double dth05 = dth * 0.5;
-    const double gtopofact = g * topofact_;
-
     // Exner function
     kernel_diagMontgomery_Exner(nx, nz, nb, exn_.data(), prs_.data(), cp, pref, rdcp);
 
     // Montgomery
-    for(int i = 0; i < nxb; ++i)
-        mtg_(i, 0) = gtopofact * topo_(i) + th0_(0) * exn_(i, 0) + dth05 * exn_(i, 0);
-
-    for(int k = 1; k < nz; ++k)
-        for(int i = 0; i < nxb; ++i)
-            mtg_(i, k) = mtg_(i, k - 1) + dth * exn_(i, k);
+    kernel_diagMontgomery_Montgomery(nx, nz, nb, mtg_.data(), topo_.data(), exn_.data(), th0_(0), cp, dth,  g * topofact_);
 }
 
 
