@@ -66,7 +66,7 @@ if(NOT(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC"))
                             )
         string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd1478 -simd -fma")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd1478 -wd3180 -simd -fma")
         
         # Report on vectorization
         if(ISEN_VEC_REPORT)

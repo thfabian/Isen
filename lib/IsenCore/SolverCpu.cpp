@@ -36,31 +36,83 @@ SolverCpu::SolverCpu(std::shared_ptr<NameList> namelist, Output::ArchiveType arc
     : Base(namelist, archiveType)
 {}
 
-void SolverCpu::horizontalDiffusion() noexcept
+// -------------------------------------------------- horizontalDiffusion ----------------------------------------------
+ISEN_NO_INLINE void kernel_horizontalDiffusion(const int nx,
+                                               const int nz,
+                                               const int nb,
+                                               double* ISEN_RESTRICT unew,
+                                               double* ISEN_RESTRICT snew,
+                                               const double* ISEN_RESTRICT unow,
+                                               const double* ISEN_RESTRICT snow,
+                                               const double* ISEN_RESTRICT tau)
 {
-    SOLVER_DECLARE_ALL_ALIASES
-
     const int nxnb = nx + nb;
     const int nxnb1 = nx + nb + 1;
 
+    const int nxb = nx + 2 * nb;
+    const int nxb1 = nx + 2 * nb + 1;
+
+#pragma omp parallel for num_threads(getNumThreads(nx, nz))
     for(int k = 0; k < nz; ++k)
     {
-        const double tau = tau_(k);
-        const bool sel = tau_(k) > 0.0;
-        const bool negSel = !sel;
+        const double tau025 = 0.25 * tau[k];
 
         // Velocity
-        for(int i = nb; i < nxnb1; ++i)
-        {
-            unew_(i, k) = sel * (unow_(i, k) + 0.25 * tau * (unow_(i - 1, k) - 2 * unow_(i, k) + unow_(i + 1, k)))
-                          + negSel * unow_(i, k);
-        }
+        if(tau[k] > 0.0)
+            for(int i = nb; i < nxnb1; ++i)
+                unew[k * nxb1 + i] = unow[k * nxb1 + i]
+                                     + tau025
+                                           * (unow[k * nxb1 + i - 1] - 2 * unow[k * nxb1 + i] + unow[k * nxb1 + i + 1]);
+        else
+            for(int i = nb; i < nxnb1; ++i)
+                unew[k * nxb1 + i] = unow[k * nxb1 + i];
 
         // Isentropic density
-        for(int i = nb; i < nxnb; ++i)
+        if(tau[k] > 0.0)
+            for(int i = nb; i < nxnb; ++i)
+                snew[k * nxb + i] = snow[k * nxb + i]
+                                    + tau025 * (snow[k * nxb + i - 1] - 2 * snow[k * nxb + i] + snow[k * nxb + i + 1]);
+        else
+            for(int i = nb; i < nxnb; ++i)
+                snew[k * nxb + i] = snow[k * nxb + i];
+    }
+}
+
+void SolverCpu::horizontalDiffusion() noexcept
+{
+    SOLVER_DECLARE_ALL_ALIASES
+    kernel_horizontalDiffusion(nx, nz, nb, unew_.data(), snew_.data(), unow_.data(), snow_.data(), tau_.data());
+}
+
+// -------------------------------------------------- geometricHeight --------------------------------------------------
+ISEN_NO_INLINE void kernel_geometricHeight(const int nx,
+                                           const int nz,
+                                           const int nb,
+                                           double* ISEN_RESTRICT zhtnow,
+                                           const double* ISEN_RESTRICT topo,
+                                           const double* ISEN_RESTRICT th0,
+                                           const double* ISEN_RESTRICT exn,
+                                           const double* ISEN_RESTRICT prs,
+                                           const double topofact,
+                                           const double rcpg05)
+{
+    const int nxb = nx + 2 * nb;
+    const int nz1 = nz + 1;
+
+    for(int i = 0; i < nxb; ++i)
+        zhtnow[i] = topo[i] * topofact;
+
+    for(int k = 1; k < nz1; ++k)
+    {
+        double th0_kminus1 = th0[k - 1];
+        double th0_center = th0[k];
+
+        for(int i = 0; i < nxb; ++i)
         {
-            snew_(i, k) = sel * (snow_(i, k) + 0.25 * tau * (snow_(i - 1, k) - 2 * snow_(i, k) + snow_(i + 1, k)))
-                          + negSel * snow_(i, k);
+            double th0exn = th0_kminus1 * exn[(k - 1) * nxb + i] + th0_center * exn[k * nxb + i];
+            double prs_delta = (prs[k * nxb + i] - prs[(k - 1) * nxb + i])
+                               / (0.5 * (prs[k * nxb + i] + prs[(k - 1) * nxb + i]));
+            zhtnow[k * nxb + i] = zhtnow[(k - 1) * nxb + i] - rcpg05 * th0exn * prs_delta;
         }
     }
 }
@@ -68,19 +120,10 @@ void SolverCpu::horizontalDiffusion() noexcept
 void SolverCpu::geometricHeight() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
-    
-    for(int i = 0; i < nxb; ++i) 
-        zhtnow_(i, 0) = topo_(i) * topofact_;
-
-    const double rcpg05 = 0.5 * r / cp / g;
-    for(int k = 1; k < nz1; ++k)
-        for(int i = 0; i < nxb; ++i)
-        {
-            double th0exn = (th0_(k - 1) * exn_(i, k - 1) + th0_(k) * exn_(i, k));
-            double prs = (prs_(i, k) - prs_(i, k - 1)) / (0.5 * (prs_(i, k) + prs_(i, k - 1)));
-            zhtnow_(i, k) = zhtnow_(i, k - 1) - rcpg05 * th0exn * prs;
-        }
+    kernel_geometricHeight(nx, nz, nb, zhtnow_.data(), topo_.data(), th0_.data(), exn_.data(), prs_.data(), topofact_,
+                           0.5 * r / cp / g);
 }
+
 // -------------------------------------------------- diagMontgomery ---------------------------------------------------
 ISEN_NO_INLINE void kernel_diagMontgomery_Exner(const int nx,
                                                 const int nz,
@@ -96,7 +139,7 @@ ISEN_NO_INLINE void kernel_diagMontgomery_Exner(const int nx,
     
     const double fac = cp * std::pow(1.0 / pref, rdcp);
 
-//#pragma omp parallel for num_threads(getNumThreads(nx, nz))
+#pragma omp parallel for num_threads(getNumThreads(nx, nz))
     for(int k = 0; k < nz1; ++k)
         for(int i = 0; i < nxb; ++i)
             exn[k * nxb + i] = fac * std::pow(prs[k * nxb + i], rdcp);
@@ -174,6 +217,7 @@ ISEN_NO_INLINE void kernel_progIsendens(const int nx,
     const int nxb1 = nx + 2 * nb + 1;
     const int nxnb = nx + nb;
 
+#pragma omp parallel for num_threads(getNumThreads(nx, nz))    
     for(int k = 0; k < nz; ++k)
         for(int i = nb; i < nxnb; ++i)
         {
@@ -205,6 +249,7 @@ ISEN_NO_INLINE void kernel_progVelocity(const int nx,
 
     const double dtdx2 = 2 * dtdx;
 
+#pragma omp parallel for num_threads(getNumThreads(nx, nz))        
     for(int k = 0; k < nz; ++k)
         for(int i = nb; i < nx1nb; ++i)
         {
