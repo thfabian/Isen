@@ -26,6 +26,9 @@ void PySolver::initWithNameList(PyNameList namelist)
     // Copy NameList
     namelist_ = namelist.getNameList();
 
+    if(solver_)
+        solver_.reset();
+    
     // Construct Solver
     solver_ = SolverFactory::create(name_, namelist_);
 
@@ -50,6 +53,9 @@ void PySolver::initWithFile(const char* filename)
             throw IsenException("Solver: %s", err.what());
         }
     }
+
+    if(solver_)
+        solver_.reset();
 
     // Construct Solver
     solver_ = SolverFactory::create(name_, namelist_);
