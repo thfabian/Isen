@@ -113,7 +113,25 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         CHECK_FIELD(tau, 0);
 
         CHECK_FIELD(th0, 0);
-
+        
+        CHECK_FIELD(qvold, 0);
+        CHECK_FIELD(qvnow, 0);
+        CHECK_FIELD(qvnew, 0);
+        
+        CHECK_FIELD(qcold, 0);
+        CHECK_FIELD(qcnow, 0);
+        CHECK_FIELD(qcnew, 0);
+        
+        CHECK_FIELD(qrold, 0);
+        CHECK_FIELD(qrnow, 0);
+        CHECK_FIELD(qrnew, 0);
+        
+        CHECK_FIELD(qvbnd1, 0);
+        CHECK_FIELD(qvbnd2, 0);
+        CHECK_FIELD(qcbnd1, 0);
+        CHECK_FIELD(qcbnd2, 0);
+        CHECK_FIELD(qrbnd1, 0);
+        CHECK_FIELD(qrbnd2, 0);
         CHECK_FIELD(sbnd1, 0);
         CHECK_FIELD(sbnd2, 0);
         CHECK_FIELD(ubnd1, 0);
@@ -172,16 +190,16 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         }                                                                                                              \
     } while(0)
 
-#define CHECK_FIELD_OPT(field) CHECK_FIELD_IMPL(field, solverOpt)
+#define CHECK_FIELD_CPU(field) CHECK_FIELD_IMPL(field, solverOpt)
 
-TEST_CASE("Cross verification (SolverOpt)", "[Solver]")
+TEST_CASE("Cross verification (SolverCpu)", "[Solver]")
 {    
     Timer t;         
     LOG() << logger::disable;
     
     Progressbar::disableProgressbar = false;        
     Progressbar::printBar('-');
-    std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "SolverOpt verification";
+    std::cout << Terminal::Color(Terminal::Color::getFileColor()) << "SolverCpu verification";
     std::cout << " with Solver" << std::endl;
     Progressbar::printBar('-');
     
@@ -199,21 +217,21 @@ TEST_CASE("Cross verification (SolverOpt)", "[Solver]")
     solverOpt->run();    
     LOG() << logger::enable;    
 
-    CHECK_FIELD_OPT(zhtold);
-    CHECK_FIELD_OPT(zhtnow);
+    CHECK_FIELD_CPU(zhtold);
+    CHECK_FIELD_CPU(zhtnow);
 
-    CHECK_FIELD_OPT(uold);
-    CHECK_FIELD_OPT(unow);
+    CHECK_FIELD_CPU(uold);
+    CHECK_FIELD_CPU(unow);
 
-    CHECK_FIELD_OPT(sold);
-    CHECK_FIELD_OPT(snow);
+    CHECK_FIELD_CPU(sold);
+    CHECK_FIELD_CPU(snow);
 
-    CHECK_FIELD_OPT(mtg);
+    CHECK_FIELD_CPU(mtg);
 
-    CHECK_FIELD_OPT(exn);
-    CHECK_FIELD_OPT(prs);
+    CHECK_FIELD_CPU(exn);
+    CHECK_FIELD_CPU(prs);
 
-    CHECK_FIELD_OPT(tau);
+    CHECK_FIELD_CPU(tau);
 }
 
 TEST_CASE("Getter", "[Solver]")

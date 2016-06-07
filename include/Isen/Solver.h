@@ -170,7 +170,7 @@ protected:
     /// Accumulated precipitation
     VectorXf tot_prec_;
 
-    /// Specific humidity
+    /// Water vapor
     MatrixXf qvold_;
     MatrixXf qvnow_;
     MatrixXf qvnew_;

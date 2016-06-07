@@ -21,7 +21,7 @@
 ISEN_NAMESPACE_BEGIN
 
 /// @brief General meteorological utility functions
-struct MetoUtils
+struct MeteoUtils
 {
     /// Kind of humidity
     enum HumidityKind
@@ -30,33 +30,33 @@ struct MetoUtils
         ERelative = 2
     };
 
-    /// @brief Computes mixing ratio in (g/g)
+    /// @brief Computes mixing ratio in (g/g) 
     ///
     /// @param p        Pressure in [hPa]
     /// @param T        Temperature [K]
-    /// @param humv     Humidity variable, either in [K] if humidityKind == HumidityKind::DEWPOINT or between [0,1] if
-    ///                 humidityKind == HumidityKind::RELATIVE
+    /// @param humv     Humidity variable, either in [K] if humidityKind == HumidityKind::EDewPoint or between [0,1] if
+    ///                 humidityKind == HumidityKind::ERelative
     /// @param humidityKind Kind of humidity
-    static inline VectorXf rrmixv1(const VectorXf& p, Float T, Float humv, HumidityKind humidityKind) noexcept
+    static inline double rrmixv1(double p, double T, double humv, HumidityKind humidityKind) noexcept
     {
-        // Local constant
-        const Float eps = 0.62198;
-
-        Float esat;
-
-        VectorXf mixv1(p.size());
-
-        switch(humidityKind)
+        constexpr double eps = 0.62198;
+        double mixv1 = 0.0;
+                
+        if(humidityKind == EDewPoint)
         {
-            case EDewPoint:
-                esat = eswat1(humv);
-                // mixv1 = eps * esat / (p - esat);
-                break;
-            case ERelative:
-                esat = eswat1(T);
+            double esat = eswat1(humv);
+            mixv1 = eps * esat / (p - esat);
         }
-
-        // mixv1 = np.where(esat >= 0.616*p, 0., eps*humv*esat / (p - humv*esat))
+        else /* ERelative */
+        {
+            assert(humv >= 0.0 && humv <= 1.0);
+            
+            double esat = eswat1(T);
+            if(esat >= 0.616 * p)
+                mixv1 = 0.0;
+            else /* esat < 0.616 * p */
+                mixv1 = eps * humv * esat / (p - humv * esat);
+        }
         return mixv1;
     }
 
@@ -65,20 +65,20 @@ struct MetoUtils
     /// Using Goff-Gratch formulation which is based on exact integration of Clausius-Clapeyron equation.
     ///
     /// @param T    Temperature [K]
-    static inline Float eswat1(Float T) noexcept
+    static inline double eswat1(double T) noexcept
     {
         // Define local constants
-        const Float C1 = 7.90298;
-        const Float C2 = 5.02808;
-        const Float C3 = 1.3816e-7;
-        const Float C4 = 11.344;
-        const Float C5 = 8.1328e-3;
-        const Float C6 = 3.49149;
+        constexpr double C1 = 7.90298;
+        constexpr double C2 = 5.02808;
+        constexpr double C3 = 1.3816e-7;
+        constexpr double C4 = 11.344;
+        constexpr double C5 = 8.1328e-3;
+        constexpr double C6 = 3.49149;
 
-        Float rmixv = 373.16 / T;
+        double rmixv = 373.16 / T;
 
-        Float ES = -C1 * (rmixv - 1.0) + C2 * std::log10(rmixv) - C3 * (std::pow(10, C4 * (1.0 - 1.0 / rmixv)) - 1.0)
-                   + C5 * (std::pow(10, -C6 * (rmixv - 1.0)) - 1.0);
+        double ES = -C1 * (rmixv - 1.0) + C2 * std::log10(rmixv) - C3 * (std::pow(10, C4 * (1.0 - 1.0 / rmixv)) - 1.0)
+                    + C5 * (std::pow(10, -C6 * (rmixv - 1.0)) - 1.0);
 
         return (1013.246 * std::pow(10, ES));
     }

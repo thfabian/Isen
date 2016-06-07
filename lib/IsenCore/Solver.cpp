@@ -18,6 +18,7 @@
 #include <Isen/Boundary.h>
 #include <Isen/Logger.h>
 #include <Isen/Output.h>
+#include <Isen/MeteoUtils.h>
 #include <Isen/Progressbar.h>
 #include <Isen/Solver.h>
 #include <Isen/Timer.h>
@@ -70,7 +71,7 @@ Solver::Solver(const std::shared_ptr<NameList>& namelist, Output::ArchiveType ar
         // Height-dependent diffusion coefficient
         tau_ = VectorXf::Zero(nz);
 
-        // Upstream profile for theta 
+        // Upstream profile for theta
         th0_ = VectorXf::Zero(nz1);
 
         if(imoist)
@@ -173,12 +174,13 @@ void Solver::init() noexcept
     LOG() << "Create initial profile ... " << logger::flush;
 
     VectorXf z0 = VectorXf::Zero(nz1);
-    VectorXf rh0 = VectorXf::Zero(nz1);
-    VectorXf qv0 = VectorXf::Zero(nz);
 
-    VectorXf qc0, qr0, nc0, nr0;
+    VectorXf rh0, qv0, qc0, qr0, nc0, nr0;
     if(imoist)
     {
+        rh0 = VectorXf::Zero(nz);
+
+        qv0 = VectorXf::Zero(nz);
         qc0 = VectorXf::Zero(nz);
         qr0 = VectorXf::Zero(nz);
 
@@ -201,8 +203,8 @@ void Solver::init() noexcept
     //-------------------------------------------------------------
     exn0_[0] = exn00;
     for(int k = 1; k < nz1; ++k)
-        exn0_[k]
-        = exn0_[k - 1] - (16 * g2 * (th0_[k] - th0_[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * pow2(th0_[k - 1] + th0_[k])));
+        exn0_[k] = exn0_[k - 1]
+                   - (16 * g2 * (th0_[k] - th0_[k - 1]) / (pow2(bv0[k - 1] + bv0[k]) * pow2(th0_[k - 1] + th0_[k])));
 
     for(int k = 0; k < nz1; ++k)
         prs0_[k] = pref * std::pow(exn0_[k] / cp, cpdr);
@@ -248,19 +250,32 @@ void Solver::init() noexcept
     //-------------------------------------------------------------
     if(imoist)
     {
-        // *** Exercise 4.1 Initial Moisture profile ***
-        // *** define new indices and create the profile ***
-        // *** for rh0; then use function rrmixv1 to compute qv0 ***
+        double rhmax = 0.98;
+        const int kc = 12;
+        const int kw = 10;
 
-        // *** edit here ...
+        for(int k = kc - kw; k < (kc + kw); ++k)
+        {
+            double cos_k = std::cos((std::abs(k - kc) / kw) * M_PI * 0.5);
+            rh0[k] = rhmax * cos_k * cos_k;
+        }
 
-
-        // *** Exercise 4.1 Initial Moisture profile ***
+        for(int k = 0; k < nz; ++k)
+        {
+            qv0[k] = MeteoUtils::rrmixv1(0.5 * (prs0_[k] + prs0_[k + 1]) / 100,
+                                         0.5 * (th0_[k] / cp * exn0_[k] + th0_[k + 1] / cp * exn0_[k + 1]), rh0[k],
+                                         MeteoUtils::ERelative);
+        }
 
         // Upstream profile for number densities(unstaggered)
         //---------------------------------------------------------
         if(imicrophys == 2)
         {
+            for(int k = 0; k < nz; ++k)
+            {
+                nc0[k] = 0;
+                nr0[k] = 0;
+            }
         }
     }
 
@@ -343,8 +358,8 @@ void Solver::init() noexcept
     for(int k = 1; k < nz1; ++k)
     {
         zhtnow_.col(k) = zhtnow_.col(k - 1).array()
-            - rdcp / g * 0.5 * (th0_[k - 1] * exn0_[k - 1] + th0_[k] * exn0_[k]) * (prs0_[k] - prs0_[k - 1])
-            / (0.5 * (prs0_[k] + prs0_[k - 1]));
+                         - rdcp / g * 0.5 * (th0_[k - 1] * exn0_[k - 1] + th0_[k] * exn0_[k])
+                               * (prs0_[k] - prs0_[k - 1]) / (0.5 * (prs0_[k] + prs0_[k - 1]));
     }
 
     // Make topography
@@ -388,18 +403,18 @@ void Solver::init() noexcept
     // Height-dependent diffusion coefficient
     //-------------------------------------------------------------
     LOG() << "Height-dependent diffusion coefficient ... " << logger::flush;
-    t.start(); 
-    
+    t.start();
+
     tau_ = diff * VectorXf::Ones(nz).array();
 
     for(int k = nz - nab; k < nz; ++k)
     {
-        double sint = std::sin(0.5 * M_PI * ((k + 1) - (nz - nab)) / nab);
-        tau_(k) = diff + (diffabs - diff) * (sint * sint);
+        double sin_k = std::sin(0.5 * M_PI * ((k + 1) - (nz - nab)) / nab);
+        tau_(k) = diff + (diffabs - diff) * (sin_k * sin_k);
     }
 
     LOG_SUCCESS(t);
-    
+
     // Set up getter maps
     //-------------------------------------------------------------
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("zhtold", &zhtold_));
@@ -430,7 +445,7 @@ void Solver::init() noexcept
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("ncnow", &ncnow_));
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("ncnew", &ncnew_));
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("dthetadt", &dthetadt_));
-    
+
     vecMap_.insert(std::make_pair<std::string, VectorXf*>("topo", &topo_));
     vecMap_.insert(std::make_pair<std::string, VectorXf*>("mtg0", &mtg0_));
     vecMap_.insert(std::make_pair<std::string, VectorXf*>("exn0", &exn0_));
@@ -457,7 +472,7 @@ void Solver::init() noexcept
     vecMap_.insert(std::make_pair<std::string, VectorXf*>("ncbnd2", &ncbnd2_));
     vecMap_.insert(std::make_pair<std::string, VectorXf*>("tbnd1", &tbnd1_));
     vecMap_.insert(std::make_pair<std::string, VectorXf*>("tbnd2", &tbnd2_));
-    
+
     // Output initial fields
     //-------------------------------------------------------------
     if(iiniout)
@@ -663,8 +678,8 @@ void Solver::horizontalDiffusion() noexcept
 void Solver::geometricHeight() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
-    
-    for(int i = 0; i < nxb; ++i) 
+
+    for(int i = 0; i < nxb; ++i)
         zhtnow_(i, 0) = topo_(i) * topofact_;
 
     const double rcpg05 = 0.5 * r / cp / g;
@@ -705,12 +720,12 @@ void Solver::applyRelaxationBoundary() noexcept
 
     assert(irelax);
     Boundary::relax(snew_, nx, nb, sbnd1_, sbnd2_);
-    Boundary::relax(unew_, nx1, nb, ubnd1_ ,ubnd2_);
+    Boundary::relax(unew_, nx1, nb, ubnd1_, ubnd2_);
 
     if(imoist)
     {
         Boundary::relax(qvnew_, nx, nb, qvbnd1_, qvbnd2_);
-        Boundary::relax(qcnew_, nx, nb, qcbnd1_ ,qcbnd2_);
+        Boundary::relax(qcnew_, nx, nb, qcbnd1_, qcbnd2_);
         Boundary::relax(qrnew_, nx, nb, qrbnd1_, qrbnd2_);
 
         if(imicrophys == 2)
@@ -746,7 +761,7 @@ void Solver::diagPressure() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
 
-    const double gdth = g* dth;
+    const double gdth = g * dth;
 
     for(int i = 0; i < nxb; ++i)
         prs_(i, nz) = prs0_(nz);
@@ -767,7 +782,7 @@ void Solver::progIsendens() noexcept
         for(int i = nb; i < nxnb; ++i)
             snew_(i, k) = sold_(i, k)
                           - (dtdx05) * (snow_(i + 1, k) * (unow_(i + 2, k) + unow_(i + 1, k))
-                                       - snow_(i - 1, k) * (unow_(i, k) + unow_(i - 1, k)));
+                                        - snow_(i - 1, k) * (unow_(i, k) + unow_(i - 1, k)));
 }
 
 void Solver::progVelocity() noexcept
