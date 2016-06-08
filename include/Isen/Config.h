@@ -135,4 +135,9 @@
 #define BOOST_PP_VARIADICS 1
 #endif
 
+// Define number of threads for Windows (assume 4 cores)
+#ifdef ISEN_PLATFORM_WINDOWS
+#define ISEN_NUM_THREADS 4
+#endif
+
 #endif

@@ -254,9 +254,9 @@ void Solver::init() noexcept
         const int kc = 12;
         const int kw = 10;
 
-        for(int k = kc - kw; k < (kc + kw); ++k)
+        for(int k = kc - kw; k < (kc + kw - 1); ++k)
         {
-            double cos_k = std::cos((std::abs(k - kc) / kw) * M_PI * 0.5);
+            double cos_k = std::cos((std::abs((k + 1) - kc) / double(kw)) * M_PI * 0.5);
             rh0[k] = rhmax * cos_k * cos_k;
         }
 

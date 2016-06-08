@@ -30,8 +30,9 @@ ISEN_NAMESPACE_BEGIN
     {                                                                                                                  \
         Timer t;                                                                                                       \
         bool passed = true;                                                                                            \
-        LOG() << "Checking " << #field << "[t=" << #time << "] ... " << logger::flush;                                 \
-        auto field = FieldLoader::load((dir / boost::filesystem::path(#field "-" #time ".dat")).string());             \
+        LOG() << "Checking " << #field << "[t=" << time << "] ... " << logger::flush;                                  \
+        auto field = FieldLoader::load(                                                                                \
+            (dir / boost::filesystem::path(std::string(#field "-") + time + std::string(".dat"))).string());           \
         CHECK((passed = FieldVerifier::verify(#field, MatrixXf(solver->getField(#field)), std::move((field)))));       \
         if(passed)                                                                                                     \
         {                                                                                                              \
@@ -87,57 +88,59 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         solver->init();
         LOG() << logger::enable;
 
-        CHECK_FIELD(topo, 0);
+        std::string initial("0");
 
-        CHECK_FIELD(zhtold, 0);
-        CHECK_FIELD(zhtnow, 0);
+        CHECK_FIELD(topo, initial);
 
-        CHECK_FIELD(uold, 0);
-        CHECK_FIELD(unow, 0);
-        CHECK_FIELD(unew, 0);
+        CHECK_FIELD(zhtold, initial);
+        CHECK_FIELD(zhtnow, initial);
 
-        CHECK_FIELD(sold, 0);
-        CHECK_FIELD(snow, 0);
-        CHECK_FIELD(snew, 0);
+        CHECK_FIELD(uold, initial);
+        CHECK_FIELD(unow, initial);
+        CHECK_FIELD(unew, initial);
 
-        CHECK_FIELD(mtg, 0);
-        CHECK_FIELD(mtgnew, 0);
-        CHECK_FIELD(mtg0, 0);
+        CHECK_FIELD(sold, initial);
+        CHECK_FIELD(snow, initial);
+        CHECK_FIELD(snew, initial);
 
-        CHECK_FIELD(exn, 0);
-        CHECK_FIELD(exn0, 0);
+        CHECK_FIELD(mtg, initial);
+        CHECK_FIELD(mtgnew, initial);
+        CHECK_FIELD(mtg0, initial);
 
-        CHECK_FIELD(prs, 0);
-        CHECK_FIELD(prs0, 0);
+        CHECK_FIELD(exn, initial);
+        CHECK_FIELD(exn0, initial);
 
-        CHECK_FIELD(tau, 0);
+        CHECK_FIELD(prs, initial);
+        CHECK_FIELD(prs0, initial);
 
-        CHECK_FIELD(th0, 0);
+        CHECK_FIELD(tau, initial);
+
+        CHECK_FIELD(th0, initial);
         
-        CHECK_FIELD(qvold, 0);
-        CHECK_FIELD(qvnow, 0);
-        CHECK_FIELD(qvnew, 0);
+        CHECK_FIELD(qvold, initial);
+        CHECK_FIELD(qvnow, initial);
+        CHECK_FIELD(qvnew, initial);
+
+        CHECK_FIELD(qcold, initial);
+        CHECK_FIELD(qcnow, initial);
+        CHECK_FIELD(qcnew, initial);
         
-        CHECK_FIELD(qcold, 0);
-        CHECK_FIELD(qcnow, 0);
-        CHECK_FIELD(qcnew, 0);
+        CHECK_FIELD(qrold, initial);
+        CHECK_FIELD(qrnow, initial);
+        CHECK_FIELD(qrnew, initial);
         
-        CHECK_FIELD(qrold, 0);
-        CHECK_FIELD(qrnow, 0);
-        CHECK_FIELD(qrnew, 0);
-        
-        CHECK_FIELD(qvbnd1, 0);
-        CHECK_FIELD(qvbnd2, 0);
-        CHECK_FIELD(qcbnd1, 0);
-        CHECK_FIELD(qcbnd2, 0);
-        CHECK_FIELD(qrbnd1, 0);
-        CHECK_FIELD(qrbnd2, 0);
-        CHECK_FIELD(sbnd1, 0);
-        CHECK_FIELD(sbnd2, 0);
-        CHECK_FIELD(ubnd1, 0);
-        CHECK_FIELD(ubnd2, 0);
-        CHECK_FIELD(tbnd1, 0);
-        CHECK_FIELD(tbnd2, 0);
+        CHECK_FIELD(qvbnd1, initial);
+        CHECK_FIELD(qvbnd2, initial);
+        CHECK_FIELD(qcbnd1, initial);
+        CHECK_FIELD(qcbnd2, initial);
+        CHECK_FIELD(qrbnd1, initial);
+        CHECK_FIELD(qrbnd2, initial);
+        CHECK_FIELD(sbnd1, initial);
+        CHECK_FIELD(sbnd2, initial);
+        CHECK_FIELD(ubnd1, initial);
+        CHECK_FIELD(ubnd2, initial);
+        CHECK_FIELD(tbnd1, initial);
+        CHECK_FIELD(tbnd2, initial);
 
         //-------------------------------------------------
         // Check evolution
@@ -146,21 +149,23 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         solver->run();
         LOG() << logger::enable;
 
-        CHECK_FIELD(zhtold, 1);
-        CHECK_FIELD(zhtnow, 1);
+        std::string nout = std::to_string(namelist->nts);
 
-        CHECK_FIELD(uold, 1);
-        CHECK_FIELD(unow, 1);
+        CHECK_FIELD(zhtold, nout);
+        CHECK_FIELD(zhtnow, nout);
 
-        CHECK_FIELD(sold, 1);
-        CHECK_FIELD(snow, 1);
+        CHECK_FIELD(uold, nout);
+        CHECK_FIELD(unow, nout);
 
-        CHECK_FIELD(mtg, 1);
+        CHECK_FIELD(sold, nout);
+        CHECK_FIELD(snow, nout);
 
-        CHECK_FIELD(exn, 1);
-        CHECK_FIELD(prs, 1);
+        CHECK_FIELD(mtg, nout);
 
-        CHECK_FIELD(tau, 1);
+        CHECK_FIELD(exn, nout);
+        CHECK_FIELD(prs, nout);
+
+        CHECK_FIELD(tau, nout);
     }
     else
     {

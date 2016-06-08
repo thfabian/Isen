@@ -98,15 +98,17 @@ std::string memString(std::size_t size, bool precise)
 
 extern unsigned int getNumThreads(int nx, int nz)
 {
-#ifdef ISEN_NUM_CORES
-    unsigned int numThreads = ISEN_NUM_CORES;
+#ifdef ISEN_NUM_THREADS
+    unsigned int numThreads = ISEN_NUM_THREADS;
 #else
     unsigned int numThreads = std::thread::hardware_concurrency();
-    
     // We assume hyper-threading
     if(numThreads > 2)
         numThreads /= 2;
 #endif
+
+    if(numThreads <= 0)
+        numThreads = 1;
 
      // Dual-Core
     if(numThreads <= 2)

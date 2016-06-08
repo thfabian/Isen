@@ -52,7 +52,11 @@ ISEN_NO_INLINE void kernel_horizontalDiffusion(const int nx,
     const int nxb = nx + 2 * nb;
     const int nxb1 = nx + 2 * nb + 1;
 
-#pragma omp parallel for num_threads(getNumThreads(nx, nz))
+#ifdef ISEN_COMPILER_MSVC
+#pragma omp parallel for num_threads(ISEN_NUM_THREADS)
+#else
+#pragma omp parallel for num_threads(getNumThreads(nx, nz))    
+#endif
     for(int k = 0; k < nz; ++k)
     {
         const double tau025 = 0.25 * tau[k];
@@ -139,7 +143,11 @@ ISEN_NO_INLINE void kernel_diagMontgomery_Exner(const int nx,
     
     const double fac = cp * std::pow(1.0 / pref, rdcp);
 
-#pragma omp parallel for num_threads(getNumThreads(nx, nz))
+#ifdef ISEN_COMPILER_MSVC
+#pragma omp parallel for num_threads(ISEN_NUM_THREADS)
+#else
+#pragma omp parallel for num_threads(getNumThreads(nx, nz))    
+#endif
     for(int k = 0; k < nz1; ++k)
         for(int i = 0; i < nxb; ++i)
             exn[k * nxb + i] = fac * std::pow(prs[k * nxb + i], rdcp);
@@ -217,7 +225,11 @@ ISEN_NO_INLINE void kernel_progIsendens(const int nx,
     const int nxb1 = nx + 2 * nb + 1;
     const int nxnb = nx + nb;
 
+#ifdef ISEN_COMPILER_MSVC
+#pragma omp parallel for num_threads(ISEN_NUM_THREADS)
+#else
 #pragma omp parallel for num_threads(getNumThreads(nx, nz))    
+#endif
     for(int k = 0; k < nz; ++k)
         for(int i = nb; i < nxnb; ++i)
         {
@@ -249,7 +261,11 @@ ISEN_NO_INLINE void kernel_progVelocity(const int nx,
 
     const double dtdx2 = 2 * dtdx;
 
-#pragma omp parallel for num_threads(getNumThreads(nx, nz))        
+#ifdef ISEN_COMPILER_MSVC
+#pragma omp parallel for num_threads(ISEN_NUM_THREADS)
+#else
+#pragma omp parallel for num_threads(getNumThreads(nx, nz))    
+#endif   
     for(int k = 0; k < nz; ++k)
         for(int i = nb; i < nx1nb; ++i)
         {

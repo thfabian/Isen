@@ -63,7 +63,7 @@ itime   = 1;           % print computation time (0=not print, 1=print)
 
 % Physics: Moisture
 % -----------------------------------
-imoist         = 0;    % include moisture             (0=dry, 1=moist)
+imoist         = 1;    % include moisture             (0=dry, 1=moist)
 imoist_diff    = 0;    % apply diffusion to qv,qc,qr  (0=off, 1=on)
 imicrophys     = 0;    % include microphysics         (0=off, 1=kessler, 2=two moment)
 idthdt         = 0;    % couple physics to dynamics   (0=off, 1=on)

@@ -62,7 +62,7 @@ extern std::string timeString(double time, bool precise = false);
 /// Convert a memory amount in bytes into a human-readable string
 extern std::string memString(std::size_t size, bool precise = false);
 
-/// Heuristic to get the optimal number of threads to use for given problem size
+/// Heuristic to get the optimal number of threads for given problem size
 extern unsigned int getNumThreads(int nx, int nz);
 
 // Forward Declaration
