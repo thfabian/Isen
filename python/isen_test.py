@@ -44,7 +44,7 @@ class TestSolver(unittest.TestCase):
             self.fail("IsenException caught: {0}".format(e.message))
         
         with self.assertRaises(RuntimeError):
-            solver = IsenPython.Solver("qwfqwf")
+            solver = IsenPython.Solver("qwfawsdqwadqwf")
             solver.init(namelist)
         
     def test_init_namelist(self):

@@ -32,7 +32,7 @@ class PySolver
 {
 public:
     /// Set the implementation of the solver
-    explicit PySolver(const char* name = "ref");
+    explicit PySolver(const char* name = "cpu");
 
     /// Initialize simulation with a file which will be parsed to a namelist
     void initWithFile(const char* filename = "");

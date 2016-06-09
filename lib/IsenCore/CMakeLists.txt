@@ -14,6 +14,7 @@ cmake_minimum_required(VERSION 2.8)
 set(CORE_SOURCE
     CommandLine.cpp
     Common.cpp
+    Kessler.cpp
     Logger.cpp
     NameList.cpp
     Output.cpp
@@ -29,6 +30,7 @@ set(CORE_HEADER
     ${ISEN_INCLUDE_DIR}/Isen/Config.h
     ${ISEN_INCLUDE_DIR}/Isen/CommandLine.h
     ${ISEN_INCLUDE_DIR}/Isen/Common.h
+    ${ISEN_INCLUDE_DIR}/Isen/Kessler.h
     ${ISEN_INCLUDE_DIR}/Isen/Logger.h
     ${ISEN_INCLUDE_DIR}/Isen/MeteoUtils.h
     ${ISEN_INCLUDE_DIR}/Isen/NameList.h

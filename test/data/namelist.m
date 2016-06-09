@@ -21,7 +21,7 @@ dx      = xl/nx;
 thl     = 60.;          % domain depth [K]
 nz      = 60;           % vertical resolution
 dt      = 10;           % time step [s]
-time    = 50;      % integration time [s]
+time    = 1500;      % integration time [s]
 diff    = 0.02;         % (horizontal) diffusion coefficient
 
 % Topography
@@ -64,8 +64,8 @@ itime   = 1;           % print computation time (0=not print, 1=print)
 % Physics: Moisture
 % -----------------------------------
 imoist         = 1;    % include moisture             (0=dry, 1=moist)
-imoist_diff    = 0;    % apply diffusion to qv,qc,qr  (0=off, 1=on)
-imicrophys     = 0;    % include microphysics         (0=off, 1=kessler, 2=two moment)
+imoist_diff    = 1;    % apply diffusion to qv,qc,qr  (0=off, 1=on)
+imicrophys     = 1;    % include microphysics         (0=off, 1=kessler, 2=two moment)
 idthdt         = 0;    % couple physics to dynamics   (0=off, 1=on)
 iern           = 0;    % evaporation of rain droplets (0=off, 1=on)
 

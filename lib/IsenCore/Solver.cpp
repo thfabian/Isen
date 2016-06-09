@@ -91,6 +91,13 @@ Solver::Solver(const std::shared_ptr<NameList>& namelist, Output::ArchiveType ar
             // Specific rain water content
             qrold_ = qrnow_ = qrnew_ = MatrixXf::Zero(nxb, nz);
 
+            // Temperature
+            temp_ = MatrixXf::Zero(nxb, nz1);
+
+            // Parametrization
+            if(imicrophys == 1)
+                kessler_ = std::make_shared<Kessler>(namelist_);
+
             if(imicrophys == 2)
             {
                 // Rain-droplet number density
@@ -438,6 +445,7 @@ void Solver::init() noexcept
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("qcold", &qcold_));
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("qcnow", &qcnow_));
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("qcnew", &qcnew_));
+    matMap_.insert(std::make_pair<std::string, MatrixXf*>("temp", &temp_));
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("nrold", &nrold_));
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("nrnow", &nrnow_));
     matMap_.insert(std::make_pair<std::string, MatrixXf*>("nrnew", &nrnew_));
@@ -551,6 +559,10 @@ void Solver::run()
         // Isentropic mass density
         progIsendens();
 
+        // Moisture scalars
+        if(imoist)
+            progMoisture();
+
         // Velocity
         progVelocity();
 
@@ -566,9 +578,15 @@ void Solver::run()
 
         uold_.swap(unow_);
         sold_.swap(snow_);
+        qvold_.swap(qvnow_);
+        qcold_.swap(qcnow_);
+        qrold_.swap(qrnow_);
 
         unow_.swap(unew_);
         snow_.swap(snew_);
+        qvnow_.swap(qvnew_);
+        qcnow_.swap(qcnew_);
+        qrnow_.swap(qrnew_);
 
         // Diffusion and gravity wave absorber
         //--------------------------------------------------------
@@ -577,8 +595,14 @@ void Solver::run()
         if(!irelax)
             applyPeriodicBoundary();
 
+        if(imoist)
+            clipMoisture();
+
         unow_.swap(unew_);
         snow_.swap(snew_);
+        qvnow_.swap(qvnew_);
+        qcnow_.swap(qcnew_);
+        qrnow_.swap(qrnew_);
 
         // Diagnostic step
         //--------------------------------------------------------
@@ -596,7 +620,34 @@ void Solver::run()
 
         // Microphysics
         //---------------------------------------------------------
+        if(imoist)
+        {
+            if(imicrophys == 1) // Kessler scheme
+            {
+                kessler_->apply(
+                    // Output
+                    temp_, qvnew_, qcnew_, qrnew_, tot_prec_, prec_,
 
+                    // Input
+                    th0_, prs_, snow_, qvnow_, qcnow_, qrnow_, exn_, zhtnow_);
+            }
+            else if(imicrophys == 2) // Two-moment scheme
+            {
+                //TODO...
+            }
+
+            if(imicrophys > 0)
+            {
+                if(idthdt) // Diabatic flow
+                {
+                    //TODO...
+                }
+            }
+        }
+
+        qvnow_.swap(qvnew_);
+        qcnow_.swap(qcnew_);
+        qrnow_.swap(qrnew_);
 
         // Check maximum CFL condition
         //--------------------------------------------------------
@@ -672,6 +723,33 @@ void Solver::horizontalDiffusion() noexcept
             snew_(i, k) = sel * (snow_(i, k) + 0.25 * tau * (snow_(i - 1, k) - 2 * snow_(i, k) + snow_(i + 1, k)))
                           + negSel * snow_(i, k);
         }
+
+        if(imoist_diff)
+        {
+            // Water vapor (qv)
+            for(int i = nb; i < nxnb; ++i)
+            {
+                qvnew_(i, k)
+                    = sel * (qvnow_(i, k) + 0.25 * tau * (qvnow_(i - 1, k) - 2 * qvnow_(i, k) + qvnow_(i + 1, k)))
+                      + negSel * qvnow_(i, k);
+            }
+
+            // Specific cloud water content (qc)
+            for(int i = nb; i < nxnb; ++i)
+            {
+                qcnew_(i, k)
+                    = sel * (qcnow_(i, k) + 0.25 * tau * (qcnow_(i - 1, k) - 2 * qcnow_(i, k) + qcnow_(i + 1, k)))
+                      + negSel * qcnow_(i, k);
+            }
+
+            // Specific rain water content (qr)
+            for(int i = nb; i < nxnb; ++i)
+            {
+                qrnew_(i, k)
+                    = sel * (qrnow_(i, k) + 0.25 * tau * (qrnow_(i - 1, k) - 2 * qrnow_(i, k) + qrnow_(i + 1, k)))
+                      + negSel * qrnow_(i, k);
+            }
+        }
     }
 }
 
@@ -734,6 +812,24 @@ void Solver::applyRelaxationBoundary() noexcept
             Boundary::relax(nrnew_, nx, nb, nrbnd1_, nrbnd2_);
         }
     }
+}
+
+void Solver::clipMoisture() noexcept
+{
+    SOLVER_DECLARE_ALL_ALIASES
+    const int nxnb = nx + nb;
+
+    auto clip = [&](MatrixXf& mat)
+    {
+        for(int k = 0; k < nz; ++k)
+            for(int i = nb; i < nxnb; ++i)
+                if(mat(i, k) < 0.0)
+                    mat(i, k) = 0.0;
+    };
+
+    clip(qvnew_);
+    clip(qcnew_);
+    clip(qrnew_);
 }
 
 void Solver::diagMontgomery() noexcept
@@ -806,6 +902,27 @@ void Solver::progVelocity() noexcept
 void Solver::progMoisture() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
+
+    const double dtdx05 = 0.5 * dtdx_;
+    const int nxnb = nx + nb;
+
+    // Water vapor (qv)
+    for(int k = 0; k < nz; ++k)
+        for(int i = nb; i < nxnb; ++i)
+            qvnew_(i, k)
+                = qvold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qvnow_(i + 1, k) + qvnow_(i - 1, k));
+
+    // Specific cloud water content (qc)
+    for(int k = 0; k < nz; ++k)
+        for(int i = nb; i < nxnb; ++i)
+            qcnew_(i, k)
+                = qcold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qcnow_(i + 1, k) + qcnow_(i - 1, k));
+
+    // Specific rain water content (qr)
+    for(int k = 0; k < nz; ++k)
+        for(int i = nb; i < nxnb; ++i)
+            qrnew_(i, k)
+                = qrold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qrnow_(i + 1, k) + qrnow_(i - 1, k));
 }
 
 void Solver::progNumdens() noexcept

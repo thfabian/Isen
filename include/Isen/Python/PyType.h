@@ -51,7 +51,7 @@ inline boost::python::object toNumpyArray(const VectorXf& vec)
     return internal::toNumpyArrayImpl(vec.data(), vec.rows(), vec.cols());
 }
 
-/// Convert an Eigen::Vector to a numpy array
+/// Convert an Eigen::Matrix to a numpy array
 inline boost::python::object toNumpyArray(const MatrixXf& mat)
 {
     if(MatrixXf::Options == 0 /* Eigen::ColMajor */ && mat.cols() != 1)

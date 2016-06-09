@@ -109,21 +109,56 @@ void Output::makeOutput(const Solver* solver) noexcept
     // Time vector
     outputData_.t[curIt_] = curIt_ * iout * dt;
 
-    // Precipitation (transposed)
+    if(imoist)
+    {
+        // Precipitation
+        const auto& prec = solver->getVec("prec");
+        auto it_prec = outputData_.prec.begin() + curIt_ * nx;
+        for(int i = nb; i < (nx + nb); ++i, ++it_prec)
+            *it_prec = prec(i);
 
-    // Accumulated precipitation (transposed)
+        // Accumulated precipitation
+        const auto& tot_prec = solver->getVec("tot_prec");
+        auto it_tot_prec = outputData_.tot_prec.begin() + curIt_ * nx;
+        for(int i = nb; i < (nx + nb); ++i, ++it_tot_prec)
+            *it_tot_prec = tot_prec(i);
 
-    // Specific humidity (transposed)
+        // Specific humidity (transposed)
+        const auto& qvnow = solver->getMat("qvnow");
+        auto it_qv = outputData_.qv.begin() + curIt_ * nz * nx;
+        for(int i = nb; i < (nx + nb); ++i)
+            for(int k = 0; k < nz; ++k, ++it_qv)
+                *it_qv = qvnow(i, k);
 
-    // Specific cloud water content (transposed)
+        // Specific cloud water content (transposed)
+        const auto& qcnow = solver->getMat("qcnow");
+        auto it_qc = outputData_.qc.begin() + curIt_ * nz * nx;
+        for(int i = nb; i < (nx + nb); ++i)
+            for(int k = 0; k < nz; ++k, ++it_qc)
+                *it_qc = qcnow(i, k);
 
-    // Specific rain water content (transposed)
+        // Specific rain water content (transposed)
+        const auto& qrnow = solver->getMat("qrnow");
+        auto it_qr = outputData_.qr.begin() + curIt_ * nz * nx;
+        for(int i = nb; i < (nx + nb); ++i)
+            for(int k = 0; k < nz; ++k, ++it_qr)
+                *it_qr = qrnow(i, k);
 
-    // Rain-droplet number density (transposed)
+        if(imicrophys == 2)
+        {
+            // Rain-droplet number density (transposed)
+            //TODO...
 
-    // Cloud droplet number density (transposed)
+            // Cloud droplet number density (transposed)
+            //TODO...
+        }
 
-    // Latent heating
+        if(idthdt)
+        {
+            // Latent heating
+            //TODO...
+        }
+    }
 
     ++curIt_;
 }

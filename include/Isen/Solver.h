@@ -18,6 +18,7 @@
 #include <Isen/Common.h>
 #include <Isen/NameList.h>
 #include <Isen/Output.h>
+#include <Isen/Kessler.h>
 #include <map>
 
 ISEN_NAMESPACE_BEGIN
@@ -75,6 +76,9 @@ public:
     /// Relaxation of prognostic fields
     virtual void applyRelaxationBoundary() noexcept;
 
+    /// Clip negative values of moisture variables
+    virtual void clipMoisture() noexcept;
+
     //------------------------------------------------------------
     // Diagnostic
     //------------------------------------------------------------
@@ -123,6 +127,11 @@ protected:
 
     std::map<std::string, MatrixXf*> matMap_;
     std::map<std::string, VectorXf*> vecMap_;
+
+    //-------------------------------------------------
+    // Parametrizations
+    //-------------------------------------------------
+    std::shared_ptr<Kessler> kessler_;
 
     //-------------------------------------------------
     // Define physical fields
@@ -184,6 +193,9 @@ protected:
     MatrixXf qrold_;
     MatrixXf qrnow_;
     MatrixXf qrnew_;
+
+    /// Temperature
+    MatrixXf temp_;
 
     /// Rain-droplet number density
     MatrixXf nrold_;

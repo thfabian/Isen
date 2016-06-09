@@ -20,7 +20,7 @@
 
 ISEN_NAMESPACE_BEGIN
 
-/// @brief Single threaded CPU optimized version
+/// @brief Multi threaded CPU optimized version
 class SolverCpu : public Solver
 {
 public:

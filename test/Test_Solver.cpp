@@ -78,8 +78,11 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         Parser parser;
         std::shared_ptr<NameList> namelist;
         CHECK_NOTHROW(namelist = parser.parse(filename));
+
+        // Adjust namelist
         namelist->iprtcfl = false;
-        
+        namelist->setByName("iout", namelist->nout * 2);
+
         std::shared_ptr<Solver> solver = SolverFactory::create("ref", namelist);
 
         //-------------------------------------------------
@@ -145,9 +148,7 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
         //-------------------------------------------------
         // Check evolution
         //-------------------------------------------------
-        LOG() << logger::disable;
         solver->run();
-        LOG() << logger::enable;
 
         std::string nout = std::to_string(namelist->nts);
 
@@ -159,6 +160,18 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
 
         CHECK_FIELD(sold, nout);
         CHECK_FIELD(snow, nout);
+
+        //CHECK_FIELD(qvold, nout);
+        //CHECK_FIELD(qvnow, nout);
+
+        //CHECK_FIELD(qcold, nout);
+        //CHECK_FIELD(qcnow, nout);
+        //
+        //CHECK_FIELD(qrold, nout);
+        //CHECK_FIELD(qrnow, nout);
+
+        //CHECK_FIELD(prec, nout);
+        //CHECK_FIELD(tot_prec, nout);
 
         CHECK_FIELD(mtg, nout);
 

@@ -32,7 +32,6 @@ class Visualizer:
             output: IsenPython.Output instance containing the data.
         """
         matplotlib.rcParams.update({'font.size': 11})
-        matplotlib.rcParams.update({'figure.max_num_figures' : 1000})
 
         self.__output = output
         namelist = output.getNameList()
@@ -95,7 +94,7 @@ class Visualizer:
                            data = 'u') 
             return plotDict
         
-        raise RuntimeError("Visualizer: invalid plot name '{0}'")
+        raise RuntimeError("Visualizer: invalid plot name '{0}'".fomat(name))
         
     def plot(self, name, timestep, file = None, show = True):
         """Generate velocitry contour plot
@@ -107,10 +106,10 @@ class Visualizer:
             file: Save to file if not None
             show: Show plot
         """
-        if timestep > self.nt:
+        if timestep >= self.nt:
             raise RuntimeError("Visualizer: requested timestep '{0}' exceeds available timesteps '{1}'".format(
                   timestep, self.nt - 1))
-        
+                
         fig, ax = self.__makeFigure()
         
         plt.sca(ax)
