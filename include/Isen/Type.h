@@ -31,6 +31,8 @@ ISEN_NAMESPACE_BEGIN
 /// Eigen3 typedefs (matrices are stored in ColMajor order)
 using MatrixXf = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
 using VectorXf = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+using MatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>;
+using VectorXi = Eigen::Matrix<int, Eigen::Dynamic, 1>;
 using Vector2f = Eigen::Matrix<double, 2, 1>;
 using Vector3f = Eigen::Matrix<double, 3, 1>;
 using Matrix2f = Eigen::Matrix<double, 2, 2>;

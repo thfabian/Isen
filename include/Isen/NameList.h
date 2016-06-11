@@ -151,7 +151,7 @@ struct NameList
     /// Multiplication factor for autoconversion
     double autoconv_mult = 1.0;
     /// Switch to turn on / off sedimentation
-    bool sediment_on = 1;
+    bool sediment_on = true;
 
     //-------------------------------------------------
     // Computed input parameters

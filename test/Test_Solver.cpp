@@ -152,26 +152,16 @@ TEST_CASE("MATLAB verification (Solver)", "[Solver]")
 
         std::string nout = std::to_string(namelist->nts);
 
-        CHECK_FIELD(zhtold, nout);
         CHECK_FIELD(zhtnow, nout);
-
-        CHECK_FIELD(uold, nout);
         CHECK_FIELD(unow, nout);
-
-        CHECK_FIELD(sold, nout);
         CHECK_FIELD(snow, nout);
 
-        //CHECK_FIELD(qvold, nout);
-        //CHECK_FIELD(qvnow, nout);
+        CHECK_FIELD(qvnow, nout);
+        CHECK_FIELD(qcnow, nout);
+        CHECK_FIELD(qrnow, nout);
 
-        //CHECK_FIELD(qcold, nout);
-        //CHECK_FIELD(qcnow, nout);
-        //
-        //CHECK_FIELD(qrold, nout);
-        //CHECK_FIELD(qrnow, nout);
-
-        //CHECK_FIELD(prec, nout);
-        //CHECK_FIELD(tot_prec, nout);
+        CHECK_FIELD(prec, nout);
+        CHECK_FIELD(tot_prec, nout);
 
         CHECK_FIELD(mtg, nout);
 
@@ -235,15 +225,9 @@ TEST_CASE("Cross verification (SolverCpu)", "[Solver]")
     solverOpt->run();    
     LOG() << logger::enable;    
 
-    CHECK_FIELD_CPU(zhtold);
     CHECK_FIELD_CPU(zhtnow);
-
-    CHECK_FIELD_CPU(uold);
     CHECK_FIELD_CPU(unow);
-
-    CHECK_FIELD_CPU(sold);
     CHECK_FIELD_CPU(snow);
-
     CHECK_FIELD_CPU(mtg);
 
     CHECK_FIELD_CPU(exn);

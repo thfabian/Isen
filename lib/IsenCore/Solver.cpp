@@ -724,7 +724,7 @@ void Solver::horizontalDiffusion() noexcept
                           + negSel * snow_(i, k);
         }
 
-        if(imoist_diff)
+        if(imoist && imoist_diff)
         {
             // Water vapor (qv)
             for(int i = nb; i < nxnb; ++i)
@@ -910,19 +910,19 @@ void Solver::progMoisture() noexcept
     for(int k = 0; k < nz; ++k)
         for(int i = nb; i < nxnb; ++i)
             qvnew_(i, k)
-                = qvold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qvnow_(i + 1, k) + qvnow_(i - 1, k));
+                = qvold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qvnow_(i + 1, k) - qvnow_(i - 1, k));
 
     // Specific cloud water content (qc)
     for(int k = 0; k < nz; ++k)
         for(int i = nb; i < nxnb; ++i)
             qcnew_(i, k)
-                = qcold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qcnow_(i + 1, k) + qcnow_(i - 1, k));
+                = qcold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qcnow_(i + 1, k) - qcnow_(i - 1, k));
 
     // Specific rain water content (qr)
     for(int k = 0; k < nz; ++k)
         for(int i = nb; i < nxnb; ++i)
             qrnew_(i, k)
-                = qrold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qrnow_(i + 1, k) + qrnow_(i - 1, k));
+                = qrold_(i, k) - dtdx05 * (unow_(i, k) + unow_(i + 1, k)) * (qrnow_(i + 1, k) - qrnow_(i - 1, k));
 }
 
 void Solver::progNumdens() noexcept

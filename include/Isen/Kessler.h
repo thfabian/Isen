@@ -51,6 +51,32 @@ public:
 
 private:
     std::shared_ptr<NameList> namelist_;
+
+    // Internal variables
+    MatrixXf rho_;
+    MatrixXf qcprod_;
+
+    MatrixXf qrr_;
+    MatrixXf vt_fact_;
+    MatrixXf vt_;
+
+    MatrixXf rdzw_;
+    MatrixXf crmax_;
+
+    VectorXf ppt_;
+    MatrixXf zw_;
+    VectorXf k_max_value_per_col_;
+
+    MatrixXf qrprod_;
+    MatrixXf pressure_;
+    MatrixXf gam_;
+    MatrixXf es_;
+    MatrixXf qvs_;
+    MatrixXf diff_;
+    MatrixXf produc_;
+    MatrixXf ern_;
+
+    MatrixXf production_;
 };
 
 /// This is a convenience macro to declare local aliases of the NameList class inside any Kessler method
