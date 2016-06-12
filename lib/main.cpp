@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
             if(cl.has("solver"))
                 solver =  SolverFactory::create(cl.as<std::string>("solver"), namelist, archiveType);            
             else
-                solver =  SolverFactory::create("ref", namelist, archiveType);
+                solver =  SolverFactory::create("cpu", namelist, archiveType);
         }
         catch(const std::exception& e)
         {

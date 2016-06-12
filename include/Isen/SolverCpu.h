@@ -49,6 +49,13 @@ public:
     virtual void geometricHeight() noexcept override;
     
     //------------------------------------------------------------
+    // Boundary
+    //------------------------------------------------------------
+
+    /// Clip negative values of moisture variables
+    virtual void clipMoisture() noexcept override;
+    
+    //------------------------------------------------------------
     // Diagnostic
     //------------------------------------------------------------
 
@@ -67,6 +74,9 @@ public:
 
     /// Prognostic step for momentum
     virtual void progVelocity() noexcept override;
+    
+    /// Prognostic step for hydrometeors
+    virtual void progMoisture() noexcept;
     
     /// Free all memory
     virtual ~SolverCpu() {}

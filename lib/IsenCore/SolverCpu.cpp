@@ -21,9 +21,7 @@
 #include <Isen/SolverCpu.h>
 #include <Isen/Timer.h>
 
-//#ifndef NDEBUG
-#define MIB_OFF
-//#endif
+//#define MIB_OFF
 #include <mib.h>
 
 #ifdef ISEN_PYTHON
@@ -42,9 +40,16 @@ ISEN_NO_INLINE void kernel_horizontalDiffusion(const int nx,
                                                const int nb,
                                                double* ISEN_RESTRICT unew,
                                                double* ISEN_RESTRICT snew,
+                                               double* ISEN_RESTRICT qvnew,
+                                               double* ISEN_RESTRICT qcnew,
+                                               double* ISEN_RESTRICT qrnew,
                                                const double* ISEN_RESTRICT unow,
                                                const double* ISEN_RESTRICT snow,
-                                               const double* ISEN_RESTRICT tau)
+                                               const double* ISEN_RESTRICT qvnow,
+                                               const double* ISEN_RESTRICT qcnow,
+                                               const double* ISEN_RESTRICT qrnow,
+                                               const double* ISEN_RESTRICT tau,
+                                               const bool imoist)
 {
     const int nxnb = nx + nb;
     const int nxnb1 = nx + nb + 1;
@@ -75,13 +80,71 @@ ISEN_NO_INLINE void kernel_horizontalDiffusion(const int nx,
         else
             for(int i = nb; i < nxnb; ++i)
                 snew[k * nxb + i] = snow[k * nxb + i];
+
+        if(imoist)
+        {
+            // qv
+            if(tau[k] > 0.0)
+                for(int i = nb; i < nxnb; ++i)
+                    qvnew[k * nxb + i]
+                        = qvnow[k * nxb + i]
+                          + tau025 * (qvnow[k * nxb + i - 1] - 2 * qvnow[k * nxb + i] + qvnow[k * nxb + i + 1]);
+            else
+                for(int i = nb; i < nxnb; ++i)
+                    qvnew[k * nxb + i] = qvnow[k * nxb + i];
+
+            // qc
+            if(tau[k] > 0.0)
+                for(int i = nb; i < nxnb; ++i)
+                    qcnew[k * nxb + i]
+                        = qcnow[k * nxb + i]
+                          + tau025 * (qcnow[k * nxb + i - 1] - 2 * qcnow[k * nxb + i] + qcnow[k * nxb + i + 1]);
+            else
+                for(int i = nb; i < nxnb; ++i)
+                    qcnew[k * nxb + i] = qcnow[k * nxb + i];
+
+            // qr
+            if(tau[k] > 0.0)
+                for(int i = nb; i < nxnb; ++i)
+                    qrnew[k * nxb + i]
+                        = qrnow[k * nxb + i]
+                          + tau025 * (qrnow[k * nxb + i - 1] - 2 * qrnow[k * nxb + i] + qrnow[k * nxb + i + 1]);
+            else
+                for(int i = nb; i < nxnb; ++i)
+                    qrnew[k * nxb + i] = qrnow[k * nxb + i];
+        }
     }
 }
 
 void SolverCpu::horizontalDiffusion() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
-    kernel_horizontalDiffusion(nx, nz, nb, unew_.data(), snew_.data(), unow_.data(), snow_.data(), tau_.data());
+    kernel_horizontalDiffusion(nx, nz, nb, unew_.data(), snew_.data(), qvnew_.data(), qcnew_.data(), qrnew_.data(),
+                               unow_.data(), snow_.data(), qvnow_.data(), qcnow_.data(), qrnow_.data(), tau_.data(),
+                               imoist);
+}
+
+
+// -------------------------------------------------- clipMoisture -----------------------------------------------------
+
+ISEN_NO_INLINE void kernel_clipMoisture(const int nx,
+                                        const int nz,
+                                        const int nb,
+                                        double* ISEN_RESTRICT qnow)
+{
+    const int nxb = nx + 2 * nb;
+    
+    for(int k = 0; k < nz; ++k)
+        for(int i = 0; i < nxb; ++i)
+            qnow[k*nxb + i] = qnow[k*nxb + i] < 0.0 ? 0.0 : qnow[k*nxb + i];
+}
+                                           
+void SolverCpu::clipMoisture() noexcept
+{
+    SOLVER_DECLARE_ALL_ALIASES
+    kernel_clipMoisture(nx, nz, nb, qvnew_.data());
+    kernel_clipMoisture(nx, nz, nb, qcnew_.data());
+    kernel_clipMoisture(nx, nz, nb, qrnew_.data());
 }
 
 // -------------------------------------------------- geometricHeight --------------------------------------------------
@@ -233,6 +296,35 @@ void SolverCpu::progIsendens() noexcept
     kernel_progIsendens(nx, nz, nb, snew_.data(), snow_.data(), sold_.data(), unow_.data(), 0.5 * dtdx_);
 }
 
+// -------------------------------------------------- progMoisture -----------------------------------------------------
+ISEN_NO_INLINE void kernel_progMoisture(const int nx,
+                                        const int nz,
+                                        const int nb,
+                                        double* ISEN_RESTRICT qnew,                                       
+                                        const double* ISEN_RESTRICT qnow,
+                                        const double* ISEN_RESTRICT qold,
+                                        const double* ISEN_RESTRICT unow,
+                                        const double dtdx05)
+{
+    const int nxb = nx + 2 * nb;
+    const int nxb1 = nx + 2 * nb + 1;
+    const int nxnb = nx + nb;
+    
+#pragma omp parallel for
+    for(int k = 0; k < nz; ++k)
+        for(int i = nb; i < nxnb; ++i)
+            qnew[k*nxb + i] = qold[k*nxb + i] - dtdx05 * (unow[k*nxb1 + i] + unow[k*nxb1 + i + 1]) 
+                                                       * (qnow[k*nxb + i + 1] - qnow[k*nxb + i - 1]);
+}
+
+void SolverCpu::progMoisture() noexcept
+{
+    SOLVER_DECLARE_ALL_ALIASES
+    kernel_progMoisture(nx, nz, nb, qvnew_.data(), qvnow_.data(), qvold_.data(), unow_.data(), 0.5 * dtdx_);
+    kernel_progMoisture(nx, nz, nb, qcnew_.data(), qcnow_.data(), qcold_.data(), unow_.data(), 0.5 * dtdx_);
+    kernel_progMoisture(nx, nz, nb, qrnew_.data(), qrnow_.data(), qrold_.data(), unow_.data(), 0.5 * dtdx_);
+}
+
 // -------------------------------------------------- progVelocity -----------------------------------------------------
 ISEN_NO_INLINE void kernel_progVelocity(const int nx,
                                         const int nz,
@@ -298,7 +390,14 @@ void SolverCpu::run()
         // Isentropic mass density
         MIB_START("progIsendens")        
         progIsendens();
-
+        
+        // Moisture scalars
+        if(imoist)
+        {
+            MIB_NEXT("progMoisture")        
+            progMoisture();
+        }
+        
         // Velocity
         MIB_NEXT("progVelocity")        
         progVelocity();
@@ -316,9 +415,15 @@ void SolverCpu::run()
 
         uold_.swap(unow_);
         sold_.swap(snow_);
+        qvold_.swap(qvnow_);
+        qcold_.swap(qcnow_);
+        qrold_.swap(qrnow_);
 
         unow_.swap(unew_);
         snow_.swap(snew_);
+        qvnow_.swap(qvnew_);
+        qcnow_.swap(qcnew_);
+        qrnow_.swap(qrnew_);
 
         // Diffusion and gravity wave absorber
         //--------------------------------------------------------
@@ -329,8 +434,18 @@ void SolverCpu::run()
         if(!irelax)
             applyPeriodicBoundary();
 
+        if(imoist)
+        {
+            MIB_NEXT("clipMoisture")                                
+            clipMoisture();
+        }
+        
         unow_.swap(unew_);
         snow_.swap(snew_);
+        qvnow_.swap(qvnew_);
+        qcnow_.swap(qcnew_);
+        qrnow_.swap(qrnew_);
+
 
         // Diagnostic step
         //--------------------------------------------------------
@@ -351,7 +466,24 @@ void SolverCpu::run()
 
         // Microphysics
         //---------------------------------------------------------
+        if(imoist)
+        {
+            if(imicrophys == 1) // Kessler scheme
+            {
+                MIB_NEXT("kessler")                                                                
+                kessler_->apply(
+                    // Output
+                    temp_, qvnew_, qcnew_, qrnew_, tot_prec_, prec_,
 
+                    // Input
+                    th0_, prs_, snow_, qvnow_, qcnow_, qrnow_, exn_, zhtnow_);
+            }
+        }
+           
+        
+        qvnow_.swap(qvnew_);
+        qcnow_.swap(qcnew_);
+        qrnow_.swap(qrnew_);
 
         // Check maximum CFL condition
         //--------------------------------------------------------
@@ -382,7 +514,7 @@ void SolverCpu::run()
 #endif
     }
 
-    MIB_PRINT("cycle")
+    MIB_PRINT("nsec")
     
     pbar.pause();
     if(!logIsDisabled)

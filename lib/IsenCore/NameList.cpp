@@ -121,7 +121,15 @@ void NameList::setByName(const std::string& name, const int& value)
     }
     else
     {
-        throw IsenException("variable '%s' is not part of Namelist", name);
+        // Try floating point and boolean options
+        try 
+        {
+            setByName(name, static_cast<double>(value));
+        } 
+        catch(...)
+        {
+            setByName(name, static_cast<bool>(value));
+        }
     }
     this->update();
 }

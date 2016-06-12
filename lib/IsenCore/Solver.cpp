@@ -817,14 +817,12 @@ void Solver::applyRelaxationBoundary() noexcept
 void Solver::clipMoisture() noexcept
 {
     SOLVER_DECLARE_ALL_ALIASES
-    const int nxnb = nx + nb;
-
+            
     auto clip = [&](MatrixXf& mat)
     {
         for(int k = 0; k < nz; ++k)
-            for(int i = nb; i < nxnb; ++i)
-                if(mat(i, k) < 0.0)
-                    mat(i, k) = 0.0;
+            for(int i = 0; i < nxb; ++i)
+                mat(i, k) = mat(i, k) < 0.0 ? 0.0 : mat(i, k);
     };
 
     clip(qvnew_);

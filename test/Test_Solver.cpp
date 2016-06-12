@@ -212,7 +212,10 @@ TEST_CASE("Cross verification (SolverCpu)", "[Solver]")
     Progressbar::printBar('-');
     
     auto namelist = std::make_shared<NameList>();
-    namelist->setByName("time", 100.0); // 10 timesteps
+    namelist->setByName("time", 1500.0); // 10 timesteps
+    namelist->setByName("imoist", true);    
+    namelist->setByName("imoist_diff", true);    
+    namelist->setByName("imicrophys", 1); // Kessler    
     namelist->setByName("iprtcfl", false);    
     
     std::shared_ptr<Solver> solverRef = SolverFactory::create("ref", namelist);
@@ -229,7 +232,20 @@ TEST_CASE("Cross verification (SolverCpu)", "[Solver]")
     CHECK_FIELD_CPU(unow);
     CHECK_FIELD_CPU(snow);
     CHECK_FIELD_CPU(mtg);
-
+    
+    if(namelist->imoist)
+    {
+        CHECK_FIELD_CPU(qvnow);
+        CHECK_FIELD_CPU(qcnow);
+        CHECK_FIELD_CPU(qrnow);
+        
+        if(namelist->imicrophys > 0)
+        {
+            CHECK_FIELD_CPU(prec);
+            CHECK_FIELD_CPU(tot_prec);
+        }
+    }
+    
     CHECK_FIELD_CPU(exn);
     CHECK_FIELD_CPU(prs);
 
