@@ -21,7 +21,7 @@
 #include <Isen/SolverCpu.h>
 #include <Isen/Timer.h>
 
-//#define MIB_OFF
+#define MIB_OFF
 #include <mib.h>
 
 #ifdef ISEN_PYTHON
