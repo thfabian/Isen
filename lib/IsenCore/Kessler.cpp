@@ -106,8 +106,12 @@ void Kessler::apply(
     double nfalld = -1.0;
     double nfalld_new = -1.0;
     int k_max = 0;
-    
+
+#ifdef ISEN_COMPILER_MSVC
+    #pragma omp parallel shared(nfalld, nfalld_new, k_max) // MSVC only implements OpenMP 1.0 ...
+#else
     #pragma omp parallel
+#endif
     {
         // Compute density
         //--------------------------------------------------------
@@ -148,9 +152,13 @@ void Kessler::apply(
         for(int k = 0; k < nz; ++k)
             for(int i = 0; i < nxb; ++i)
                 crmax_(i, k) = std::max(0.5 * dt_in * vt_(i, k) * rdzw_(i, k), 0.0);
-    
+
         // Determine maximum nfall for all grid points
+#ifdef ISEN_COMPILER_MSVC
+        #pragma omp single
+#else
         #pragma omp for reduction(max: nfalld)
+#endif
         for(int k = 0; k < nz; ++k)
             for(int i = 0; i < nxb; ++i)
                 nfalld = std::max(nfalld, std::max(1.0, std::ceil(0.5 + crmax_(i, k) / max_cr_sedimentation)));
@@ -168,6 +176,8 @@ void Kessler::apply(
             while(nfall > 0)
             {
                 time_sediment = time_sediment - dtfall;
+
+                k_max = 0;
         
                 #pragma omp for
                 for(int i = 0; i < nxb; ++i)
@@ -199,8 +209,12 @@ void Kessler::apply(
                     k_max_value_per_col_(k) = max_element;
                 }
     
-                // Find largest index which is non-zero                
+                // Find largest index which is non-zero  
+#ifdef ISEN_COMPILER_MSVC
+                #pragma omp single
+#else
                 #pragma omp for reduction(max: k_max)
+#endif
                 for(int k = 1; k < nz; ++k)
                     k_max = k_max_value_per_col_(k) != 0.0 ? k : k_max;
                 
@@ -232,6 +246,7 @@ void Kessler::apply(
                 if(nfall > 1)
                 {
                     nfall = nfall - 1;
+                    nfalld_new = -1.0;
     
                     #pragma omp for                                
                     for(int k = 0; k < nz; ++k)
@@ -247,8 +262,12 @@ void Kessler::apply(
                     for(int k = 0; k < nz; ++k)
                         for(int i = 0; i < nxb; ++i)
                             crmax_(i, k) = std::max(time_sediment * vt_(i, k) * rdzw_(i, k), 0.0);
-    
-                    #pragma omp for reduction(max: nfalld_new)                                              
+
+#ifdef ISEN_COMPILER_MSVC
+                    #pragma omp single
+#else
+                    #pragma omp for reduction(max: nfalld_new)
+#endif
                     for(int k = 0; k < nz; ++k)
                         for(int i = 0; i < nxb; ++i)
                             nfalld_new
