@@ -76,7 +76,7 @@ public:
     virtual void progVelocity() noexcept override;
     
     /// Prognostic step for hydrometeors
-    virtual void progMoisture() noexcept;
+    virtual void progMoisture() noexcept override;
     
     /// Free all memory
     virtual ~SolverCpu() {}
