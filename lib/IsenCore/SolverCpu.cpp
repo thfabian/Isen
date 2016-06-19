@@ -21,7 +21,7 @@
 #include <Isen/SolverCpu.h>
 #include <Isen/Timer.h>
 
-#define MIB_OFF
+//#define MIB_OFF
 #include <mib.h>
 
 #ifdef ISEN_PYTHON
@@ -162,20 +162,25 @@ ISEN_NO_INLINE void kernel_geometricHeight(const int nx,
     const int nxb = nx + 2 * nb;
     const int nz1 = nz + 1;
 
-    for(int i = 0; i < nxb; ++i)
-        zhtnow[i] = topo[i] * topofact;
-
-    for(int k = 1; k < nz1; ++k)
+    #pragma omp parallel
     {
-        double th0_kminus1 = th0[k - 1];
-        double th0_center = th0[k];
-
+        #pragma omp for
         for(int i = 0; i < nxb; ++i)
+            zhtnow[i] = topo[i] * topofact;
+    
+        for(int k = 1; k < nz1; ++k)
         {
-            double th0exn = th0_kminus1 * exn[(k - 1) * nxb + i] + th0_center * exn[k * nxb + i];
-            double prs_delta = (prs[k * nxb + i] - prs[(k - 1) * nxb + i])
-                               / (0.5 * (prs[k * nxb + i] + prs[(k - 1) * nxb + i]));
-            zhtnow[k * nxb + i] = zhtnow[(k - 1) * nxb + i] - rcpg05 * th0exn * prs_delta;
+            double th0_kminus1 = th0[k - 1];
+            double th0_center = th0[k];
+            
+            #pragma omp for        
+            for(int i = 0; i < nxb; ++i)
+            {
+                double th0exn = th0_kminus1 * exn[(k - 1) * nxb + i] + th0_center * exn[k * nxb + i];
+                double prs_delta = (prs[k * nxb + i] - prs[(k - 1) * nxb + i])
+                                   / (0.5 * (prs[k * nxb + i] + prs[(k - 1) * nxb + i]));
+                zhtnow[k * nxb + i] = zhtnow[(k - 1) * nxb + i] - rcpg05 * th0exn * prs_delta;
+            }
         }
     }
 }
@@ -222,12 +227,18 @@ ISEN_NO_INLINE void kernel_diagMontgomery_Montgomery(const int nx,
     const int nxb = nx + 2 * nb;
     const double th0dth05 = dth * 0.5 + th0;
 
-    for(int i = 0; i < nxb; ++i)
-        mtg[i] = gtopofact * topo[i] + th0dth05 * exn[i];
-
-    for(int k = 1; k < nz; ++k)
+    
+    #pragma omp parallel
+    {
+        #pragma omp for  
         for(int i = 0; i < nxb; ++i)
-            mtg[k * nxb + i] = mtg[(k - 1) * nxb + i] + dth * exn[k * nxb + i];
+            mtg[i] = gtopofact * topo[i] + th0dth05 * exn[i];
+    
+        for(int k = 1; k < nz; ++k)
+            #pragma omp for              
+            for(int i = 0; i < nxb; ++i)
+                mtg[k * nxb + i] = mtg[(k - 1) * nxb + i] + dth * exn[k * nxb + i];
+    }
 }
 
 void SolverCpu::diagMontgomery() noexcept
@@ -252,12 +263,19 @@ ISEN_NO_INLINE void kernel_diagPressure(const int nxb,
 {
     const int nz_offset = nz * nxb;
 
-    for(int i = 0; i < nxb; ++i)
-        prs[nz_offset + i] = prs0;
-
-    for(int k = nz - 1; k >= 0; --k)
+    #pragma omp parallel
+    {
+        #pragma omp for    
         for(int i = 0; i < nxb; ++i)
-            prs[k * nxb + i] = prs[(k + 1) * nxb + i] + gdth * snow[k * nxb + i];
+            prs[nz_offset + i] = prs0;
+    
+        for(int k = nz - 1; k >= 0; --k)
+        {
+            #pragma omp for            
+            for(int i = 0; i < nxb; ++i)
+                prs[k * nxb + i] = prs[(k + 1) * nxb + i] + gdth * snow[k * nxb + i];
+        }
+    }
 }
 
 void SolverCpu::diagPressure() noexcept
