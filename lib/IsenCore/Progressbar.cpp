@@ -34,7 +34,7 @@ Progressbar::Progressbar(int maxTimeStep) : curStep_(0), maxStep_(maxTimeStep), 
 
     strSpace_ = std::string(terminalWidth_ - (maxBarWidth_ + 3 + 7), ' ');
     strBar_ = std::string(maxBarWidth_, ' ');
-
+    
     // Start the timer (this assures we print the first time in advance)
     timer_.start();
 }
@@ -51,7 +51,7 @@ void Progressbar::advance()
     int barWidth = percentage * maxBarWidth_;
     bool printThisStep;
 
-    if((printThisStep = curBarWidth_ < (barWidth ? barWidth : 1)))
+    while((printThisStep = curBarWidth_ < (barWidth ? barWidth : 1)))
         strBar_[curBarWidth_++] = '=';
 
     // Only print if there was an update or IntervalMs milliseconds have passed
