@@ -46,14 +46,6 @@ public:
     //-------------------------------------------------
     // Floating point getter/setters
     //-------------------------------------------------
-
-    void set_dx(double value) const noexcept
-    {
-        namelist_->dx = value;
-        namelist_->update();
-    }
-    double get_dx() const noexcept { return namelist_->dx; }
-
     void set_thl(double value) const noexcept
     {
         namelist_->thl = value;

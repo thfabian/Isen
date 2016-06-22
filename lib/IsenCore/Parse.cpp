@@ -119,7 +119,6 @@ Parser::Parser(Style style, bool prettyPrintErrors)
     ADD_KNOWN_VARIABLE(iiniout);
     ADD_KNOWN_VARIABLE(xl);
     ADD_KNOWN_VARIABLE(nx);
-    ADD_KNOWN_VARIABLE(dx);
     ADD_KNOWN_VARIABLE(thl);
     ADD_KNOWN_VARIABLE(nz);
     ADD_KNOWN_VARIABLE(time);
@@ -174,6 +173,7 @@ Parser::Parser(Style style, bool prettyPrintErrors)
     ADD_IGNORE_VARIABLE(z00);
     ADD_IGNORE_VARIABLE(prs00);
     ADD_IGNORE_VARIABLE(exn00);
+    ADD_IGNORE_VARIABLE(dx);    
 
     #undef ADD_IGNORE_VARIABLE
 }

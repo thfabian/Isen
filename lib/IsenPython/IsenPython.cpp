@@ -61,7 +61,6 @@ BOOST_PYTHON_MODULE(IsenPythonCxx)
     class_<Isen::PyNameList>("NameList", init<boost::python::optional<const char*>>())
         .def("__str__", &Isen::PyNameList::__str__)
         // Floating point getter/setters
-        .add_property("dx", &Isen::PyNameList::get_dx, &Isen::PyNameList::set_dx)
         .add_property("thl", &Isen::PyNameList::get_thl, &Isen::PyNameList::set_thl)
         .add_property("time", &Isen::PyNameList::get_time, &Isen::PyNameList::set_time)
         .add_property("dt", &Isen::PyNameList::get_dt, &Isen::PyNameList::set_dt)

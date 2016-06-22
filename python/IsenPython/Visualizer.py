@@ -43,7 +43,8 @@ class Visualizer:
         self.u00 = namelist.u00
         
         # Plotting variables
-        self.xlim = [0, (self.nx - 1) * namelist.dx / 1000.]
+        dx = namelist.xl / namelist.nx
+        self.xlim = [0, (self.nx - 1) * dx / 1000.]
         self.zlim = [0, 10]
         self.title = namelist.run_name
         
@@ -55,7 +56,7 @@ class Visualizer:
         self.vlim = [0., 60.]
         
         # X-axis
-        self.__x = np.tile(np.array(range(0, self.nx)) * namelist.dx / 1000., [self.nz, 1]).transpose();
+        self.__x = np.tile(np.array(range(0, self.nx)) * dx / 1000., [self.nz, 1]).transpose();
 
         # Geometric height (destaggered)
         z = self.__output.z() / 1000.

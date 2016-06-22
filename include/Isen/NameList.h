@@ -58,8 +58,6 @@ struct NameList
     int xl = 500000;
     /// Horizontal resolution
     int nx = 100;
-    /// Horizontal spacing
-    double dx = xl / nx;
     /// Domain depth [K]
     double thl = 60.0;
     /// Vertical Resolution
@@ -157,6 +155,8 @@ struct NameList
     // Computed input parameters
     //-------------------------------------------------
 
+    /// Horizontal spacing
+    double dx = xl / nx;
     /// Spacing between vertical layers[K]
     double dth = thl / nz;
     /// Number of iterations

@@ -201,7 +201,6 @@ class TestNameList(unittest.TestCase):
         self.assertTrue(hasattr(namelist, 'iiniout'))
         self.assertTrue(hasattr(namelist, 'xl'))
         self.assertTrue(hasattr(namelist, 'nx'))
-        self.assertTrue(hasattr(namelist, 'dx'))
         self.assertTrue(hasattr(namelist, 'thl'))
         self.assertTrue(hasattr(namelist, 'nz'))
         self.assertTrue(hasattr(namelist, 'time'))

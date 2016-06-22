@@ -21,6 +21,7 @@ ISEN_NAMESPACE_BEGIN
 
 void NameList::update()
 {
+    dx = static_cast<double>(xl) / nx;
     dth = thl / nz;
     nts = static_cast<int>(std::round(time / dt));
     nout = nts / iout + iiniout;
@@ -138,10 +139,6 @@ void NameList::setByName(const std::string& name, const double& value)
 {
     if(name.empty())
         return;
-    else if(name == "dx")
-    {
-        this->dx = value;
-    }
     else if(name == "thl")
     {
         this->thl = value;
