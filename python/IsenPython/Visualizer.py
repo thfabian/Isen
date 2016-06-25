@@ -13,14 +13,13 @@
 
 from __future__ import print_function, division
 
+import sys
+
 import numpy as np
 import matplotlib 
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 from matplotlib.ticker import MultipleLocator
-
-import sys
-import argparse
-import inspect
 
 class Visualizer:
     """Visualize output of simulation """
@@ -48,12 +47,18 @@ class Visualizer:
         self.zlim = [0, 10]
         self.title = namelist.run_name
         
-        self.tci = 2 # Theta contour interval (K)
-        self.vci = 2 # Velocity contour interval (m/s)
+        self.tci = 2        # Theta contour interval (K)
+        self.vci = 2        # Velocity contour interval (m/s)
+        self.qvci = 0.5	    # Vapor contour interval (g/kg)
+        self.qcci = 0.1	    # Cloud water contour interval (g/kg)
+        self.qrci = 0.005	# Rain contour interval (g/kg)
         
         dth = namelist.thl / self.nz
         self.tlim = [namelist.th00 + dth / 2., 400.];
         self.vlim = [0., 60.]
+        self.qvlim = [self.qvci, 10 * self.qvci]
+        self.qclim = [self.qcci, 10 * self.qcci]
+        self.qrlim = [self.qrci, 100 * self.qrci]
         
         # X-axis
         self.__x = np.tile(np.array(range(0, self.nx)) * dx / 1000., [self.nz, 1]).transpose();
@@ -77,25 +82,43 @@ class Visualizer:
         # Velocity (destaggered)
         self.u = self.__output.u()
         
-    def __makeFigure(self):
-        fig = plt.figure(figsize=(6.5, 5.25))
-        fig.subplots_adjust(left = 0.1, bottom = 0.12, right = 0.97, top = 0.96)
-        ax = fig.add_subplot(1, 1, 1)
-        return fig, ax
+        # Moist variables
+        if namelist.imoist: 
+          self.qv = 1000 * self.__output.qv()      # Convert to g/kg
+          self.qc = 1000 * self.__output.qc()      # Convert to g/kg
+          self.qr = 1000 * self.__output.qr()      # Convert to g/kg
+          self.prec = self.__output.prec()         # mm/h
+          self.tot_prec = self.__output.tot_prec()  # mm
         
     def __generateDictonary(self, name):
         if name.lower() == 'horizontal_velocity':
             vclev1 = np.arange(self.vlim[0], self.u00, self.vci)
             vclev2 = np.arange(self.u00 + self.vci, self.vlim[1] + self.vci, self.vci)
             
-            plotDict= dict(fmt = '%2i',
-                           clev = np.array(list(vclev1) + [self.u00] + list(vclev2)),
-                           color = ['lime'] * len(vclev1) + ['k'] + ['r'] * len(vclev2),
-                           scale = 1,
-                           data = 'u') 
+            plotDict = dict(fmt = '%2i',
+                            clev = np.array(list(vclev1) + [self.u00] + list(vclev2)),
+                            color = ['lime'] * len(vclev1) + ['k'] + ['r'] * len(vclev2),
+                            scale = 1,
+                            data = 'u') 
             return plotDict
-        
-        raise RuntimeError("Visualizer: invalid plot name '{0}'".fomat(name))
+            
+        if name.lower() == 'specific_rain_water_content':
+            plotDict = dict(fmt='%1.3f',
+                            clev = np.arange(self.qrlim[0], self.qrlim[1], self.qrci),
+                            color='skyblue',
+                            scale = 1000,
+                            data = 'qr') 
+            return plotDict
+            
+        if name.lower() == 'specific_humidity':
+            plotDict = dict(fmt='%2i',
+                            clev=np.arange(self.qvlim[0], self.qvlim[1], self.qvci),
+                            color='blue',
+                            scale=1000,
+                            data = 'qv') 
+            return plotDict
+                
+        raise RuntimeError("Visualizer: invalid plot name '{0}'".format(name))
         
     def plot(self, name, timestep, file = None, show = True):
         """Generate velocitry contour plot
@@ -103,6 +126,7 @@ class Visualizer:
         Args:
             name: Name of the plot to generate:
                 - horizontal_velocity
+                - rain_water
             timestep: Specify which data set to use.
             file: Save to file if not None
             show: Show plot
@@ -111,8 +135,22 @@ class Visualizer:
             raise RuntimeError("Visualizer: requested timestep '{0}' exceeds available timesteps '{1}'".format(
                   timestep, self.nt - 1))
                 
-        fig, ax = self.__makeFigure()
+        # Create figure
+        fig = plt.figure(figsize=(6.5, 5.25))
+        fig.subplots_adjust(left = 0.1, bottom = 0.12, right = 0.97, top = 0.96)
         
+        if name == 'specific_rain_water_content':
+            gs = gridspec.GridSpec(2, 1, height_ratios=[20, 10])
+        else:
+            gs = gridspec.GridSpec(1, 1, height_ratios=[20])
+        
+        # Create axis
+        ax = fig.add_subplot(gs[0, 0])
+        if name == 'specific_rain_water_content':
+            ax2 = fig.add_subplot(gs[1, 0])
+        else:
+            ax2 = None
+                
         plt.sca(ax)
         ax.cla()
 
@@ -144,6 +182,13 @@ class Visualizer:
                         
         ax.clabel(cs, pd['clev'], fmt=pd['fmt'], inline_spacing=2, fontsize=8)             
         
+        if name == 'specific_rain_water_content':
+            ax2.cla()
+            ax2.set_ylabel('Acum. Rain [mm]')
+            ax2.set_ylim([0, 0.1 + max(self.tot_prec[timestep, :])])
+            ax2.set_xlim(self.xlim)
+            cs = ax2.plot(self.__x[:, 0], self.tot_prec[timestep, :], 'b-')
+                          
         plt.title('Time = {0} seconds'.format(int(self.__output.t()[timestep])))
         plt.tight_layout()
         
@@ -152,7 +197,7 @@ class Visualizer:
             plt.savefig(file)
         if show:
             plt.show()
-        
+
         # Cleanup    
         plt.cla()
         plt.clf()
