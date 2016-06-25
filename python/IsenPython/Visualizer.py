@@ -32,11 +32,11 @@ class Visualizer:
         """
         matplotlib.rcParams.update({'font.size': 11})
 
-        self.__output = output
+        self.output = output
         namelist = output.getNameList()
         
         # NameList parameters
-        self.nt = len(self.__output.t())
+        self.nt = len(self.output.t())
         self.nz = namelist.nz
         self.nx = namelist.nx
         self.u00 = namelist.u00
@@ -61,34 +61,34 @@ class Visualizer:
         self.qrlim = [self.qrci, 100 * self.qrci]
         
         # X-axis
-        self.__x = np.tile(np.array(range(0, self.nx)) * dx / 1000., [self.nz, 1]).transpose();
+        self.x = np.tile(np.array(range(0, self.nx)) * dx / 1000., [self.nz, 1]).transpose();
 
         # Geometric height (destaggered)
-        z = self.__output.z() / 1000.
-        self.__z = np.zeros((self.nt, self.nx, self.nz))
+        z = self.output.z() / 1000.
+        self.z = np.zeros((self.nt, self.nx, self.nz))
         for t in xrange(0, self.nt):
             for i in xrange(0, self.nx):
-                    self.__z[t, i, 0:self.nz] = 0.5 * (z[t, i, 0:self.nz] + z[t, i, 1:self.nz+1])
+                    self.z[t, i, 0:self.nz] = 0.5 * (z[t, i, 0:self.nz] + z[t, i, 1:self.nz+1])
         
         # Theta value between the coordinate surfaces
         theta = np.zeros((self.nz))
         for i in xrange(len(theta)):
             theta[i] = namelist.th00 + (i + 0.5) * dth
-        self.__theta = np.tile(theta,[self.nx, 1])
+        self.heta = np.tile(theta,[self.nx, 1])
         
         # Topography height
-        self.__topo = z[:, :, 0]
+        self.topo = z[:, :, 0]
         
         # Velocity (destaggered)
-        self.u = self.__output.u()
+        self.u = self.output.u()
         
         # Moist variables
         if namelist.imoist: 
-          self.qv = 1000 * self.__output.qv()      # Convert to g/kg
-          self.qc = 1000 * self.__output.qc()      # Convert to g/kg
-          self.qr = 1000 * self.__output.qr()      # Convert to g/kg
-          self.prec = self.__output.prec()         # mm/h
-          self.tot_prec = self.__output.tot_prec()  # mm
+          self.qv = 1000 * self.output.qv()      # Convert to g/kg
+          self.qc = 1000 * self.output.qc()      # Convert to g/kg
+          self.qr = 1000 * self.output.qr()      # Convert to g/kg
+          self.prec = self.output.prec()         # mm/h
+          self.tot_prec = self.output.tot_prec()  # mm
         
     def __generateDictonary(self, name):
         if name.lower() == 'horizontal_velocity':
@@ -108,6 +108,14 @@ class Visualizer:
                             color='skyblue',
                             scale = 1000,
                             data = 'qr') 
+            return plotDict
+            
+        if name.lower() == 'specific_cloud_liquid_water_content':
+            plotDict = dict(fmt='%1.1f',
+                            clev = np.arange(self.qclim[0], self.qclim[1], self.qcci),
+                            color = 'dodgerblue',
+                            scale = 1000,
+                            data = 'qc') 
             return plotDict
             
         if name.lower() == 'specific_humidity':
@@ -140,7 +148,7 @@ class Visualizer:
         fig.subplots_adjust(left = 0.1, bottom = 0.12, right = 0.97, top = 0.96)
         
         if name == 'specific_rain_water_content':
-            gs = gridspec.GridSpec(2, 1, height_ratios=[20, 10])
+            gs = gridspec.GridSpec(2, 1, height_ratios=[20, 20])
         else:
             gs = gridspec.GridSpec(1, 1, height_ratios=[20])
         
@@ -168,15 +176,15 @@ class Visualizer:
                 
         # Plot theta
         clev = np.arange(self.tlim[0], self.tlim[1], self.tci)
-        ax.contour(self.__x, self.__z[timestep, :, :], self.__theta, clev, colors='grey', linewidths=1)
+        ax.contour(self.x, self.z[timestep, :, :], self.theta, clev, colors='grey', linewidths=1)
         
         # Plot topography
-        ax.plot(self.__x[:, 0], self.__topo[timestep, :], linewidth=2, color='k');
+        ax.plot(self.x[:, 0], self.topo[timestep, :], linewidth=2, color='k');
         
         # Plot quantity 'name'
         pd = self.__generateDictonary(name)
      
-        cs = ax.contour(self.__x, self.__z[timestep, :, :], 
+        cs = ax.contour(self.x, self.z[timestep, :, :], 
                         pd['scale'] * getattr(self, pd['data'])[timestep, :, :], 
                         pd['clev'], colors=pd['color'], linewidths=1)
                         
@@ -187,9 +195,9 @@ class Visualizer:
             ax2.set_ylabel('Acum. Rain [mm]')
             ax2.set_ylim([0, 0.1 + max(self.tot_prec[timestep, :])])
             ax2.set_xlim(self.xlim)
-            cs = ax2.plot(self.__x[:, 0], self.tot_prec[timestep, :], 'b-')
+            cs = ax2.plot(self.x[:, 0], self.tot_prec[timestep, :], 'b-')
                           
-        plt.title('Time = {0} seconds'.format(int(self.__output.t()[timestep])))
+        plt.title('Time = {0} seconds'.format(int(self.output.t()[timestep])))
         plt.tight_layout()
         
         if file:

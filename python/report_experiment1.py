@@ -30,12 +30,13 @@ def runSimulation(nx, dt):
     namelist.iprtcfl = False
     
     namelist.nx = nx
-    namelist.run_name = "100h-simulation-" + str(namelist.nx)
+    namelist.run_name = "60h-simulation-" + str(namelist.nx)
 
-    namelist.iout = 36000 # 10h
+    outsteps = 36000 / dt
+    namelist.iout = int(outsteps) # 10h
     namelist.dt = dt
 
-    namelist.time = 10 * namelist.iout # 100h
+    namelist.time = 6 * namelist.iout # 60h
 
     print(namelist)
 
@@ -48,11 +49,14 @@ def runSimulation(nx, dt):
 
 def main():
     runSimulation(100, 1)
-#    runSimulation(1000, 0.1)
-#    runSimulation(5000, 0.02)
-#    plotSimulation("100h-simulation-1000.bin", 10)
-#    plotSimulation("100h-simulation-1000.bin", 10)    
-#    plotSimulation("100h-simulation-1000.bin", 10)
+    runSimulation(500, 0.2)
+    runSimulation(1000, 0.1)
+    runSimulation(5000, 0.02)
+
+    plotSimulation("60h-simulation-100.bin", 6)
+    plotSimulation("60h-simulation-500.bin", 6)
+    plotSimulation("60h-simulation-1000.bin", 6)    
+    plotSimulation("60h-simulation-5000.bin", 6)
 
 if __name__ == '__main__':
     main()

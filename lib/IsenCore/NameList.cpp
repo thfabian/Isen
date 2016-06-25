@@ -325,6 +325,7 @@ void NameList::print(std::ostream& out, bool color) const
     out << internal::printHelper("sediment_on", this->sediment_on);
 
     internal::header(out, color, "Computed input parameters");
+    out << internal::printHelper("dx", this->dx);    
     out << internal::printHelper("dth", this->dth);
     out << internal::printHelper("nts", this->nts);
     out << internal::printHelper("nout", this->nout);
