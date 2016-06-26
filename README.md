@@ -5,7 +5,9 @@
 <p align="center">
   	<img src="https://github.com/thfabian/Isen/blob/master/doc/resources/animation.gif" alt="Horizontal velocity distribution"/>
 </p>
-<p align="center">Figure 1 - Horizontal velocity distribution of an adiabatic flow over a mountain ridge.</>
+<p align="center">
+   Figure 1 - Horizontal velocity distribution of an adiabatic flow over a mountain ridge.
+</p>
 
 #### Table of Contents
   * [Build](#build)
