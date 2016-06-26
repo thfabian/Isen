@@ -126,7 +126,7 @@ This section will walk you through the building process for Mac OSX using [Homeb
    export PYTHON_EXECUTABLE=/usr/local/bin/python
    export PYTHON_INCLUDE_DIR=$(python-config --prefix)/include/python2.7
    export PYTHON_LIBRARY=$(python-config --prefix)/lib/libpython2.7.dylib
-   cmake -DCMAKE_BUILD_TYPE=Release ../ -DISEN_PYTHON=ON -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} - -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} -DPYTHON_LIBRARY=${PYTHON_LIBRARY}
+   cmake -DCMAKE_BUILD_TYPE=Release ../ -DISEN_PYTHON=ON -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} -DPYTHON_LIBRARY=${PYTHON_LIBRARY}
    make
    make install
    ```
