@@ -74,7 +74,7 @@ class Visualizer:
         theta = np.zeros((self.nz))
         for i in xrange(len(theta)):
             theta[i] = namelist.th00 + (i + 0.5) * dth
-        self.heta = np.tile(theta,[self.nx, 1])
+        self.theta = np.tile(theta,[self.nx, 1])
         
         # Topography height
         self.topo = z[:, :, 0]

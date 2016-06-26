@@ -246,7 +246,6 @@ from IsenPython.Visualizer import Visualizer
 
 # Setup Namelist
 namelist = NameList()
-namelist.ishear = True
 namelist.nx = 100
 
 # Setup & run Solver

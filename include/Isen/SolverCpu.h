@@ -31,9 +31,6 @@ public:
     /// @throw IsenException if out of memory
     SolverCpu(std::shared_ptr<NameList> namelist, Output::ArchiveType archiveType = Output::ArchiveType::Text);
 
-    /// Run the simulation
-    virtual void run() override;   
-
     //------------------------------------------------------------
     // Diffusion
     //------------------------------------------------------------
