@@ -41,7 +41,7 @@ This section will walk you through the building process for Ubuntu 14.04. The st
 2. Install the dependencies (Boost and Eigen3)
 
    ```bash
-   sudo apt-get libboost-serialization-dev libboost-program-options-dev libboost-filesystem-dev libboost-system-dev libboost-regex-dev libboost-python-dev libeigen3-dev
+   sudo apt-get libboost-dev libboost-python-dev libeigen3-dev
    ``` 
 
    for the Python bindings you additionally need [Python](https://www.python.org/) with [NumPy](http://www.numpy.org/) and [matplotlib](http://matplotlib.org/)
