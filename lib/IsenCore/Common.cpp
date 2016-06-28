@@ -63,9 +63,9 @@ std::string timeString(double time, bool precise)
             {
                 time /= 60;
                 suffix = "h ";
-                if(time > 12)
+                if(time > 24)
                 {
-                    time /= 12;
+                    time /= 24;
                     suffix = "d ";
                 }
             }
@@ -84,9 +84,9 @@ std::string memString(std::size_t size, bool precise)
     const char* suffixes[] = {"B", "KB", "MB", "GB", "TB", "PB"};
 
     int suffix = 0;
-    while(suffix < 5 && value > 1024.0f)
+    while(suffix < 5 && value > 1024.0)
     {
-        value /= 1024.0f;
+        value /= 1024.0;
         ++suffix;
     }
 
