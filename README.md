@@ -1,4 +1,4 @@
-# Isen [![Build Status]( https://travis-ci.org/thfabian/Isen.svg?branch=master)](https://travis-ci.org/thfabian/Isen) [![Build status](https://ci.appveyor.com/api/projects/status/wcuxkwaxtt3vskqu/branch/master?svg=true)](https://ci.appveyor.com/project/thfabian/isen/branch/master) [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/thfabian/Isen/blob/master/LICENSE.TXT)
+# Isen - 2D Isentropic model [![Build Status]( https://travis-ci.org/thfabian/Isen.svg?branch=master)](https://travis-ci.org/thfabian/Isen) [![Build status](https://ci.appveyor.com/api/projects/status/wcuxkwaxtt3vskqu/branch/master?svg=true)](https://ci.appveyor.com/project/thfabian/isen/branch/master) [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/thfabian/Isen/blob/master/LICENSE.TXT)
 
 *Isen* is a two dimensional isentropic vertical coordinate model derived from the existing Matlab implementation of the course *Numerical Modelling of Weather and Climate* (701-1216-00L) at ETH Zürich. The newly developed model, written in C++11, achieves a speedup factor of 49x with repsect to the Matlab code while retaining the ease of use due to a powerful Python frontend. The code is carefully optimized for modern shared-memory multiprocessors.
 
@@ -41,7 +41,7 @@ This section will walk you through the building process for Ubuntu 14.04. The st
 2. Install the dependencies (Boost and Eigen3)
 
    ```bash
-   sudo apt-get libboost-serialization-dev libboost-program-options-dev libboost-filesystem-dev libboost-system-dev libboost-regex-dev libboost-python-dev libeigen3-dev
+   sudo apt-get libboost-dev libboost-python-dev libeigen3-dev
    ``` 
 
    for the Python bindings you additionally need [Python](https://www.python.org/) with [NumPy](http://www.numpy.org/) and [matplotlib](http://matplotlib.org/)
