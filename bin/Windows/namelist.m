@@ -66,7 +66,7 @@ run_name = 'logfile';   % simulation name
 % Print options
 % -----------------------------------
 idbg    = 0;           % print debugging text (0=not print, 1=print)
-iprtcfl = 1;           % print Courant number (0=not print, 1=print)
+iprtcfl = 0;           % print Courant number (0=not print, 1=print)
 itime   = 1;           % print computation time (0=not print, 1=print)
 
 % Physics: Moisture
