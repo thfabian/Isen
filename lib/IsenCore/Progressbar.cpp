@@ -49,10 +49,13 @@ void Progressbar::advance()
 
     float percentage = float(curStep_) / maxStep_;
     int barWidth = percentage * maxBarWidth_;
-    bool printThisStep;
+    bool printThisStep = false;
 
-    while((printThisStep = curBarWidth_ < (barWidth ? barWidth : 1)))
+    while(curBarWidth_ < (barWidth ? barWidth : 1))
+    {
+        printThisStep = true;
         strBar_[curBarWidth_++] = '=';
+    }
 
     // Only print if there was an update or IntervalMs milliseconds have passed
     if(printThisStep || timer_.stop() > IntervalMs)

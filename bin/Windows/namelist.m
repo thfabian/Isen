@@ -26,25 +26,25 @@ vt_mult autoconv_th autoconv_mult iern itime sediment_on
 xl      = 500000.;     % domain size[m]
 nx      = 100;         % horizontal resolution
 dx      = xl/nx;
-thl     = 100.;        % domain depth [K]
-nz      = 100;         % vertical resolution
+thl     = 60.;         % domain depth [K]
+nz      = 60;          % vertical resolution
 time    = 12*60*60;    % integration time [s]
-dt      = 6;           % time step [s]
-diff    = 0.2;         % (horizontal) diffusion coefficient
+dt      = 10;          % time step [s]
+diff    = 0.02;         % (horizontal) diffusion coefficient
 
 % Topography
 % -----------------------------------
-topomx  = 1400;        % mountain height [m]
-topowd  = 25000;       % mountain half width [m]
+topomx  = 500;         % mountain height [m]
+topowd  = 50000;       % mountain half width [m]
 topotim = 1800;        % mountain growth time [s]
 
 % Initial atmosphere 
 % -----------------------------------
-u00     = 0;           % initial velocity [m/s]
+u00     = 15;          % initial velocity [m/s]
 bv00    = 0.01;        % Brunt-Vaisalla frequency [1/s]
-th00    = 280.;	       % potential temperature at surface
+th00    = 300.;	       % potential temperature at surface
 
-ishear  = 1;           % wind shear simulation (0=no shear,1=shear)
+ishear  = 0;           % wind shear simulation (0=no shear,1=shear)
 k_shl   = 5;	       % bottom level of wind shear layer    (ishear=1)      
 k_sht   = 8;	       % top level of wind shear layer       (ishear=1)
 u00_sh  = 10.; 	       % initial velocity below shear layer [m/s] (ishear=1)
@@ -52,7 +52,7 @@ u00_sh  = 10.; 	       % initial velocity below shear layer [m/s] (ishear=1)
 
 % Boundaries
 % -----------------------------------
-nab     = 30;           % number of grid points in absorber
+nab     = 0;            % number of grid points in absorber
 diffabs = 1.;           % maximum value of absorber
 irelax  = 1;            % lateral boundaries (0=periodic, 1=relax)
 nb      = 2;            % number of boundary points on each side
